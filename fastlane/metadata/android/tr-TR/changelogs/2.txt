@@ -1,0 +1,5 @@
+İlk açık önizleme.
+- Jellyfin'e şifre ya da Quick Connect ile giriş
+- Yerel ağda sunucu keşfi, birden çok hesap
+- Albüm, sanatçı, şarkı, çalma listesi ve türlerde gezinme; arama
+- Kütüphanenin çevrimdışı önbelleği

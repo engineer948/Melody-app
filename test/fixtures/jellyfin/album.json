@@ -1,0 +1,20 @@
+{
+  "Name": "Gülümse",
+  "ServerId": "srv1",
+  "Id": "a1",
+  "DateCreated": "2024-03-01T10:20:30.0000000Z",
+  "SortName": "gulumse",
+  "ChildCount": 12,
+  "Genres": ["Pop", "Türkçe"],
+  "RunTimeTicks": 27000000000,
+  "ProductionYear": 1991,
+  "Type": "MusicAlbum",
+  "UserData": {"PlayCount": 3, "IsFavorite": true, "Played": true, "Key": "x"},
+  "AlbumArtist": "Sezen Aksu",
+  "AlbumArtists": [{"Name": "Sezen Aksu", "Id": "ar1"}],
+  "ArtistItems": [{"Name": "Sezen Aksu", "Id": "ar1"}],
+  "ImageTags": {"Primary": "tagA"},
+  "ImageBlurHashes": {"Primary": {"tagA": "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}},
+  "LocationType": "FileSystem",
+  "UnknownFutureField": {"nested": [1, 2, 3]}
+}

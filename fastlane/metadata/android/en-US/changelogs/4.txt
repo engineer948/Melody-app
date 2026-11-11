@@ -1,0 +1,6 @@
+Lyrics, playlists and streaming quality.
+- Synced lyrics from the server, optionally from LRCLIB (off by default)
+- Create, rename, reorder and delete playlists; save the queue
+- Favourite songs from the player and menus
+- Separate quality for Wi-Fi and mobile data, data saver, song cache
+- Experimental crossfade

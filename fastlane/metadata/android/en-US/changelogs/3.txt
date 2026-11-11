@@ -1,0 +1,6 @@
+Playback and a new look.
+- Background playback with notification, lock screen and headset buttons
+- Gapless queue, shuffle, repeat, sleep timer, playback speed
+- Volume normalization, fades and an equalizer
+- Now playing screen, mini player and an editable queue
+- New design: big titles, frosted bars, any accent color, 22 fonts

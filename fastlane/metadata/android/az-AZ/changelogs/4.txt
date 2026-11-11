@@ -1,0 +1,6 @@
+Sözlər, pleylistlər və yayım keyfiyyəti.
+- Serverdən sinxron mahnı sözləri, istəyə görə LRCLIB (standart olaraq söndürülüb)
+- Pleylist yaratma, adlandırma, sıralama, silmə; növbəni yadda saxlama
+- Pleyerdən və menyulardan mahnını sevimlilərə əlavə etmə
+- Wi-Fi və mobil internet üçün ayrı keyfiyyət, trafikə qənaət, mahnı keşi
+- Eksperimental crossfade

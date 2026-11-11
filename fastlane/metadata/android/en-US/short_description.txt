@@ -1,0 +1,1 @@
+A clean, private music player for your Jellyfin server

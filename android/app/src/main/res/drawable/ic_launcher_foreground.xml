@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Melody launcher icon: five bars of a sound wave tracing an "M". -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.92"
+        android:scaleY="0.92">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M28,45.5 A3.5,3.5 0 0 1 35,45.5 L35,62.5 A3.5,3.5 0 0 1 28,62.5 Z M39,37.5 A3.5,3.5 0 0 1 46,37.5 L46,70.5 A3.5,3.5 0 0 1 39,70.5 Z M50,46.5 A3.5,3.5 0 0 1 57,46.5 L57,61.5 A3.5,3.5 0 0 1 50,61.5 Z M61,37.5 A3.5,3.5 0 0 1 68,37.5 L68,70.5 A3.5,3.5 0 0 1 61,70.5 Z M72,45.5 A3.5,3.5 0 0 1 79,45.5 L79,62.5 A3.5,3.5 0 0 1 72,62.5 Z" />
+    </group>
+</vector>

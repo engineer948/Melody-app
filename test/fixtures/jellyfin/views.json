@@ -1,0 +1,9 @@
+{
+  "Items": [
+    {"Name": "Müzik", "Id": "lib1", "Type": "CollectionFolder", "CollectionType": "music"},
+    {"Name": "Filmler", "Id": "lib2", "Type": "CollectionFolder", "CollectionType": "movies"},
+    {"Name": "Canlı Kayıtlar", "Id": "lib3", "Type": "CollectionFolder", "CollectionType": "music"},
+    {"Name": "Karışık", "Id": "lib4", "Type": "CollectionFolder"}
+  ],
+  "TotalRecordCount": 4
+}

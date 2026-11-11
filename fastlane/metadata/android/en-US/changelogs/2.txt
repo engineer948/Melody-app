@@ -1,0 +1,5 @@
+First public preview.
+- Sign in to Jellyfin with a password or Quick Connect
+- Server discovery on the local network, multiple accounts
+- Browse albums, artists, songs, playlists and genres; search
+- Offline cache of the library

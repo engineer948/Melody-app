@@ -1,0 +1,8 @@
+{
+  "Name": "Sezen Aksu",
+  "Id": "ar1",
+  "Type": "MusicArtist",
+  "Overview": "Türk <b>pop</b> müziğinin<br/>önemli isimlerinden.",
+  "UserData": {"IsFavorite": true},
+  "ImageTags": {"Primary": "tagP"}
+}

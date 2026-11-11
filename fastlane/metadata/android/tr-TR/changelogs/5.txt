@@ -1,0 +1,1 @@
+Oynatıcıdan albüme ya da sanatçıya gidildikten sonra Ana sayfa sekmesinin açılmaması düzeltildi.

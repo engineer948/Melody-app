@@ -1,0 +1,1 @@
+Fixes the Home tab not opening after going to an album or artist from the player.

@@ -1,0 +1,373 @@
+{
+  "@@locale": "en",
+  "navHome": "Home",
+  "navSearch": "Search",
+  "navLibrary": "Library",
+  "settingsTitle": "Settings",
+  "homeEmptyBody": "Add some music to your Jellyfin library and it will show up here.",
+  "searchHint": "Artists, albums, songs",
+  "searchEmptyBody": "Search results from your server will appear here.",
+  "settingsAppearance": "Appearance",
+  "settingsTheme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "settingsColorSource": "Colors",
+  "colorSourceSystem": "System colors",
+  "colorSourceSystemUnavailable": "System colors are not available on this device; the accent color is used.",
+  "settingsAccentColor": "Accent color",
+  "settingsLanguage": "Language",
+  "languageSystem": "System language",
+  "languageEnglish": "English",
+  "languageTurkish": "Türkçe",
+  "languageAzerbaijani": "Azərbaycanca",
+  "settingsAbout": "About",
+  "aboutVersion": "Version",
+  "aboutLicenses": "Open source licenses",
+  "errorGenericTitle": "Something went wrong",
+  "errorGenericBody": "Please try again.",
+  "errorPageNotFound": "This page could not be found.",
+  "retry": "Retry",
+  "goHome": "Go to home",
+  "errorNetwork": "The server cannot be reached. Check your connection.",
+  "errorTimeout": "The server took too long to answer.",
+  "errorUnauthorized": "Your session has expired. Please sign in again.",
+  "errorNotFound": "This item no longer exists on the server.",
+  "errorServer": "The server reported an error.",
+  "errorParsing": "The server sent an answer that could not be understood.",
+  "errorUnsupported": "This is not supported by the server.",
+  "offlineBanner": "Offline — showing saved content",
+  "emptyList": "Nothing here yet",
+  "cancel": "Cancel",
+  "continueLabel": "Continue",
+  "connectTitle": "Connect to Jellyfin",
+  "connectIntro": "Enter the address of your Jellyfin server or pick one found on your network.",
+  "connectAddressLabel": "Server address",
+  "connectAddressHint": "e.g. 192.168.1.10:8096",
+  "connectButton": "Connect",
+  "connectDiscovered": "On your network",
+  "connectSearching": "Looking for servers…",
+  "connectNoneFound": "No servers found on your network.",
+  "connectRescan": "Scan again",
+  "connectInvalidAddress": "Enter a server address.",
+  "connectNotFound": "No Jellyfin server was found at this address.",
+  "insecureTitle": "Unencrypted connection",
+  "insecureBody": "This server uses HTTP. Your password and music can be read by others on the network. Only continue on a network you trust.",
+  "loginTitle": "Sign in",
+  "loginServerVersion": "Version {version}",
+  "loginUsername": "User name",
+  "loginPassword": "Password",
+  "loginUsernameRequired": "Enter your user name.",
+  "loginShowPassword": "Show password",
+  "loginHidePassword": "Hide password",
+  "loginButton": "Sign in",
+  "loginFailed": "Wrong user name or password.",
+  "loginQuickConnect": "Use Quick Connect",
+  "loginSessionExpired": "Your session has expired. Sign in again to continue.",
+  "quickConnectTitle": "Quick Connect",
+  "quickConnectBody": "Open Jellyfin on a device where you are signed in, go to Quick Connect and enter this code:",
+  "quickConnectWaiting": "Waiting for approval…",
+  "libraryAlbums": "Albums",
+  "libraryArtists": "Artists",
+  "librarySongs": "Songs",
+  "libraryPlaylists": "Playlists",
+  "libraryGenres": "Genres",
+  "libraryFavorites": "Favorites",
+  "sortBy": "Sort by",
+  "sortName": "Name",
+  "sortArtist": "Artist",
+  "sortYear": "Year",
+  "sortDateAdded": "Date added",
+  "sortRandom": "Random",
+  "trackCount": "{count, plural, =1{1 song} other{{count} songs}}",
+  "discNumber": "Disc {number}",
+  "artistAbout": "About",
+  "artistTopTracks": "Popular songs",
+  "favoriteAdd": "Add to favorites",
+  "favoriteRemove": "Remove from favorites",
+  "homeRecentlyAdded": "Recently added",
+  "homeRecentlyPlayed": "Recently played",
+  "homeMostPlayed": "Most played",
+  "homeRandomAlbums": "Random albums",
+  "searchRecent": "Recent searches",
+  "searchClearRecent": "Clear",
+  "searchClear": "Clear search",
+  "searchNoResults": "No results for “{query}”",
+  "settingsAccounts": "Accounts",
+  "accountAdd": "Add account",
+  "accountSignOut": "Sign out",
+  "accountSignOutConfirm": "Sign {user} out of {server}? Saved data of this account will be removed from this device.",
+  "accountLibrary": "Music library",
+  "libraryAll": "All libraries",
+  "@loginServerVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "@trackCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@discNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "@searchNoResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "@accountSignOutConfirm": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      },
+      "server": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPureBlack": "Pure black",
+  "settingsPureBlackBody": "Black background for OLED screens in dark mode",
+  "colorCustom": "Custom color",
+  "colorPickerTitle": "Pick a color",
+  "colorHex": "Hex code",
+  "colorSwatch": "Color {hex}",
+  "apply": "Apply",
+  "brightness": "Brightness",
+  "settingsTint": "Background tint",
+  "settingsBarTransparency": "Bar transparency",
+  "settingsFont": "Font",
+  "fontSystem": "System font",
+  "fontSample": "Melody plays your music beautifully.",
+  "settingsResetAppearance": "Reset appearance",
+  "settingsPlayback": "Playback",
+  "replayGain": "Volume normalization",
+  "replayGainOff": "Off",
+  "replayGainTrack": "Per song",
+  "replayGainAlbum": "Per album",
+  "replayGainAuto": "Automatic",
+  "replayGainPreamp": "Pre-amplification",
+  "dbValue": "{value} dB",
+  "fadeLength": "Fade on pause and play",
+  "fadeOff": "Off",
+  "msValue": "{value} ms",
+  "hzValue": "{value} Hz",
+  "khzValue": "{value} kHz",
+  "equalizer": "Equalizer",
+  "equalizerEnabled": "Use equalizer",
+  "equalizerUnavailable": "The equalizer is not available on this device.",
+  "equalizerPresets": "Presets",
+  "presetFlat": "Flat",
+  "presetBass": "Bass boost",
+  "presetTreble": "Treble boost",
+  "presetVocal": "Vocal",
+  "presetRock": "Rock",
+  "presetPop": "Pop",
+  "presetJazz": "Jazz",
+  "presetClassical": "Classical",
+  "loudnessBoost": "Loudness boost",
+  "greetingMorning": "Good morning",
+  "greetingAfternoon": "Good afternoon",
+  "greetingEvening": "Good evening",
+  "greetingNight": "Good night",
+  "play": "Play",
+  "shuffle": "Shuffle",
+  "pause": "Pause",
+  "next": "Next",
+  "previous": "Previous",
+  "nowPlaying": "Now playing",
+  "repeatOff": "Repeat off",
+  "repeatAll": "Repeat all",
+  "repeatOne": "Repeat this song",
+  "queue": "Queue",
+  "queueUpNext": "Up next",
+  "queueClear": "Clear",
+  "queueEmpty": "Nothing up next",
+  "queueRemoved": "Removed from queue",
+  "playNext": "Play next",
+  "addToQueue": "Add to queue",
+  "addedToQueue": "Added to queue",
+  "goToAlbum": "Go to album",
+  "goToArtist": "Go to artist",
+  "playbackSpeed": "Playback speed",
+  "speedValue": "{value}×",
+  "sleepTimer": "Sleep timer",
+  "sleepMinutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "sleepEndOfTrack": "End of song",
+  "sleepOff": "Turn off timer",
+  "sleepUntil": "Stops at {time}",
+  "sleepAfterSong": "Stops after this song",
+  "playerClose": "Close player",
+  "playbackError": "This song could not be played.",
+  "moreOptions": "More options",
+  "seekPosition": "Position",
+  "@colorSwatch": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "@dbValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@msValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "@hzValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "@khzValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@speedValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@sleepMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@sleepUntil": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "lyrics": "Lyrics",
+  "lyricsNone": "No lyrics for this song",
+  "lyricsFromLrclib": "Lyrics from LRCLIB",
+  "lyricsOffset": "Timing: {value} s",
+  "lyricsEarlier": "Show earlier",
+  "lyricsLater": "Show later",
+  "settingsLyrics": "Lyrics",
+  "lyricsUseLrclib": "Search LRCLIB",
+  "lyricsUseLrclibBody": "When the server has no lyrics, the song's title, artist, album and length are sent to lrclib.net.",
+  "lyricsAlignCenter": "Center lyrics",
+  "lyricsFontSize": "Text size",
+  "addToPlaylist": "Add to playlist",
+  "newPlaylist": "New playlist",
+  "playlistName": "Name",
+  "create": "Create",
+  "save": "Save",
+  "addedToPlaylist": "Added to {name}",
+  "playlistRename": "Rename",
+  "playlistEdit": "Edit",
+  "playlistDone": "Done",
+  "playlistDelete": "Delete playlist",
+  "playlistDeleteConfirm": "Delete “{name}”? This cannot be undone.",
+  "delete": "Delete",
+  "removeFromPlaylist": "Remove from playlist",
+  "queueSaveAsPlaylist": "Save as playlist",
+  "settingsStreaming": "Streaming quality",
+  "streamWifi": "On Wi-Fi",
+  "streamMobile": "On mobile data",
+  "streamOriginal": "Original",
+  "kbpsValue": "{value} kbps",
+  "streamFormat": "Format",
+  "dataSaver": "Data saver",
+  "dataSaverBody": "Limits mobile data to 128 kbps",
+  "settingsStorage": "Storage",
+  "cacheLimit": "Song cache",
+  "cacheOff": "Off",
+  "mbValue": "{value} MB",
+  "gbValue": "{value} GB",
+  "cacheUsed": "In use: {size}",
+  "cacheClear": "Clear cache",
+  "cacheCleared": "Cache cleared",
+  "cacheOnlyOriginal": "Only songs played in original quality are cached.",
+  "crossfade": "Crossfade",
+  "crossfadeOff": "Off",
+  "secondsValue": "{value} s",
+  "crossfadeBody": "Experimental. The next song fades in while the current one fades out.",
+  "@lyricsOffset": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@addedToPlaylist": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@playlistDeleteConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@kbpsValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "@mbValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "@gbValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "@cacheUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@secondsValue": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  }
+}

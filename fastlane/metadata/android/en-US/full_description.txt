@@ -1,0 +1,17 @@
+<p>Melody plays the music library on your own <b>Jellyfin</b> server. No account with us, no ads, no tracking: everything stays on your device and your server.</p>
+<p><b>Early development.</b> Expect rough edges; feedback is welcome.</p>
+<p><b>Features</b></p>
+<ul>
+<li>Background playback with notification, lock screen and headset controls</li>
+<li>Gapless queue, shuffle, repeat, sleep timer, speed, volume normalization, equalizer</li>
+<li>Any accent color, light / dark / pure black, 22 open-source fonts</li>
+<li>Finds Jellyfin servers on your local network</li>
+<li>Sign in with a password or Quick Connect; several servers and accounts</li>
+<li>Home shelves: recently added, recently played, most played, random albums</li>
+<li>Albums, artists, songs, playlists, genres and favourites</li>
+<li>Fast search with recent searches</li>
+<li>Works offline with what was loaded before</li>
+<li>Light, dark and pure black themes; English, Turkish and Azerbaijani</li>
+</ul>
+<p><b>Privacy</b></p>
+<p>Only your server's access token is stored, in the system keystore; your password is never saved. Melody contains no analytics or advertising libraries. Lyrics can optionally be looked up on lrclib.net; this is off unless you turn it on.</p>

@@ -1,0 +1,17 @@
+<p>Melody, kendi <b>Jellyfin</b> sunucundaki müzik kütüphaneni çalar. Bize ait bir hesap, reklam ya da takip yok: her şey cihazında ve kendi sunucunda kalır.</p>
+<p><b>Erken geliştirme aşamasında.</b> Eksikler olabilir; geri bildirimlere açığız.</p>
+<p><b>Özellikler</b></p>
+<ul>
+<li>Bildirim, kilit ekranı ve kulaklık kontrolleriyle arka planda çalma</li>
+<li>Kesintisiz sıra, karıştır, tekrar, uyku zamanlayıcısı, hız, ses eşitleme, ekolayzer</li>
+<li>İstenen vurgu rengi, açık / koyu / saf siyah, 22 açık kaynak yazı tipi</li>
+<li>Yerel ağdaki Jellyfin sunucularını bulur</li>
+<li>Şifre ya da Quick Connect ile giriş; birden çok sunucu ve hesap</li>
+<li>Ana sayfa rafları: son eklenenler, son çalınanlar, en çok çalınanlar, rastgele albümler</li>
+<li>Albümler, sanatçılar, şarkılar, çalma listeleri, türler ve favoriler</li>
+<li>Hızlı arama ve son aramalar</li>
+<li>Daha önce yüklenen içerikle çevrimdışı çalışır</li>
+<li>Açık, koyu ve saf siyah tema; Türkçe, İngilizce ve Azerbaycan Türkçesi</li>
+</ul>
+<p><b>Gizlilik</b></p>
+<p>Yalnızca sunucunun erişim anahtarı (token) sistem anahtar deposunda saklanır; şifren asla kaydedilmez. Melody analitik ya da reklam kütüphanesi içermez. Şarkı sözleri isteğe bağlı olarak lrclib.net üzerinden aranabilir; siz açmadıkça kapalıdır.</p>

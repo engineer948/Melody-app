@@ -1,0 +1,6 @@
+Sözler, çalma listeleri ve akış kalitesi.
+- Sunucudan senkronize şarkı sözleri, isteğe bağlı LRCLIB (varsayılan kapalı)
+- Çalma listesi oluşturma, adlandırma, sıralama, silme; sırayı kaydetme
+- Oynatıcıdan ve menülerden şarkıyı favorilere ekleme
+- Wi-Fi ve mobil veri için ayrı kalite, veri tasarrufu, şarkı önbelleği
+- Deneysel crossfade

@@ -1,0 +1,1 @@
+Pleyerdən alboma və ya ifaçıya keçdikdən sonra Ana səhifə bölməsinin açılmaması düzəldildi.

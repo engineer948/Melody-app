@@ -1,0 +1,6 @@
+Çalma ve yeni görünüm.
+- Bildirim, kilit ekranı ve kulaklık tuşlarıyla arka planda çalma
+- Kesintisiz sıra, karıştır, tekrar, uyku zamanlayıcısı, çalma hızı
+- Ses seviyesi eşitleme, geçişler ve ekolayzer
+- Şimdi çalıyor ekranı, mini oynatıcı ve düzenlenebilir sıra
+- Yeni tasarım: büyük başlıklar, buzlu cam çubuklar, istenen renk, 22 yazı tipi

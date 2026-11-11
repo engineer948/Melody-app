@@ -1,0 +1,5 @@
+İlk açıq önbaxış.
+- Jellyfin-ə parol və ya Quick Connect ilə giriş
+- Yerli şəbəkədə server axtarışı, bir neçə hesab
+- Albom, ifaçı, mahnı, pleylist və janrlarda gəzinti; axtarış
+- Kitabxananın oflayn keşi

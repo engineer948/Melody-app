@@ -1,0 +1,21 @@
+{
+  "Name": "Hadi Bakalım",
+  "Id": "t1",
+  "Container": "flac",
+  "RunTimeTicks": 2451230000,
+  "ProductionYear": 1991,
+  "IndexNumber": 3,
+  "ParentIndexNumber": 2,
+  "Type": "Audio",
+  "UserData": {"PlayCount": 7, "IsFavorite": false},
+  "Artists": ["Sezen Aksu", "Guest"],
+  "ArtistItems": [{"Name": "Sezen Aksu", "Id": "ar1"}, {"Name": "Guest", "Id": "ar2"}],
+  "Album": "Gülümse",
+  "AlbumId": "a1",
+  "AlbumPrimaryImageTag": "tagA",
+  "AlbumArtist": "Sezen Aksu",
+  "AlbumArtists": [{"Name": "Sezen Aksu", "Id": "ar1"}],
+  "ImageTags": {},
+  "ImageBlurHashes": {"Primary": {"tagA": "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}},
+  "MediaType": "Audio"
+}

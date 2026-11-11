@@ -1,0 +1,6 @@
+Dinləmə və yeni görünüş.
+- Bildiriş, kilid ekranı və qulaqlıq düymələri ilə arxa fonda dinləmə
+- Fasiləsiz növbə, qarışdırma, təkrar, yuxu taymeri, oxutma sürəti
+- Səs səviyyəsinin bərabərləşdirilməsi, keçidlər və ekvalayzer
+- İndi oxunur ekranı, mini pleyer və redaktə edilə bilən növbə
+- Yeni dizayn: böyük başlıqlar, şüşə panellər, istənilən rəng, 22 şrift

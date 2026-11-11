@@ -1,0 +1,41 @@
+# Draft F-Droid build recipe. Copy it to metadata/io.github.engineer948.melody.yml in a
+# fork of https://gitlab.com/fdroid/fdroiddata (see docs/FDROID.md).
+# Check with `fdroid lint` and `fdroid build` before opening the merge request.
+Categories:
+  - Multimedia
+License: MIT
+AuthorName: engineer948
+SourceCode: https://github.com/engineer948/Melody-app
+IssueTracker: https://github.com/engineer948/Melody-app/issues
+Changelog: https://github.com/engineer948/Melody-app/releases
+
+AutoName: Melody
+
+RepoType: git
+Repo: https://github.com/engineer948/Melody-app.git
+
+Builds:
+  - versionName: 0.4.0
+    versionCode: 4
+    commit: v0.4.0
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.47.9
+    rm:
+      - ios
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - export MELODY_UNSIGNED=1
+      - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+CurrentVersion: 0.4.0
+CurrentVersionCode: 4
