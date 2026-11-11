@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Səslənən mahnı və idarəetmə düymələri</string>
+    <string name="widget_idle">Heç nə səslənmir</string>
+    <string name="widget_previous">Əvvəlki</string>
+    <string name="widget_play_pause">Oxut və ya dayandır</string>
+    <string name="widget_next">Növbəti</string>
+</resources>

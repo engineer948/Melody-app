@@ -302,5 +302,10 @@
   "downloadQuality": "Yükləmə keyfiyyəti",
   "downloadQualityBody": "Yeni yükləmələrə aiddir",
   "downloadParallel": "Eyni anda yükləmə sayı",
-  "downloadAutoFavorites": "Sevimliləri avtomatik yüklə"
+  "downloadAutoFavorites": "Sevimliləri avtomatik yüklə",
+  "outputTitle": "Çıxış cihazı",
+  "outputThisDevice": "Bu cihaz",
+  "outputNone": "Bu şəbəkədə DLNA cihazı tapılmadı.",
+  "settingsAndroidAuto": "Android Auto",
+  "androidAutoBody": "Avtomobildə göstərilən bölmələr. Google Play-dən kənar quraşdırılan tətbiqlər Android Auto-nun tərtibatçı ayarlarında \"Naməlum mənbələr\" açıldıqdan sonra görünür."
 }

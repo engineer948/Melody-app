@@ -98,7 +98,7 @@ final class AudioEngineProvider
   }
 }
 
-String _$audioEngineHash() => r'13922db3d40595630b7389f0cd052cc906126770';
+String _$audioEngineHash() => r'92b3ee96093f6ed1bf46e509688fc06f3bb5cee8';
 
 /// Current position, refreshed a few times per second while playing.
 
@@ -175,7 +175,7 @@ final class PlayerControllerProvider
   }
 }
 
-String _$playerControllerHash() => r'7566753a00d1646157fbf2d1038477fc2b4e961c';
+String _$playerControllerHash() => r'831b320942f71fc2b22ac5bcbf710631a83c15de';
 
 /// Owns the queue and drives the [AudioEngine].
 

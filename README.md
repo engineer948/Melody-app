@@ -7,7 +7,9 @@ Görünen ad tek yerden değişir: `AppConfig.appName`.
 
 Erken geliştirme aşamasında. Jellyfin girişi, kütüphane, arama, arka planda
 çalma (kuyruk, bildirim, uyku zamanlayıcısı, ses eşitleme, ekolayzer), şarkı
-sözleri, çalma listeleri ve Wi-Fi / mobil akış kalitesi çalışıyor.
+sözleri, çalma listeleri, Wi-Fi / mobil akış kalitesi, çevrimdışı indirme,
+Auto DJ, cihazda hesaplanan öneriler ve dinleme istatistikleri (Yıl Özeti),
+Android Auto, ana ekran widget'ı ve DLNA cihazlarında çalma var.
 F-Droid yayını için: [docs/FDROID.md](docs/FDROID.md).
 
 ## Çalıştırma
@@ -59,13 +61,17 @@ lib/
   core/       config, device, errors (Result/Failure), logging, network (dio),
               router, settings, theme, utils, widgets
   domain/     models (Track, Album, Artist, ...), repositories (MusicSource,
-              ServerConnector arayüzleri)
+              ServerConnector arayüzleri), stats (istatistik), recommendation
+              (öneri puanlaması)
   data/       sources/jellyfin (API, DTO, mapper, keşif), db (drift),
-              repositories (önbellek, hesap deposu, LibraryRepository)
-  player/     kuyruk (PlayQueue), oynatıcı denetleyicisi, ses motoru
-              (just_audio), bildirim / kilit ekranı (audio_service)
+              repositories (önbellek, hesap deposu, LibraryRepository),
+              downloads (indirme deposu ve aktarımı), history (dinleme
+              geçmişi), dlna (SSDP keşfi, AVTransport)
+  player/     kuyruk (PlayQueue), oynatıcı denetleyicisi, ses motorları
+              (just_audio, DLNA), bildirim / kilit ekranı (audio_service),
+              Android Auto ağacı, Auto DJ, geçmiş kaydı, widget
   features/   auth, home, library, album, artist, genre, playlist, search,
-              player, settings, shell
+              player, downloads, stats, settings, shell
   l10n/       ARB dosyaları (tr, en, az)
 ```
 

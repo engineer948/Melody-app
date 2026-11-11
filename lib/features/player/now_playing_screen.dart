@@ -12,6 +12,7 @@ import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/lyrics/lyrics_view.dart';
 import 'package:melody/features/player/track_actions.dart';
+import 'package:melody/features/player/widgets/output_sheet.dart';
 import 'package:melody/features/player/widgets/player_sheets.dart';
 import 'package:melody/features/player/widgets/seek_bar.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -386,6 +387,7 @@ class _BottomRow extends ConsumerWidget {
           ),
           onPressed: () => showSleepSheet(context, ref),
         ),
+        const OutputButton(color: fg),
         IconButton(
           color: fg,
           tooltip: l10n.queue,

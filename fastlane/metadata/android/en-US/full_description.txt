@@ -10,6 +10,10 @@
 <li>Home shelves: recently added, recently played, most played, random albums</li>
 <li>Albums, artists, songs, playlists, genres and favourites</li>
 <li>Fast search with recent searches</li>
+<li>Offline downloads: songs, albums and playlists; playlists and favourites can stay in sync</li>
+<li>Auto DJ, and suggestions computed on your device</li>
+<li>Listening statistics and a year in review (kept on the device; can be turned off or deleted)</li>
+<li>Android Auto, a home screen widget and playback on DLNA devices</li>
 <li>Works offline with what was loaded before</li>
 <li>Light, dark and pure black themes; English, Turkish and Azerbaijani</li>
 </ul>

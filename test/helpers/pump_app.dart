@@ -36,6 +36,7 @@ Future<ProviderContainer> createContainer({
   FakeAudioEngine? engine,
   FakeDownloadTransport? downloadTransport,
   bool mobileData = false,
+  Override? engineOverride,
   List<Override> overrides = const [],
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
@@ -55,7 +56,8 @@ Future<ProviderContainer> createContainer({
       sessionBootstrapProvider.overrideWithValue([
         if (signedIn) (account: testAccount, token: 'token-1'),
       ]),
-      audioEngineProvider.overrideWithValue(engine ?? FakeAudioEngine()),
+      engineOverride ??
+          audioEngineProvider.overrideWithValue(engine ?? FakeAudioEngine()),
       downloadDirectoryProvider.overrideWithValue(
         () async => downloadFolder ??= Directory.systemTemp.createTempSync(
           'melody_downloads',

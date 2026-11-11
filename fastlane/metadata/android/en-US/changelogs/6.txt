@@ -1,0 +1,6 @@
+Offline listening, Auto DJ and statistics.
+- Download songs, albums and playlists; keep playlists and favourites in sync
+- Auto DJ keeps the music going when the queue ends
+- Suggestions on the home tab, computed on your device
+- Listening statistics and a year in review; history can be turned off or deleted
+- Android Auto, a home screen widget and playback on DLNA devices

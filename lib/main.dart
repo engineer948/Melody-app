@@ -16,6 +16,7 @@ import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/player/auto_queue.dart';
 import 'package:melody/player/history_recorder.dart';
+import 'package:melody/player/home_widget.dart';
 import 'package:melody/player/media_session.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -54,6 +55,7 @@ Future<void> main() async {
         ..read(autoQueueProvider),
     ),
   );
+  HomeWidgetUpdater.start(container);
   runApp(
     UncontrolledProviderScope(container: container, child: const MelodyApp()),
   );
