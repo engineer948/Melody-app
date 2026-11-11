@@ -18,7 +18,7 @@ hazır derlenmiş ikili dosya indirilmemeli.
 | `pubspec.lock` depoda | ✅ |
 | SQLite kaynaktan derleniyor | ✅ resmî 3.54.1 kaynağı, bkz. 2. madde |
 | Depo herkese açık | ❌ |
-| Sürüm etiketi (`v0.2.0`) | ❌ |
+| Sürüm etiketi (`v0.x.y`) ve GitHub sürümü | ✅ etiket gelince otomatik |
 | Ekran görüntüleri | ❌ henüz eklenmedi |
 
 ## 2. SQLite
@@ -41,8 +41,26 @@ kaynaktan derlenir. Güncellemek için `third_party/sqlite/README.md`'ye bak.
    git push origin v0.3.0
    ```
 
+Etiket gelince GitHub Actions (`.github/workflows/release.yml`) APK'ları
+derler ve GitHub sürümüne ekler: `melody-<sürüm>-debug.apk` (tüm
+işlemciler) ile `arm64-v8a`, `armeabi-v7a` ve `x86_64` için ayrı dosyalar.
+Sürüm notu `fastlane/metadata/android/tr-TR/changelogs/<sayı>.txt`
+dosyasından alınır. Etiket, `pubspec.yaml`'daki sürümle aynı olmalıdır.
+
+Bu APK'lar depodaki sabit debug anahtarıyla
+(`android/app/debug.keystore`, standart `android` / `androiddebugkey`
+şifreleri; gizli değildir) imzalanır. Böylece her sürüm bir öncekinin
+üzerine kurulabilir. Kendi yayın anahtarımız yoktur.
+
 F-Droid uygulamayı bir kez kabul ettikten sonra yeni etiketleri kendisi
 bulur ve yeni sürümü birkaç gün içinde yayınlar (`AutoUpdateMode`).
+F-Droid'de yayınlanan APK (F-Droid'in kendi kalıcı anahtarıyla imzalı)
+f-droid.org'dan indirilip aynı GitHub sürümüne, debug APK'nın yanına
+eklenir:
+
+```bash
+gh release upload v0.5.0 io.github.engineer948.melody_6.apk
+```
 
 ## 4. İlk başvuru
 
@@ -77,5 +95,6 @@ aylar sürebilir.
   değiştirilemez (değiştirmek yeni bir uygulama demektir).
 - **Tarif taslaktır.** Flutter sürümü (`srclibs: flutter@3.47.9`) ve çıktı
   yolu F-Droid'in derleme sunucusunda doğrulanmadı.
-- F-Droid kendi anahtarıyla imzaladığı için, GitHub'dan kurulan APK ile
-  F-Droid'den kurulan APK birbirinin üzerine güncellenemez.
+- F-Droid kendi anahtarıyla imzaladığı için, GitHub'daki debug APK ile
+  F-Droid'in imzaladığı APK birbirinin üzerine güncellenemez; birinden
+  diğerine geçmek için uygulamayı kaldırıp yeniden kurmak gerekir.
