@@ -397,6 +397,9 @@ abstract interface class MusicSource {
   /// Address the player streams [track] from.
   Uri streamUri(Track track, [StreamOptions options = const StreamOptions()]);
 
+  /// Address a complete file of [track] can be downloaded from.
+  Uri downloadUri(Track track, [StreamOptions options = const StreamOptions()]);
+
   /// Address of a cover image scaled to roughly [size] pixels.
   Uri? artworkUri(Artwork? artwork, {int size = 300});
 

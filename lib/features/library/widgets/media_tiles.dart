@@ -5,6 +5,7 @@ import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/core/utils/formatters.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/domain/models/media.dart';
+import 'package:melody/features/downloads/download_widgets.dart';
 import 'package:melody/features/player/track_actions.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
@@ -233,6 +234,7 @@ class TrackTile extends ConsumerWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          DownloadedBadge(trackId: track.id),
           if (duration != null)
             Text(
               formatDuration(duration),

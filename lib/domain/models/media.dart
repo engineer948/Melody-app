@@ -49,6 +49,7 @@ abstract class Track with _$Track {
     String? container,
     @Default(false) bool isFavorite,
     @Default(0) int playCount,
+    @Default(<String>[]) List<String> genres,
 
     /// ReplayGain-style track gain in dB, when the source knows it.
     double? trackGainDb,

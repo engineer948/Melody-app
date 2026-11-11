@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/player/audio_engine.dart';
 import 'package:melody/player/just_audio_engine.dart';
 import 'package:melody/player/play_queue.dart';
@@ -138,14 +139,19 @@ class PlayerController extends _$PlayerController {
     final options = streaming.optionsFor(mobile: mobile);
     final accountId = ref.read(sessionControllerProvider).activeId;
     final cache = options.isOriginal && streaming.cacheMb > 0;
+    final downloads = ref.read(downloadControllerProvider.notifier);
     return [
       for (final entry in queue.entries)
-        EngineSource(
-          uri: source.streamUri(entry.track, options),
-          headers: source.requestHeaders,
-          tag: entry.uid,
-          cacheKey: cache ? '${accountId}_${entry.track.id}' : null,
-        ),
+        if (downloads.localPath(entry.track.id) case final path?)
+          // Downloaded: played from disk, no network needed.
+          EngineSource(uri: Uri.file(path), tag: entry.uid)
+        else
+          EngineSource(
+            uri: source.streamUri(entry.track, options),
+            headers: source.requestHeaders,
+            tag: entry.uid,
+            cacheKey: cache ? '${accountId}_${entry.track.id}' : null,
+          ),
     ];
   }
 

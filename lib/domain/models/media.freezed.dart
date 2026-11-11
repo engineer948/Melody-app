@@ -565,7 +565,7 @@ as String,
 /// @nodoc
 mixin _$Track {
 
- String get id; String get title; List<NamedRef> get artists; String? get albumId; String? get albumTitle; String? get albumArtist; Duration? get duration; int? get trackNumber; int? get discNumber; int? get year; Artwork? get artwork; String? get container; bool get isFavorite; int get playCount;/// ReplayGain-style track gain in dB, when the source knows it.
+ String get id; String get title; List<NamedRef> get artists; String? get albumId; String? get albumTitle; String? get albumArtist; Duration? get duration; int? get trackNumber; int? get discNumber; int? get year; Artwork? get artwork; String? get container; bool get isFavorite; int get playCount; List<String> get genres;/// ReplayGain-style track gain in dB, when the source knows it.
  double? get trackGainDb;/// Gain of the whole album in dB, when known.
  double? get albumGainDb;/// Id of this entry inside a playlist (needed to remove or move it).
  String? get playlistItemId;
@@ -582,20 +582,20 @@ $TrackCopyWith<Track> get copyWith => _$TrackCopyWithImpl<Track>(this as Track, 
 @override
 bool operator ==(Object other) {
   final _this = this as Track;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Track&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.artists, _this.artists)&&(identical(other.albumId, _this.albumId) || other.albumId == _this.albumId)&&(identical(other.albumTitle, _this.albumTitle) || other.albumTitle == _this.albumTitle)&&(identical(other.albumArtist, _this.albumArtist) || other.albumArtist == _this.albumArtist)&&(identical(other.duration, _this.duration) || other.duration == _this.duration)&&(identical(other.trackNumber, _this.trackNumber) || other.trackNumber == _this.trackNumber)&&(identical(other.discNumber, _this.discNumber) || other.discNumber == _this.discNumber)&&(identical(other.year, _this.year) || other.year == _this.year)&&(identical(other.artwork, _this.artwork) || other.artwork == _this.artwork)&&(identical(other.container, _this.container) || other.container == _this.container)&&(identical(other.isFavorite, _this.isFavorite) || other.isFavorite == _this.isFavorite)&&(identical(other.playCount, _this.playCount) || other.playCount == _this.playCount)&&(identical(other.trackGainDb, _this.trackGainDb) || other.trackGainDb == _this.trackGainDb)&&(identical(other.albumGainDb, _this.albumGainDb) || other.albumGainDb == _this.albumGainDb)&&(identical(other.playlistItemId, _this.playlistItemId) || other.playlistItemId == _this.playlistItemId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Track&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&const DeepCollectionEquality().equals(other.artists, _this.artists)&&(identical(other.albumId, _this.albumId) || other.albumId == _this.albumId)&&(identical(other.albumTitle, _this.albumTitle) || other.albumTitle == _this.albumTitle)&&(identical(other.albumArtist, _this.albumArtist) || other.albumArtist == _this.albumArtist)&&(identical(other.duration, _this.duration) || other.duration == _this.duration)&&(identical(other.trackNumber, _this.trackNumber) || other.trackNumber == _this.trackNumber)&&(identical(other.discNumber, _this.discNumber) || other.discNumber == _this.discNumber)&&(identical(other.year, _this.year) || other.year == _this.year)&&(identical(other.artwork, _this.artwork) || other.artwork == _this.artwork)&&(identical(other.container, _this.container) || other.container == _this.container)&&(identical(other.isFavorite, _this.isFavorite) || other.isFavorite == _this.isFavorite)&&(identical(other.playCount, _this.playCount) || other.playCount == _this.playCount)&&const DeepCollectionEquality().equals(other.genres, _this.genres)&&(identical(other.trackGainDb, _this.trackGainDb) || other.trackGainDb == _this.trackGainDb)&&(identical(other.albumGainDb, _this.albumGainDb) || other.albumGainDb == _this.albumGainDb)&&(identical(other.playlistItemId, _this.playlistItemId) || other.playlistItemId == _this.playlistItemId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Track;
-  return Object.hash(runtimeType,_this.id,_this.title,const DeepCollectionEquality().hash(_this.artists),_this.albumId,_this.albumTitle,_this.albumArtist,_this.duration,_this.trackNumber,_this.discNumber,_this.year,_this.artwork,_this.container,_this.isFavorite,_this.playCount,_this.trackGainDb,_this.albumGainDb,_this.playlistItemId);
+  return Object.hash(runtimeType,_this.id,_this.title,const DeepCollectionEquality().hash(_this.artists),_this.albumId,_this.albumTitle,_this.albumArtist,_this.duration,_this.trackNumber,_this.discNumber,_this.year,_this.artwork,_this.container,_this.isFavorite,_this.playCount,const DeepCollectionEquality().hash(_this.genres),_this.trackGainDb,_this.albumGainDb,_this.playlistItemId);
 }
 
 @override
 String toString() {
   final _this = this as Track;
-  return 'Track(id: ${_this.id}, title: ${_this.title}, artists: ${_this.artists}, albumId: ${_this.albumId}, albumTitle: ${_this.albumTitle}, albumArtist: ${_this.albumArtist}, duration: ${_this.duration}, trackNumber: ${_this.trackNumber}, discNumber: ${_this.discNumber}, year: ${_this.year}, artwork: ${_this.artwork}, container: ${_this.container}, isFavorite: ${_this.isFavorite}, playCount: ${_this.playCount}, trackGainDb: ${_this.trackGainDb}, albumGainDb: ${_this.albumGainDb}, playlistItemId: ${_this.playlistItemId})';
+  return 'Track(id: ${_this.id}, title: ${_this.title}, artists: ${_this.artists}, albumId: ${_this.albumId}, albumTitle: ${_this.albumTitle}, albumArtist: ${_this.albumArtist}, duration: ${_this.duration}, trackNumber: ${_this.trackNumber}, discNumber: ${_this.discNumber}, year: ${_this.year}, artwork: ${_this.artwork}, container: ${_this.container}, isFavorite: ${_this.isFavorite}, playCount: ${_this.playCount}, genres: ${_this.genres}, trackGainDb: ${_this.trackGainDb}, albumGainDb: ${_this.albumGainDb}, playlistItemId: ${_this.playlistItemId})';
 }
 
 
@@ -606,7 +606,7 @@ abstract mixin class $TrackCopyWith<$Res>  {
   factory $TrackCopyWith(Track value, $Res Function(Track) _then) = _$TrackCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, List<NamedRef> artists, String? albumId, String? albumTitle, String? albumArtist, Duration? duration, int? trackNumber, int? discNumber, int? year, Artwork? artwork, String? container, bool isFavorite, int playCount, double? trackGainDb, double? albumGainDb, String? playlistItemId
+ String id, String title, List<NamedRef> artists, String? albumId, String? albumTitle, String? albumArtist, Duration? duration, int? trackNumber, int? discNumber, int? year, Artwork? artwork, String? container, bool isFavorite, int playCount, List<String> genres, double? trackGainDb, double? albumGainDb, String? playlistItemId
 });
 
 
@@ -623,7 +623,7 @@ class _$TrackCopyWithImpl<$Res>
 
 /// Create a copy of Track
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? artists = null,Object? albumId = freezed,Object? albumTitle = freezed,Object? albumArtist = freezed,Object? duration = freezed,Object? trackNumber = freezed,Object? discNumber = freezed,Object? year = freezed,Object? artwork = freezed,Object? container = freezed,Object? isFavorite = null,Object? playCount = null,Object? trackGainDb = freezed,Object? albumGainDb = freezed,Object? playlistItemId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? artists = null,Object? albumId = freezed,Object? albumTitle = freezed,Object? albumArtist = freezed,Object? duration = freezed,Object? trackNumber = freezed,Object? discNumber = freezed,Object? year = freezed,Object? artwork = freezed,Object? container = freezed,Object? isFavorite = null,Object? playCount = null,Object? genres = null,Object? trackGainDb = freezed,Object? albumGainDb = freezed,Object? playlistItemId = freezed,}) {
   return _then(Track(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -639,7 +639,8 @@ as int?,artwork: freezed == artwork ? _self.artwork : artwork // ignore: cast_nu
 as Artwork?,container: freezed == container ? _self.container : container // ignore: cast_nullable_to_non_nullable
 as String?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,playCount: null == playCount ? _self.playCount : playCount // ignore: cast_nullable_to_non_nullable
-as int,trackGainDb: freezed == trackGainDb ? _self.trackGainDb : trackGainDb // ignore: cast_nullable_to_non_nullable
+as int,genres: null == genres ? _self.genres : genres // ignore: cast_nullable_to_non_nullable
+as List<String>,trackGainDb: freezed == trackGainDb ? _self.trackGainDb : trackGainDb // ignore: cast_nullable_to_non_nullable
 as double?,albumGainDb: freezed == albumGainDb ? _self.albumGainDb : albumGainDb // ignore: cast_nullable_to_non_nullable
 as double?,playlistItemId: freezed == playlistItemId ? _self.playlistItemId : playlistItemId // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -739,10 +740,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  List<NamedRef> artists,  String? albumId,  String? albumTitle,  String? albumArtist,  Duration? duration,  int? trackNumber,  int? discNumber,  int? year,  Artwork? artwork,  String? container,  bool isFavorite,  int playCount,  double? trackGainDb,  double? albumGainDb,  String? playlistItemId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  List<NamedRef> artists,  String? albumId,  String? albumTitle,  String? albumArtist,  Duration? duration,  int? trackNumber,  int? discNumber,  int? year,  Artwork? artwork,  String? container,  bool isFavorite,  int playCount,  List<String> genres,  double? trackGainDb,  double? albumGainDb,  String? playlistItemId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Track() when $default != null:
-return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitle,_that.albumArtist,_that.duration,_that.trackNumber,_that.discNumber,_that.year,_that.artwork,_that.container,_that.isFavorite,_that.playCount,_that.trackGainDb,_that.albumGainDb,_that.playlistItemId);case _:
+return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitle,_that.albumArtist,_that.duration,_that.trackNumber,_that.discNumber,_that.year,_that.artwork,_that.container,_that.isFavorite,_that.playCount,_that.genres,_that.trackGainDb,_that.albumGainDb,_that.playlistItemId);case _:
   return orElse();
 
 }
@@ -760,10 +761,10 @@ return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitl
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  List<NamedRef> artists,  String? albumId,  String? albumTitle,  String? albumArtist,  Duration? duration,  int? trackNumber,  int? discNumber,  int? year,  Artwork? artwork,  String? container,  bool isFavorite,  int playCount,  double? trackGainDb,  double? albumGainDb,  String? playlistItemId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  List<NamedRef> artists,  String? albumId,  String? albumTitle,  String? albumArtist,  Duration? duration,  int? trackNumber,  int? discNumber,  int? year,  Artwork? artwork,  String? container,  bool isFavorite,  int playCount,  List<String> genres,  double? trackGainDb,  double? albumGainDb,  String? playlistItemId)  $default,) {final _that = this;
 switch (_that) {
 case _Track():
-return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitle,_that.albumArtist,_that.duration,_that.trackNumber,_that.discNumber,_that.year,_that.artwork,_that.container,_that.isFavorite,_that.playCount,_that.trackGainDb,_that.albumGainDb,_that.playlistItemId);case _:
+return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitle,_that.albumArtist,_that.duration,_that.trackNumber,_that.discNumber,_that.year,_that.artwork,_that.container,_that.isFavorite,_that.playCount,_that.genres,_that.trackGainDb,_that.albumGainDb,_that.playlistItemId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -780,10 +781,10 @@ return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitl
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  List<NamedRef> artists,  String? albumId,  String? albumTitle,  String? albumArtist,  Duration? duration,  int? trackNumber,  int? discNumber,  int? year,  Artwork? artwork,  String? container,  bool isFavorite,  int playCount,  double? trackGainDb,  double? albumGainDb,  String? playlistItemId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  List<NamedRef> artists,  String? albumId,  String? albumTitle,  String? albumArtist,  Duration? duration,  int? trackNumber,  int? discNumber,  int? year,  Artwork? artwork,  String? container,  bool isFavorite,  int playCount,  List<String> genres,  double? trackGainDb,  double? albumGainDb,  String? playlistItemId)?  $default,) {final _that = this;
 switch (_that) {
 case _Track() when $default != null:
-return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitle,_that.albumArtist,_that.duration,_that.trackNumber,_that.discNumber,_that.year,_that.artwork,_that.container,_that.isFavorite,_that.playCount,_that.trackGainDb,_that.albumGainDb,_that.playlistItemId);case _:
+return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitle,_that.albumArtist,_that.duration,_that.trackNumber,_that.discNumber,_that.year,_that.artwork,_that.container,_that.isFavorite,_that.playCount,_that.genres,_that.trackGainDb,_that.albumGainDb,_that.playlistItemId);case _:
   return null;
 
 }
@@ -795,7 +796,7 @@ return $default(_that.id,_that.title,_that.artists,_that.albumId,_that.albumTitl
 @JsonSerializable()
 
 class _Track extends Track {
-  const _Track({required this.id, required this.title,  List<NamedRef> artists = const <NamedRef>[], this.albumId, this.albumTitle, this.albumArtist, this.duration, this.trackNumber, this.discNumber, this.year, this.artwork, this.container, this.isFavorite = false, this.playCount = 0, this.trackGainDb, this.albumGainDb, this.playlistItemId}): _artists = artists,super._();
+  const _Track({required this.id, required this.title,  List<NamedRef> artists = const <NamedRef>[], this.albumId, this.albumTitle, this.albumArtist, this.duration, this.trackNumber, this.discNumber, this.year, this.artwork, this.container, this.isFavorite = false, this.playCount = 0,  List<String> genres = const <String>[], this.trackGainDb, this.albumGainDb, this.playlistItemId}): _artists = artists,_genres = genres,super._();
   factory _Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);
 
 @override final  String id;
@@ -818,6 +819,13 @@ class _Track extends Track {
 @override final  String? container;
 @override@JsonKey() final  bool isFavorite;
 @override@JsonKey() final  int playCount;
+ final  List<String> _genres;
+@override@JsonKey() List<String> get genres {
+  if (_genres is EqualUnmodifiableListView) return _genres;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_genres);
+}
+
 /// ReplayGain-style track gain in dB, when the source knows it.
 @override final  double? trackGainDb;
 /// Gain of the whole album in dB, when known.
@@ -838,18 +846,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Track&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.artists, _artists)&&(identical(other.albumId, albumId) || other.albumId == albumId)&&(identical(other.albumTitle, albumTitle) || other.albumTitle == albumTitle)&&(identical(other.albumArtist, albumArtist) || other.albumArtist == albumArtist)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.trackNumber, trackNumber) || other.trackNumber == trackNumber)&&(identical(other.discNumber, discNumber) || other.discNumber == discNumber)&&(identical(other.year, year) || other.year == year)&&(identical(other.artwork, artwork) || other.artwork == artwork)&&(identical(other.container, container) || other.container == container)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&(identical(other.trackGainDb, trackGainDb) || other.trackGainDb == trackGainDb)&&(identical(other.albumGainDb, albumGainDb) || other.albumGainDb == albumGainDb)&&(identical(other.playlistItemId, playlistItemId) || other.playlistItemId == playlistItemId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Track&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&const DeepCollectionEquality().equals(other.artists, _artists)&&(identical(other.albumId, albumId) || other.albumId == albumId)&&(identical(other.albumTitle, albumTitle) || other.albumTitle == albumTitle)&&(identical(other.albumArtist, albumArtist) || other.albumArtist == albumArtist)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.trackNumber, trackNumber) || other.trackNumber == trackNumber)&&(identical(other.discNumber, discNumber) || other.discNumber == discNumber)&&(identical(other.year, year) || other.year == year)&&(identical(other.artwork, artwork) || other.artwork == artwork)&&(identical(other.container, container) || other.container == container)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.playCount, playCount) || other.playCount == playCount)&&const DeepCollectionEquality().equals(other.genres, _genres)&&(identical(other.trackGainDb, trackGainDb) || other.trackGainDb == trackGainDb)&&(identical(other.albumGainDb, albumGainDb) || other.albumGainDb == albumGainDb)&&(identical(other.playlistItemId, playlistItemId) || other.playlistItemId == playlistItemId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(_artists),albumId,albumTitle,albumArtist,duration,trackNumber,discNumber,year,artwork,container,isFavorite,playCount,trackGainDb,albumGainDb,playlistItemId);
+    return Object.hash(runtimeType,id,title,const DeepCollectionEquality().hash(_artists),albumId,albumTitle,albumArtist,duration,trackNumber,discNumber,year,artwork,container,isFavorite,playCount,const DeepCollectionEquality().hash(_genres),trackGainDb,albumGainDb,playlistItemId);
 }
 
 @override
 String toString() {
-    return 'Track(id: $id, title: $title, artists: $artists, albumId: $albumId, albumTitle: $albumTitle, albumArtist: $albumArtist, duration: $duration, trackNumber: $trackNumber, discNumber: $discNumber, year: $year, artwork: $artwork, container: $container, isFavorite: $isFavorite, playCount: $playCount, trackGainDb: $trackGainDb, albumGainDb: $albumGainDb, playlistItemId: $playlistItemId)';
+    return 'Track(id: $id, title: $title, artists: $artists, albumId: $albumId, albumTitle: $albumTitle, albumArtist: $albumArtist, duration: $duration, trackNumber: $trackNumber, discNumber: $discNumber, year: $year, artwork: $artwork, container: $container, isFavorite: $isFavorite, playCount: $playCount, genres: $genres, trackGainDb: $trackGainDb, albumGainDb: $albumGainDb, playlistItemId: $playlistItemId)';
 }
 
 
@@ -860,7 +868,7 @@ abstract mixin class _$TrackCopyWith<$Res> implements $TrackCopyWith<$Res> {
   factory _$TrackCopyWith(_Track value, $Res Function(_Track) _then) = __$TrackCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, List<NamedRef> artists, String? albumId, String? albumTitle, String? albumArtist, Duration? duration, int? trackNumber, int? discNumber, int? year, Artwork? artwork, String? container, bool isFavorite, int playCount, double? trackGainDb, double? albumGainDb, String? playlistItemId
+ String id, String title, List<NamedRef> artists, String? albumId, String? albumTitle, String? albumArtist, Duration? duration, int? trackNumber, int? discNumber, int? year, Artwork? artwork, String? container, bool isFavorite, int playCount, List<String> genres, double? trackGainDb, double? albumGainDb, String? playlistItemId
 });
 
 
@@ -877,7 +885,7 @@ class __$TrackCopyWithImpl<$Res>
 
 /// Create a copy of Track
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? artists = null,Object? albumId = freezed,Object? albumTitle = freezed,Object? albumArtist = freezed,Object? duration = freezed,Object? trackNumber = freezed,Object? discNumber = freezed,Object? year = freezed,Object? artwork = freezed,Object? container = freezed,Object? isFavorite = null,Object? playCount = null,Object? trackGainDb = freezed,Object? albumGainDb = freezed,Object? playlistItemId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? artists = null,Object? albumId = freezed,Object? albumTitle = freezed,Object? albumArtist = freezed,Object? duration = freezed,Object? trackNumber = freezed,Object? discNumber = freezed,Object? year = freezed,Object? artwork = freezed,Object? container = freezed,Object? isFavorite = null,Object? playCount = null,Object? genres = null,Object? trackGainDb = freezed,Object? albumGainDb = freezed,Object? playlistItemId = freezed,}) {
   return _then(_Track(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -893,7 +901,8 @@ as int?,artwork: freezed == artwork ? _self.artwork : artwork // ignore: cast_nu
 as Artwork?,container: freezed == container ? _self.container : container // ignore: cast_nullable_to_non_nullable
 as String?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,playCount: null == playCount ? _self.playCount : playCount // ignore: cast_nullable_to_non_nullable
-as int,trackGainDb: freezed == trackGainDb ? _self.trackGainDb : trackGainDb // ignore: cast_nullable_to_non_nullable
+as int,genres: null == genres ? _self._genres : genres // ignore: cast_nullable_to_non_nullable
+as List<String>,trackGainDb: freezed == trackGainDb ? _self.trackGainDb : trackGainDb // ignore: cast_nullable_to_non_nullable
 as double?,albumGainDb: freezed == albumGainDb ? _self.albumGainDb : albumGainDb // ignore: cast_nullable_to_non_nullable
 as double?,playlistItemId: freezed == playlistItemId ? _self.playlistItemId : playlistItemId // ignore: cast_nullable_to_non_nullable
 as String?,

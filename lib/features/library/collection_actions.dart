@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/errors/failure.dart';
 import 'package:melody/core/errors/result.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/failure_view.dart';
+import 'package:melody/data/downloads/download_settings.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
@@ -33,6 +37,9 @@ Future<void> toggleTrackFavorite(
           .read(playerControllerProvider.notifier)
           .updateTrack(track.copyWith(isFavorite: value));
       ref.invalidate(trackListProvider);
+      if (ref.read(downloadSettingsControllerProvider).autoFavorites) {
+        unawaited(ref.read(downloadControllerProvider.notifier).sync());
+      }
     case Err(:final failure):
       _report(context, failure);
   }
@@ -202,6 +209,7 @@ Future<void> showAddToPlaylistSheet(
   ref
     ..invalidate(playlistsProvider)
     ..invalidate(trackListProvider);
+  unawaited(ref.read(downloadControllerProvider.notifier).sync());
   switch (result) {
     case Ok():
       ScaffoldMessenger.of(context).showSnackBar(

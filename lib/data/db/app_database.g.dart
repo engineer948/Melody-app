@@ -1015,12 +1015,1114 @@ class CachedListsCompanion extends UpdateCompanion<CachedList> {
   }
 }
 
+class $PlayHistoryTable extends PlayHistory
+    with TableInfo<$PlayHistoryTable, PlayHistoryData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PlayHistoryTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _trackIdMeta = const VerificationMeta(
+    'trackId',
+  );
+  @override
+  late final GeneratedColumn<String> trackId = GeneratedColumn<String>(
+    'track_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startedAtMeta = const VerificationMeta(
+    'startedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startedAt = GeneratedColumn<DateTime>(
+    'started_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _listenedMsMeta = const VerificationMeta(
+    'listenedMs',
+  );
+  @override
+  late final GeneratedColumn<int> listenedMs = GeneratedColumn<int>(
+    'listened_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _durationMsMeta = const VerificationMeta(
+    'durationMs',
+  );
+  @override
+  late final GeneratedColumn<int> durationMs = GeneratedColumn<int>(
+    'duration_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _skippedMeta = const VerificationMeta(
+    'skipped',
+  );
+  @override
+  late final GeneratedColumn<bool> skipped = GeneratedColumn<bool>(
+    'skipped',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("skipped" IN (0, 1))',
+    ),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    accountId,
+    trackId,
+    payload,
+    startedAt,
+    listenedMs,
+    durationMs,
+    skipped,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'play_history';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PlayHistoryData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('track_id')) {
+      context.handle(
+        _trackIdMeta,
+        trackId.isAcceptableOrUnknown(data['track_id']!, _trackIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_trackIdMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('started_at')) {
+      context.handle(
+        _startedAtMeta,
+        startedAt.isAcceptableOrUnknown(data['started_at']!, _startedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startedAtMeta);
+    }
+    if (data.containsKey('listened_ms')) {
+      context.handle(
+        _listenedMsMeta,
+        listenedMs.isAcceptableOrUnknown(data['listened_ms']!, _listenedMsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_listenedMsMeta);
+    }
+    if (data.containsKey('duration_ms')) {
+      context.handle(
+        _durationMsMeta,
+        durationMs.isAcceptableOrUnknown(data['duration_ms']!, _durationMsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_durationMsMeta);
+    }
+    if (data.containsKey('skipped')) {
+      context.handle(
+        _skippedMeta,
+        skipped.isAcceptableOrUnknown(data['skipped']!, _skippedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_skippedMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PlayHistoryData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PlayHistoryData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      trackId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}track_id'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      startedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}started_at'],
+      )!,
+      listenedMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}listened_ms'],
+      )!,
+      durationMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_ms'],
+      )!,
+      skipped: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}skipped'],
+      )!,
+    );
+  }
+
+  @override
+  $PlayHistoryTable createAlias(String alias) {
+    return $PlayHistoryTable(attachedDatabase, alias);
+  }
+}
+
+class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
+  /// Row id.
+  final int id;
+
+  /// Owning account.
+  final String accountId;
+
+  /// Track played.
+  final String trackId;
+
+  /// JSON of the track as it was when played.
+  final String payload;
+
+  /// When playback of the track began.
+  final DateTime startedAt;
+
+  /// Time actually listened, in milliseconds.
+  final int listenedMs;
+
+  /// Length of the track in milliseconds; 0 when unknown.
+  final int durationMs;
+
+  /// Whether the track was left early.
+  final bool skipped;
+  const PlayHistoryData({
+    required this.id,
+    required this.accountId,
+    required this.trackId,
+    required this.payload,
+    required this.startedAt,
+    required this.listenedMs,
+    required this.durationMs,
+    required this.skipped,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['account_id'] = Variable<String>(accountId);
+    map['track_id'] = Variable<String>(trackId);
+    map['payload'] = Variable<String>(payload);
+    map['started_at'] = Variable<DateTime>(startedAt);
+    map['listened_ms'] = Variable<int>(listenedMs);
+    map['duration_ms'] = Variable<int>(durationMs);
+    map['skipped'] = Variable<bool>(skipped);
+    return map;
+  }
+
+  PlayHistoryCompanion toCompanion(bool nullToAbsent) {
+    return PlayHistoryCompanion(
+      id: Value(id),
+      accountId: Value(accountId),
+      trackId: Value(trackId),
+      payload: Value(payload),
+      startedAt: Value(startedAt),
+      listenedMs: Value(listenedMs),
+      durationMs: Value(durationMs),
+      skipped: Value(skipped),
+    );
+  }
+
+  factory PlayHistoryData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PlayHistoryData(
+      id: serializer.fromJson<int>(json['id']),
+      accountId: serializer.fromJson<String>(json['accountId']),
+      trackId: serializer.fromJson<String>(json['trackId']),
+      payload: serializer.fromJson<String>(json['payload']),
+      startedAt: serializer.fromJson<DateTime>(json['startedAt']),
+      listenedMs: serializer.fromJson<int>(json['listenedMs']),
+      durationMs: serializer.fromJson<int>(json['durationMs']),
+      skipped: serializer.fromJson<bool>(json['skipped']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'accountId': serializer.toJson<String>(accountId),
+      'trackId': serializer.toJson<String>(trackId),
+      'payload': serializer.toJson<String>(payload),
+      'startedAt': serializer.toJson<DateTime>(startedAt),
+      'listenedMs': serializer.toJson<int>(listenedMs),
+      'durationMs': serializer.toJson<int>(durationMs),
+      'skipped': serializer.toJson<bool>(skipped),
+    };
+  }
+
+  PlayHistoryData copyWith({
+    int? id,
+    String? accountId,
+    String? trackId,
+    String? payload,
+    DateTime? startedAt,
+    int? listenedMs,
+    int? durationMs,
+    bool? skipped,
+  }) => PlayHistoryData(
+    id: id ?? this.id,
+    accountId: accountId ?? this.accountId,
+    trackId: trackId ?? this.trackId,
+    payload: payload ?? this.payload,
+    startedAt: startedAt ?? this.startedAt,
+    listenedMs: listenedMs ?? this.listenedMs,
+    durationMs: durationMs ?? this.durationMs,
+    skipped: skipped ?? this.skipped,
+  );
+  PlayHistoryData copyWithCompanion(PlayHistoryCompanion data) {
+    return PlayHistoryData(
+      id: data.id.present ? data.id.value : this.id,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      trackId: data.trackId.present ? data.trackId.value : this.trackId,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
+      listenedMs: data.listenedMs.present
+          ? data.listenedMs.value
+          : this.listenedMs,
+      durationMs: data.durationMs.present
+          ? data.durationMs.value
+          : this.durationMs,
+      skipped: data.skipped.present ? data.skipped.value : this.skipped,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PlayHistoryData(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('trackId: $trackId, ')
+          ..write('payload: $payload, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('listenedMs: $listenedMs, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('skipped: $skipped')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    accountId,
+    trackId,
+    payload,
+    startedAt,
+    listenedMs,
+    durationMs,
+    skipped,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PlayHistoryData &&
+          other.id == this.id &&
+          other.accountId == this.accountId &&
+          other.trackId == this.trackId &&
+          other.payload == this.payload &&
+          other.startedAt == this.startedAt &&
+          other.listenedMs == this.listenedMs &&
+          other.durationMs == this.durationMs &&
+          other.skipped == this.skipped);
+}
+
+class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
+  final Value<int> id;
+  final Value<String> accountId;
+  final Value<String> trackId;
+  final Value<String> payload;
+  final Value<DateTime> startedAt;
+  final Value<int> listenedMs;
+  final Value<int> durationMs;
+  final Value<bool> skipped;
+  const PlayHistoryCompanion({
+    this.id = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.trackId = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.startedAt = const Value.absent(),
+    this.listenedMs = const Value.absent(),
+    this.durationMs = const Value.absent(),
+    this.skipped = const Value.absent(),
+  });
+  PlayHistoryCompanion.insert({
+    this.id = const Value.absent(),
+    required String accountId,
+    required String trackId,
+    required String payload,
+    required DateTime startedAt,
+    required int listenedMs,
+    required int durationMs,
+    required bool skipped,
+  }) : accountId = Value(accountId),
+       trackId = Value(trackId),
+       payload = Value(payload),
+       startedAt = Value(startedAt),
+       listenedMs = Value(listenedMs),
+       durationMs = Value(durationMs),
+       skipped = Value(skipped);
+  static Insertable<PlayHistoryData> custom({
+    Expression<int>? id,
+    Expression<String>? accountId,
+    Expression<String>? trackId,
+    Expression<String>? payload,
+    Expression<DateTime>? startedAt,
+    Expression<int>? listenedMs,
+    Expression<int>? durationMs,
+    Expression<bool>? skipped,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (accountId != null) 'account_id': accountId,
+      if (trackId != null) 'track_id': trackId,
+      if (payload != null) 'payload': payload,
+      if (startedAt != null) 'started_at': startedAt,
+      if (listenedMs != null) 'listened_ms': listenedMs,
+      if (durationMs != null) 'duration_ms': durationMs,
+      if (skipped != null) 'skipped': skipped,
+    });
+  }
+
+  PlayHistoryCompanion copyWith({
+    Value<int>? id,
+    Value<String>? accountId,
+    Value<String>? trackId,
+    Value<String>? payload,
+    Value<DateTime>? startedAt,
+    Value<int>? listenedMs,
+    Value<int>? durationMs,
+    Value<bool>? skipped,
+  }) {
+    return PlayHistoryCompanion(
+      id: id ?? this.id,
+      accountId: accountId ?? this.accountId,
+      trackId: trackId ?? this.trackId,
+      payload: payload ?? this.payload,
+      startedAt: startedAt ?? this.startedAt,
+      listenedMs: listenedMs ?? this.listenedMs,
+      durationMs: durationMs ?? this.durationMs,
+      skipped: skipped ?? this.skipped,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (trackId.present) {
+      map['track_id'] = Variable<String>(trackId.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (startedAt.present) {
+      map['started_at'] = Variable<DateTime>(startedAt.value);
+    }
+    if (listenedMs.present) {
+      map['listened_ms'] = Variable<int>(listenedMs.value);
+    }
+    if (durationMs.present) {
+      map['duration_ms'] = Variable<int>(durationMs.value);
+    }
+    if (skipped.present) {
+      map['skipped'] = Variable<bool>(skipped.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PlayHistoryCompanion(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('trackId: $trackId, ')
+          ..write('payload: $payload, ')
+          ..write('startedAt: $startedAt, ')
+          ..write('listenedMs: $listenedMs, ')
+          ..write('durationMs: $durationMs, ')
+          ..write('skipped: $skipped')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DownloadsTable extends Downloads
+    with TableInfo<$DownloadsTable, Download> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DownloadsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _trackIdMeta = const VerificationMeta(
+    'trackId',
+  );
+  @override
+  late final GeneratedColumn<String> trackId = GeneratedColumn<String>(
+    'track_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bytesMeta = const VerificationMeta('bytes');
+  @override
+  late final GeneratedColumn<int> bytes = GeneratedColumn<int>(
+    'bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _totalBytesMeta = const VerificationMeta(
+    'totalBytes',
+  );
+  @override
+  late final GeneratedColumn<int> totalBytes = GeneratedColumn<int>(
+    'total_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _fileNameMeta = const VerificationMeta(
+    'fileName',
+  );
+  @override
+  late final GeneratedColumn<String> fileName = GeneratedColumn<String>(
+    'file_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _originsMeta = const VerificationMeta(
+    'origins',
+  );
+  @override
+  late final GeneratedColumn<String> origins = GeneratedColumn<String>(
+    'origins',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    accountId,
+    trackId,
+    payload,
+    status,
+    bytes,
+    totalBytes,
+    fileName,
+    origins,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'downloads';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Download> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('track_id')) {
+      context.handle(
+        _trackIdMeta,
+        trackId.isAcceptableOrUnknown(data['track_id']!, _trackIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_trackIdMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('bytes')) {
+      context.handle(
+        _bytesMeta,
+        bytes.isAcceptableOrUnknown(data['bytes']!, _bytesMeta),
+      );
+    }
+    if (data.containsKey('total_bytes')) {
+      context.handle(
+        _totalBytesMeta,
+        totalBytes.isAcceptableOrUnknown(data['total_bytes']!, _totalBytesMeta),
+      );
+    }
+    if (data.containsKey('file_name')) {
+      context.handle(
+        _fileNameMeta,
+        fileName.isAcceptableOrUnknown(data['file_name']!, _fileNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fileNameMeta);
+    }
+    if (data.containsKey('origins')) {
+      context.handle(
+        _originsMeta,
+        origins.isAcceptableOrUnknown(data['origins']!, _originsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_originsMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {accountId, trackId};
+  @override
+  Download map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Download(
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      trackId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}track_id'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      bytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bytes'],
+      )!,
+      totalBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_bytes'],
+      )!,
+      fileName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_name'],
+      )!,
+      origins: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origins'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DownloadsTable createAlias(String alias) {
+    return $DownloadsTable(attachedDatabase, alias);
+  }
+}
+
+class Download extends DataClass implements Insertable<Download> {
+  /// Owning account.
+  final String accountId;
+
+  /// Track id on the source.
+  final String trackId;
+
+  /// JSON of the track.
+  final String payload;
+
+  /// `queued`, `running`, `paused`, `done` or `failed`.
+  final String status;
+
+  /// Bytes on disk so far.
+  final int bytes;
+
+  /// Expected size; 0 when the server did not say.
+  final int totalBytes;
+
+  /// File name inside the download folder.
+  final String fileName;
+
+  /// JSON array of why it is kept: `manual`, `favorites`, `playlist:<id>`…
+  final String origins;
+
+  /// When it was requested.
+  final DateTime createdAt;
+  const Download({
+    required this.accountId,
+    required this.trackId,
+    required this.payload,
+    required this.status,
+    required this.bytes,
+    required this.totalBytes,
+    required this.fileName,
+    required this.origins,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['account_id'] = Variable<String>(accountId);
+    map['track_id'] = Variable<String>(trackId);
+    map['payload'] = Variable<String>(payload);
+    map['status'] = Variable<String>(status);
+    map['bytes'] = Variable<int>(bytes);
+    map['total_bytes'] = Variable<int>(totalBytes);
+    map['file_name'] = Variable<String>(fileName);
+    map['origins'] = Variable<String>(origins);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  DownloadsCompanion toCompanion(bool nullToAbsent) {
+    return DownloadsCompanion(
+      accountId: Value(accountId),
+      trackId: Value(trackId),
+      payload: Value(payload),
+      status: Value(status),
+      bytes: Value(bytes),
+      totalBytes: Value(totalBytes),
+      fileName: Value(fileName),
+      origins: Value(origins),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory Download.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Download(
+      accountId: serializer.fromJson<String>(json['accountId']),
+      trackId: serializer.fromJson<String>(json['trackId']),
+      payload: serializer.fromJson<String>(json['payload']),
+      status: serializer.fromJson<String>(json['status']),
+      bytes: serializer.fromJson<int>(json['bytes']),
+      totalBytes: serializer.fromJson<int>(json['totalBytes']),
+      fileName: serializer.fromJson<String>(json['fileName']),
+      origins: serializer.fromJson<String>(json['origins']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'accountId': serializer.toJson<String>(accountId),
+      'trackId': serializer.toJson<String>(trackId),
+      'payload': serializer.toJson<String>(payload),
+      'status': serializer.toJson<String>(status),
+      'bytes': serializer.toJson<int>(bytes),
+      'totalBytes': serializer.toJson<int>(totalBytes),
+      'fileName': serializer.toJson<String>(fileName),
+      'origins': serializer.toJson<String>(origins),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  Download copyWith({
+    String? accountId,
+    String? trackId,
+    String? payload,
+    String? status,
+    int? bytes,
+    int? totalBytes,
+    String? fileName,
+    String? origins,
+    DateTime? createdAt,
+  }) => Download(
+    accountId: accountId ?? this.accountId,
+    trackId: trackId ?? this.trackId,
+    payload: payload ?? this.payload,
+    status: status ?? this.status,
+    bytes: bytes ?? this.bytes,
+    totalBytes: totalBytes ?? this.totalBytes,
+    fileName: fileName ?? this.fileName,
+    origins: origins ?? this.origins,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  Download copyWithCompanion(DownloadsCompanion data) {
+    return Download(
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      trackId: data.trackId.present ? data.trackId.value : this.trackId,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      status: data.status.present ? data.status.value : this.status,
+      bytes: data.bytes.present ? data.bytes.value : this.bytes,
+      totalBytes: data.totalBytes.present
+          ? data.totalBytes.value
+          : this.totalBytes,
+      fileName: data.fileName.present ? data.fileName.value : this.fileName,
+      origins: data.origins.present ? data.origins.value : this.origins,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Download(')
+          ..write('accountId: $accountId, ')
+          ..write('trackId: $trackId, ')
+          ..write('payload: $payload, ')
+          ..write('status: $status, ')
+          ..write('bytes: $bytes, ')
+          ..write('totalBytes: $totalBytes, ')
+          ..write('fileName: $fileName, ')
+          ..write('origins: $origins, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    accountId,
+    trackId,
+    payload,
+    status,
+    bytes,
+    totalBytes,
+    fileName,
+    origins,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Download &&
+          other.accountId == this.accountId &&
+          other.trackId == this.trackId &&
+          other.payload == this.payload &&
+          other.status == this.status &&
+          other.bytes == this.bytes &&
+          other.totalBytes == this.totalBytes &&
+          other.fileName == this.fileName &&
+          other.origins == this.origins &&
+          other.createdAt == this.createdAt);
+}
+
+class DownloadsCompanion extends UpdateCompanion<Download> {
+  final Value<String> accountId;
+  final Value<String> trackId;
+  final Value<String> payload;
+  final Value<String> status;
+  final Value<int> bytes;
+  final Value<int> totalBytes;
+  final Value<String> fileName;
+  final Value<String> origins;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const DownloadsCompanion({
+    this.accountId = const Value.absent(),
+    this.trackId = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.status = const Value.absent(),
+    this.bytes = const Value.absent(),
+    this.totalBytes = const Value.absent(),
+    this.fileName = const Value.absent(),
+    this.origins = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DownloadsCompanion.insert({
+    required String accountId,
+    required String trackId,
+    required String payload,
+    required String status,
+    this.bytes = const Value.absent(),
+    this.totalBytes = const Value.absent(),
+    required String fileName,
+    required String origins,
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : accountId = Value(accountId),
+       trackId = Value(trackId),
+       payload = Value(payload),
+       status = Value(status),
+       fileName = Value(fileName),
+       origins = Value(origins),
+       createdAt = Value(createdAt);
+  static Insertable<Download> custom({
+    Expression<String>? accountId,
+    Expression<String>? trackId,
+    Expression<String>? payload,
+    Expression<String>? status,
+    Expression<int>? bytes,
+    Expression<int>? totalBytes,
+    Expression<String>? fileName,
+    Expression<String>? origins,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (accountId != null) 'account_id': accountId,
+      if (trackId != null) 'track_id': trackId,
+      if (payload != null) 'payload': payload,
+      if (status != null) 'status': status,
+      if (bytes != null) 'bytes': bytes,
+      if (totalBytes != null) 'total_bytes': totalBytes,
+      if (fileName != null) 'file_name': fileName,
+      if (origins != null) 'origins': origins,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DownloadsCompanion copyWith({
+    Value<String>? accountId,
+    Value<String>? trackId,
+    Value<String>? payload,
+    Value<String>? status,
+    Value<int>? bytes,
+    Value<int>? totalBytes,
+    Value<String>? fileName,
+    Value<String>? origins,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return DownloadsCompanion(
+      accountId: accountId ?? this.accountId,
+      trackId: trackId ?? this.trackId,
+      payload: payload ?? this.payload,
+      status: status ?? this.status,
+      bytes: bytes ?? this.bytes,
+      totalBytes: totalBytes ?? this.totalBytes,
+      fileName: fileName ?? this.fileName,
+      origins: origins ?? this.origins,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (trackId.present) {
+      map['track_id'] = Variable<String>(trackId.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (bytes.present) {
+      map['bytes'] = Variable<int>(bytes.value);
+    }
+    if (totalBytes.present) {
+      map['total_bytes'] = Variable<int>(totalBytes.value);
+    }
+    if (fileName.present) {
+      map['file_name'] = Variable<String>(fileName.value);
+    }
+    if (origins.present) {
+      map['origins'] = Variable<String>(origins.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DownloadsCompanion(')
+          ..write('accountId: $accountId, ')
+          ..write('trackId: $trackId, ')
+          ..write('payload: $payload, ')
+          ..write('status: $status, ')
+          ..write('bytes: $bytes, ')
+          ..write('totalBytes: $totalBytes, ')
+          ..write('fileName: $fileName, ')
+          ..write('origins: $origins, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AccountsTable accounts = $AccountsTable(this);
   late final $CachedItemsTable cachedItems = $CachedItemsTable(this);
   late final $CachedListsTable cachedLists = $CachedListsTable(this);
+  late final $PlayHistoryTable playHistory = $PlayHistoryTable(this);
+  late final $DownloadsTable downloads = $DownloadsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1029,6 +2131,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     accounts,
     cachedItems,
     cachedLists,
+    playHistory,
+    downloads,
   ];
 }
 
@@ -1613,6 +2717,549 @@ typedef $$CachedListsTableProcessedTableManager =
       CachedList,
       PrefetchHooks Function()
     >;
+typedef $$PlayHistoryTableCreateCompanionBuilder =
+    PlayHistoryCompanion Function({
+      Value<int> id,
+      required String accountId,
+      required String trackId,
+      required String payload,
+      required DateTime startedAt,
+      required int listenedMs,
+      required int durationMs,
+      required bool skipped,
+    });
+typedef $$PlayHistoryTableUpdateCompanionBuilder =
+    PlayHistoryCompanion Function({
+      Value<int> id,
+      Value<String> accountId,
+      Value<String> trackId,
+      Value<String> payload,
+      Value<DateTime> startedAt,
+      Value<int> listenedMs,
+      Value<int> durationMs,
+      Value<bool> skipped,
+    });
+
+class $$PlayHistoryTableFilterComposer
+    extends Composer<_$AppDatabase, $PlayHistoryTable> {
+  $$PlayHistoryTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get listenedMs => $composableBuilder(
+    column: $table.listenedMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get durationMs => $composableBuilder(
+    column: $table.durationMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get skipped => $composableBuilder(
+    column: $table.skipped,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PlayHistoryTableOrderingComposer
+    extends Composer<_$AppDatabase, $PlayHistoryTable> {
+  $$PlayHistoryTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startedAt => $composableBuilder(
+    column: $table.startedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get listenedMs => $composableBuilder(
+    column: $table.listenedMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get durationMs => $composableBuilder(
+    column: $table.durationMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get skipped => $composableBuilder(
+    column: $table.skipped,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PlayHistoryTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PlayHistoryTable> {
+  $$PlayHistoryTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<String> get trackId =>
+      $composableBuilder(column: $table.trackId, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startedAt =>
+      $composableBuilder(column: $table.startedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get listenedMs => $composableBuilder(
+    column: $table.listenedMs,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get durationMs => $composableBuilder(
+    column: $table.durationMs,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get skipped =>
+      $composableBuilder(column: $table.skipped, builder: (column) => column);
+}
+
+class $$PlayHistoryTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PlayHistoryTable,
+          PlayHistoryData,
+          $$PlayHistoryTableFilterComposer,
+          $$PlayHistoryTableOrderingComposer,
+          $$PlayHistoryTableAnnotationComposer,
+          $$PlayHistoryTableCreateCompanionBuilder,
+          $$PlayHistoryTableUpdateCompanionBuilder,
+          (
+            PlayHistoryData,
+            BaseReferences<_$AppDatabase, $PlayHistoryTable, PlayHistoryData>,
+          ),
+          PlayHistoryData,
+          PrefetchHooks Function()
+        > {
+  $$PlayHistoryTableTableManager(_$AppDatabase db, $PlayHistoryTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PlayHistoryTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PlayHistoryTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PlayHistoryTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> accountId = const Value.absent(),
+                Value<String> trackId = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<DateTime> startedAt = const Value.absent(),
+                Value<int> listenedMs = const Value.absent(),
+                Value<int> durationMs = const Value.absent(),
+                Value<bool> skipped = const Value.absent(),
+              }) => PlayHistoryCompanion(
+                id: id,
+                accountId: accountId,
+                trackId: trackId,
+                payload: payload,
+                startedAt: startedAt,
+                listenedMs: listenedMs,
+                durationMs: durationMs,
+                skipped: skipped,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String accountId,
+                required String trackId,
+                required String payload,
+                required DateTime startedAt,
+                required int listenedMs,
+                required int durationMs,
+                required bool skipped,
+              }) => PlayHistoryCompanion.insert(
+                id: id,
+                accountId: accountId,
+                trackId: trackId,
+                payload: payload,
+                startedAt: startedAt,
+                listenedMs: listenedMs,
+                durationMs: durationMs,
+                skipped: skipped,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PlayHistoryTable, PlayHistoryData>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PlayHistoryTable,
+                    PlayHistoryData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PlayHistoryTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PlayHistoryTable,
+      PlayHistoryData,
+      $$PlayHistoryTableFilterComposer,
+      $$PlayHistoryTableOrderingComposer,
+      $$PlayHistoryTableAnnotationComposer,
+      $$PlayHistoryTableCreateCompanionBuilder,
+      $$PlayHistoryTableUpdateCompanionBuilder,
+      (
+        PlayHistoryData,
+        BaseReferences<_$AppDatabase, $PlayHistoryTable, PlayHistoryData>,
+      ),
+      PlayHistoryData,
+      PrefetchHooks Function()
+    >;
+typedef $$DownloadsTableCreateCompanionBuilder = DownloadsCompanion Function({
+  required String accountId,
+  required String trackId,
+  required String payload,
+  required String status,
+  Value<int> bytes,
+  Value<int> totalBytes,
+  required String fileName,
+  required String origins,
+  required DateTime createdAt,
+  Value<int> rowid,
+});
+typedef $$DownloadsTableUpdateCompanionBuilder = DownloadsCompanion Function({
+  Value<String> accountId,
+  Value<String> trackId,
+  Value<String> payload,
+  Value<String> status,
+  Value<int> bytes,
+  Value<int> totalBytes,
+  Value<String> fileName,
+  Value<String> origins,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
+});
+
+class $$DownloadsTableFilterComposer
+    extends Composer<_$AppDatabase, $DownloadsTable> {
+  $$DownloadsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fileName => $composableBuilder(
+    column: $table.fileName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get origins => $composableBuilder(
+    column: $table.origins,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DownloadsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DownloadsTable> {
+  $$DownloadsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fileName => $composableBuilder(
+    column: $table.fileName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get origins => $composableBuilder(
+    column: $table.origins,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DownloadsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DownloadsTable> {
+  $$DownloadsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<String> get trackId =>
+      $composableBuilder(column: $table.trackId, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get bytes =>
+      $composableBuilder(column: $table.bytes, builder: (column) => column);
+
+  GeneratedColumn<int> get totalBytes => $composableBuilder(
+    column: $table.totalBytes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get fileName =>
+      $composableBuilder(column: $table.fileName, builder: (column) => column);
+
+  GeneratedColumn<String> get origins =>
+      $composableBuilder(column: $table.origins, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$DownloadsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DownloadsTable,
+          Download,
+          $$DownloadsTableFilterComposer,
+          $$DownloadsTableOrderingComposer,
+          $$DownloadsTableAnnotationComposer,
+          $$DownloadsTableCreateCompanionBuilder,
+          $$DownloadsTableUpdateCompanionBuilder,
+          (Download, BaseReferences<_$AppDatabase, $DownloadsTable, Download>),
+          Download,
+          PrefetchHooks Function()
+        > {
+  $$DownloadsTableTableManager(_$AppDatabase db, $DownloadsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DownloadsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DownloadsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$DownloadsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> accountId = const Value.absent(),
+                Value<String> trackId = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> bytes = const Value.absent(),
+                Value<int> totalBytes = const Value.absent(),
+                Value<String> fileName = const Value.absent(),
+                Value<String> origins = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DownloadsCompanion(
+                accountId: accountId,
+                trackId: trackId,
+                payload: payload,
+                status: status,
+                bytes: bytes,
+                totalBytes: totalBytes,
+                fileName: fileName,
+                origins: origins,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String accountId,
+                required String trackId,
+                required String payload,
+                required String status,
+                Value<int> bytes = const Value.absent(),
+                Value<int> totalBytes = const Value.absent(),
+                required String fileName,
+                required String origins,
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => DownloadsCompanion.insert(
+                accountId: accountId,
+                trackId: trackId,
+                payload: payload,
+                status: status,
+                bytes: bytes,
+                totalBytes: totalBytes,
+                fileName: fileName,
+                origins: origins,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$DownloadsTable, Download>(table),
+                  BaseReferences<_$AppDatabase, $DownloadsTable, Download>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DownloadsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DownloadsTable,
+      Download,
+      $$DownloadsTableFilterComposer,
+      $$DownloadsTableOrderingComposer,
+      $$DownloadsTableAnnotationComposer,
+      $$DownloadsTableCreateCompanionBuilder,
+      $$DownloadsTableUpdateCompanionBuilder,
+      (Download, BaseReferences<_$AppDatabase, $DownloadsTable, Download>),
+      Download,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1623,4 +3270,8 @@ class $AppDatabaseManager {
       $$CachedItemsTableTableManager(_db, _db.cachedItems);
   $$CachedListsTableTableManager get cachedLists =>
       $$CachedListsTableTableManager(_db, _db.cachedLists);
+  $$PlayHistoryTableTableManager get playHistory =>
+      $$PlayHistoryTableTableManager(_db, _db.playHistory);
+  $$DownloadsTableTableManager get downloads =>
+      $$DownloadsTableTableManager(_db, _db.downloads);
 }

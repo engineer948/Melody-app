@@ -87,6 +87,13 @@ abstract final class AppRoutes {
   static String equalizerIn(BuildContext context) =>
       '${settingsIn(context)}/equalizer';
 
+  /// Listening statistics inside the current tab.
+  static String statsIn(BuildContext context) => '${_tab(context)}/stats';
+
+  /// Year in review inside the current tab.
+  static String wrapIn(BuildContext context, int year) =>
+      '${statsIn(context)}/wrap/$year';
+
   /// Album page inside the current tab.
   static String album(BuildContext context, String id) =>
       '${_tab(context)}/album/${Uri.encodeComponent(id)}';

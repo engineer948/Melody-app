@@ -56,6 +56,7 @@ abstract final class JellyfinMapper {
       container: dto.container,
       isFavorite: dto.userData?.isFavorite ?? false,
       playCount: dto.userData?.playCount ?? 0,
+      genres: dto.genres ?? const [],
       trackGainDb: dto.normalizationGain,
       playlistItemId: dto.playlistItemId,
     );

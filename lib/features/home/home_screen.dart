@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/core/widgets/failure_view.dart';
 import 'package:melody/core/widgets/large_title_page.dart';
@@ -9,6 +11,7 @@ import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/shell/app_shell.dart';
+import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -35,7 +38,8 @@ class HomeScreen extends ConsumerWidget {
       ..invalidate(albumListProvider(_recentlyAdded))
       ..invalidate(albumListProvider(_randomAlbums))
       ..invalidate(trackListProvider(_recentlyPlayed))
-      ..invalidate(trackListProvider(_mostPlayed));
+      ..invalidate(trackListProvider(_mostPlayed))
+      ..invalidate(suggestionsProvider);
   }
 
   @override
@@ -45,6 +49,8 @@ class HomeScreen extends ConsumerWidget {
     final random = ref.watch(albumListProvider(_randomAlbums));
     final played = ref.watch(trackListProvider(_recentlyPlayed));
     final most = ref.watch(trackListProvider(_mostPlayed));
+    final suggested = ref.watch(suggestionsProvider).value;
+    final now = DateTime.now();
 
     final empty =
         added.items.isEmpty &&
@@ -80,12 +86,32 @@ class HomeScreen extends ConsumerWidget {
     } else {
       slivers = [
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
+        // The year in review is put forward in December.
+        if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: FilledButton.icon(
+                onPressed: () =>
+                    context.push(AppRoutes.wrapIn(context, now.year)),
+                icon: const Icon(Icons.auto_awesome),
+                label: Text(l10n.wrapBanner(now.year)),
+              ),
+            ),
+          ),
         if (added.items.isNotEmpty)
           SliverToBoxAdapter(
             child: _AlbumShelf(
               title: l10n.homeRecentlyAdded,
               albums: added.items,
               cardWidth: 240,
+            ),
+          ),
+        if (suggested != null && suggested.mix.isNotEmpty)
+          SliverToBoxAdapter(
+            child: _TrackShelf(
+              title: l10n.homeMixForYou,
+              tracks: suggested.mix,
             ),
           ),
         if (played.items.isNotEmpty)
@@ -99,6 +125,13 @@ class HomeScreen extends ConsumerWidget {
           SliverToBoxAdapter(
             child: _TrackShelf(title: l10n.homeMostPlayed, tracks: most.items),
           ),
+        if (suggested != null && suggested.forgotten.isNotEmpty)
+          SliverToBoxAdapter(
+            child: _TrackShelf(
+              title: l10n.homeForgotten,
+              tracks: suggested.forgotten,
+            ),
+          ),
         if (random.items.isNotEmpty)
           SliverToBoxAdapter(
             child: _AlbumShelf(
@@ -106,12 +139,19 @@ class HomeScreen extends ConsumerWidget {
               albums: random.items,
             ),
           ),
+        if (suggested != null && suggested.discover.isNotEmpty)
+          SliverToBoxAdapter(
+            child: _TrackShelf(
+              title: l10n.homeDiscover,
+              tracks: suggested.discover,
+            ),
+          ),
       ];
     }
 
     return Scaffold(
       body: LargeTitlePage(
-        title: greeting(l10n, DateTime.now()),
+        title: greeting(l10n, now),
         automaticallyImplyLeading: false,
         actions: const [SettingsButton()],
         onRefresh: () async => _refresh(ref),

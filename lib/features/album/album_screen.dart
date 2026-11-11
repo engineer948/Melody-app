@@ -7,6 +7,7 @@ import 'package:melody/core/widgets/failure_view.dart';
 import 'package:melody/core/widgets/large_title_page.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_widgets.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
@@ -56,6 +57,8 @@ class AlbumScreen extends ConsumerWidget {
             ? const SizedBox(height: 1)
             : _AlbumHeader(detail: loaded.value),
         actions: [
+          if (loaded != null && loaded.value.tracks.isNotEmpty)
+            DownloadButton(tracks: loaded.value.tracks),
           if (album != null && canFavorite)
             IconButton(
               icon: Icon(

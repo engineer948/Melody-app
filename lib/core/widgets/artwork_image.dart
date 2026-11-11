@@ -4,6 +4,7 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 
 /// Square cover image with a placeholder for missing or loading artwork.
 class ArtworkImage extends ConsumerWidget {
@@ -59,7 +60,23 @@ class ArtworkImage extends ConsumerWidget {
                 fadeInDuration: const Duration(milliseconds: 150),
                 placeholder: (_, _) =>
                     hash == null ? placeholder : BlurHash(hash: hash),
-                errorWidget: (_, _, _) => placeholder,
+                // Offline: the cover saved with a download, if there is one.
+                errorWidget: (_, _, _) {
+                  final id = artwork?.itemId;
+                  final file = id == null
+                      ? null
+                      : ref
+                            .read(downloadControllerProvider.notifier)
+                            .coverFile(id);
+                  return file == null
+                      ? placeholder
+                      : Image.file(
+                          file,
+                          fit: BoxFit.cover,
+                          cacheWidth: pixels,
+                          errorBuilder: (_, _, _) => placeholder,
+                        );
+                },
               );
         return SizedBox.square(
           dimension: extent,
