@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:melody/core/config/app_config.dart';
+import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/features/settings/app_info.dart';
 import 'package:melody/features/settings/widgets/account_section.dart';
 import 'package:melody/features/settings/widgets/android_auto_section.dart';
@@ -61,6 +64,14 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l10n.aboutVersion),
             subtitle: version == null ? null : Text(version),
           ),
+          if (kDebugMode)
+            ListTile(
+              leading: const Icon(Icons.bug_report_outlined),
+              title: Text(l10n.debugSourcesTitle),
+              onTap: () => context.push(
+                '${AppRoutes.settingsIn(context)}/debug-sources',
+              ),
+            ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
             title: Text(l10n.aboutLicenses),

@@ -15,11 +15,12 @@ class JellyfinApi {
     void Function()? onUnauthorized,
     int retries = 2,
     Duration? connectTimeout,
+    this.authHeader = 'Authorization',
   }) : _dio = createHttpClient(
          baseUrl: baseUrl,
          adapter: adapter,
          retries: retries,
-         headers: {'Authorization': authorization(identity, token: token)},
+         headers: {authHeader: authorization(identity, token: token)},
        ) {
     if (connectTimeout != null) _dio.options.connectTimeout = connectTimeout;
     if (onUnauthorized != null && token != null) {
@@ -42,6 +43,9 @@ class JellyfinApi {
 
   /// Access token, absent before sign-in.
   final String? token;
+
+  /// Header carrying [authorizationHeader]; Emby reads its own name.
+  final String authHeader;
 
   final Dio _dio;
 

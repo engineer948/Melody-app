@@ -565,5 +565,14 @@
   "outputNone": "No DLNA devices found on this network.",
   "settingsAndroidAuto": "Android Auto",
   "androidAutoBody": "Sections shown in the car. Apps not installed from Google Play appear in Android Auto only after enabling \"Unknown sources\" in its developer settings.",
-  "outputAirPlay": "AirPlay"
+  "outputAirPlay": "AirPlay",
+  "sourceLocal": "Files on this device",
+  "sourceRadio": "Internet radio",
+  "sourceAdd": "Add",
+  "connectIntroEmby": "Enter the address of your Emby server.",
+  "connectIntroSubsonic": "Enter the address of your Subsonic-compatible server (Navidrome, Airsonic, Gonic, …).",
+  "connectIntroLocal": "Play the music files stored on this device. Melody will ask for permission to read them.",
+  "connectIntroRadio": "Listen to thousands of stations from the free Radio Browser directory.",
+  "debugSourcesTitle": "Source test",
+  "debugSourcesProbe": "Check address"
 }

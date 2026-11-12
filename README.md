@@ -52,7 +52,17 @@ flutter run --dart-define=ENABLED_SOURCES=jellyfin,subsonic,local
 ```
 
 Geçerli değerler: `jellyfin`, `emby`, `subsonic`, `local`, `radio`
-(bkz. `lib/core/config/feature_flags.dart`).
+(bkz. `lib/core/config/feature_flags.dart`). Birden çok kaynak açıkken giriş
+ekranında kaynak seçici görünür. Debug derlemesinde Ayarlar → "Kaynak testi"
+gizli kaynakları da bir adrese karşı dener.
+
+| Kaynak | Durum |
+|---|---|
+| Jellyfin | tam |
+| Emby | Jellyfin altyapısı; Quick Connect ve sunucu sözleri yok |
+| Subsonic / OpenSubsonic (Navidrome, Airsonic, Gonic) | token + salt girişi (şifre saklanmaz), çalma listeleri, favoriler, sözler, scrobble |
+| Cihazdaki dosyalar | Android MediaStore; izin yalnızca kaynak eklenirken istenir. Kapaklar, ReplayGain ve `.lrc` sözler henüz yok |
+| İnternet radyosu | Radio Browser; türe göre liste, arama, favoriler, elle adres (kodda). ICY "çalan şarkı" ve ülke / dil filtreleri henüz yok |
 
 ## Klasör yapısı
 

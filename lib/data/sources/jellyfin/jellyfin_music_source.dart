@@ -43,7 +43,7 @@ class JellyfinMusicSource implements MusicSource {
 
   @override
   Map<String, String> get requestHeaders => {
-    'Authorization': _api.authorizationHeader,
+    _api.authHeader: _api.authorizationHeader,
   };
 
   Future<Result<T>> _guard<T>(Future<T> Function() body) =>

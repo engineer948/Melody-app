@@ -8,18 +8,124 @@ part of 'auth_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Signs users in; only Jellyfin is offered for now.
+/// Sources the UI may offer (build-time flags); overridden in tests.
+
+@ProviderFor(enabledSources)
+final enabledSourcesProvider = EnabledSourcesProvider._();
+
+/// Sources the UI may offer (build-time flags); overridden in tests.
+
+final class EnabledSourcesProvider
+    extends
+        $FunctionalProvider<Set<SourceType>, Set<SourceType>, Set<SourceType>>
+    with $Provider<Set<SourceType>> {
+  /// Sources the UI may offer (build-time flags); overridden in tests.
+  EnabledSourcesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'enabledSourcesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$enabledSourcesHash();
+
+  @$internal
+  @override
+  $ProviderElement<Set<SourceType>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  Set<SourceType> create(Ref ref) {
+    return enabledSources(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Set<SourceType> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<SourceType>>(value),
+    );
+  }
+}
+
+String _$enabledSourcesHash() => r'3baf904f72790ea757e9a2272a0c130ff185ad46';
+
+/// Kind of source being added or signed in to.
+
+@ProviderFor(SelectedSourceType)
+final selectedSourceTypeProvider = SelectedSourceTypeProvider._();
+
+/// Kind of source being added or signed in to.
+final class SelectedSourceTypeProvider
+    extends $NotifierProvider<SelectedSourceType, SourceType> {
+  /// Kind of source being added or signed in to.
+  SelectedSourceTypeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedSourceTypeProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedSourceTypeHash();
+
+  @$internal
+  @override
+  SelectedSourceType create() => SelectedSourceType();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SourceType value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SourceType>(value),
+    );
+  }
+}
+
+String _$selectedSourceTypeHash() =>
+    r'd4373b3a2f4a1fb1bbae586b20dd4f98f01ab9d4';
+
+/// Kind of source being added or signed in to.
+
+abstract class _$SelectedSourceType extends $Notifier<SourceType> {
+  SourceType build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<SourceType, SourceType>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SourceType, SourceType>,
+              SourceType,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Signs users in to sources of the selected kind.
 
 @ProviderFor(serverConnector)
 final serverConnectorProvider = ServerConnectorProvider._();
 
-/// Signs users in; only Jellyfin is offered for now.
+/// Signs users in to sources of the selected kind.
 
 final class ServerConnectorProvider
     extends
         $FunctionalProvider<ServerConnector, ServerConnector, ServerConnector>
     with $Provider<ServerConnector> {
-  /// Signs users in; only Jellyfin is offered for now.
+  /// Signs users in to sources of the selected kind.
   ServerConnectorProvider._()
     : super(
         from: null,
@@ -53,7 +159,7 @@ final class ServerConnectorProvider
   }
 }
 
-String _$serverConnectorHash() => r'536eb4ef5e2fafd0edb2c3b694cf18e7da066360';
+String _$serverConnectorHash() => r'4d7d9343dfe71e5b510f385509f5499d481c7dca';
 
 /// Users [server] lists on its sign-in page; empty when it hides them.
 

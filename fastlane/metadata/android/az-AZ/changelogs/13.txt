@@ -1,0 +1,3 @@
+Yeni mənbələr üçün altyapı.
+- Emby, Subsonic / Navidrome, cihazdakı fayllar və internet radiosu hazırdır, amma hələ göstərilmir
+- Kiçik düzəlişlər

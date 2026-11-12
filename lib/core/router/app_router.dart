@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:melody/core/config/feature_flags.dart';
 import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/domain/models/server.dart';
@@ -17,6 +18,7 @@ import 'package:melody/features/player/now_playing_screen.dart';
 import 'package:melody/features/player/queue_screen.dart';
 import 'package:melody/features/playlist/playlist_screen.dart';
 import 'package:melody/features/search/search_screen.dart';
+import 'package:melody/features/settings/debug_sources_screen.dart';
 import 'package:melody/features/settings/equalizer_screen.dart';
 import 'package:melody/features/settings/font_picker_screen.dart';
 import 'package:melody/features/settings/settings_screen.dart';
@@ -43,6 +45,7 @@ String? sessionRedirect(SessionState session, String location) {
       version: active.serverVersion,
       userName: active.userName,
       expired: true,
+      type: active.type,
     );
   }
   return null;
@@ -56,6 +59,7 @@ List<RouteBase> _detailRoutes() => [
     routes: [
       _page('font', const FontPickerScreen()),
       _page('equalizer', const EqualizerScreen()),
+      _page('debug-sources', const DebugSourcesScreen()),
     ],
   ),
   GoRoute(
@@ -194,6 +198,9 @@ GoRouter appRouter(Ref ref) {
                   name: query['name'] ?? baseUrl.host,
                   id: query['id'],
                   version: query['version'],
+                  type:
+                      SourceType.values.asNameMap()[query['type']] ??
+                      SourceType.jellyfin,
                 ),
                 initialUserName: query['user'],
                 expired: query['expired'] == '1',

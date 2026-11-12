@@ -1,7 +1,7 @@
 name: melody
 description: "Jellyfin-first multi-source music player"
 publish_to: 'none'
-version: 0.6.1+12
+version: 0.7.0+13
 
 environment:
   sdk: ^3.13.7
@@ -11,6 +11,7 @@ dependencies:
   audio_session: ^0.2.4
   cached_network_image: ^4.0.6
   connectivity_plus: ^7.3.2
+  crypto: ^3.0.6
   dio: ^5.11.1
   drift: ^2.35.4
   drift_flutter: ^0.3.1
