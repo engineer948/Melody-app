@@ -107,5 +107,6 @@ aylar sürebilir.
 ## 6. Ekran görüntüleri
 
 `fastlane/metadata/android/en-US/images/phoneScreenshots/` altındaki
-görüntülerde gerçek albüm kapakları ve şarkı adları yoktur: kapaklar bu proje
-için üretilmiş soyut çizimlerdir (CC0), şarkı ve sanatçı adları uydurmadır.
+görüntülerde yalnızca CC0 (kamu malı) albüm kapakları vardır; kaynakları
+aynı klasördeki `CREDITS.md`'de. Gerçek kullanıcı ekranlarından alındı,
+telifli kapaklar ve adlar bunlarla değiştirildi.
