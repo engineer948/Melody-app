@@ -4,9 +4,12 @@ name: Release
 # in the repository secrets (MELODY_KEYSTORE, MELODY_KEYSTORE_PASSWORD) and
 # attaches them to a GitHub release. F-Droid builds and signs its own APK
 # from the same tag.
+# It can also be started by hand (Actions → Release → Run workflow): the tag
+# v<version from pubspec.yaml> is then created on the chosen branch.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -27,10 +30,11 @@ jobs:
           line=$(grep -m1 '^version:' pubspec.yaml | awk '{print $2}')
           name=${line%%+*}
           code=${line##*+}
-          if [ "v$name" != "$GITHUB_REF_NAME" ]; then
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "v$name" != "$GITHUB_REF_NAME" ]; then
             echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $name"
             exit 1
           fi
+          echo "tag=v$name" >> "$GITHUB_OUTPUT"
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "code=$code" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-java@v4
@@ -80,10 +84,11 @@ jobs:
         run: |
           notes=fastlane/metadata/android/tr-TR/changelogs/${{ steps.version.outputs.code }}.txt
           [ -f "$notes" ] || echo "Melody ${{ steps.version.outputs.name }}" > "$notes"
-          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+          tag=${{ steps.version.outputs.tag }}
+          if gh release view "$tag" > /dev/null 2>&1; then
+            gh release upload "$tag" dist/* --clobber
           else
-            gh release create "$GITHUB_REF_NAME" dist/* \
+            gh release create "$tag" dist/* --target "$GITHUB_SHA" \
               --title "Melody ${{ steps.version.outputs.name }}" \
               --notes-file "$notes"
           fi
