@@ -1,0 +1,2 @@
+Back to the 0.5.0 look.
+- The colour backgrounds of 0.5.1–0.5.3 were removed; the player shows the blurred cover again

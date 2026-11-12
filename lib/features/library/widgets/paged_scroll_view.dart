@@ -18,12 +18,8 @@ class PagedScrollView<T> extends StatelessWidget {
     this.actions = const [],
     this.emptyIcon = Icons.library_music_outlined,
     this.headers = const [],
-    this.colors,
     super.key,
   });
-
-  /// Colours washed behind the top of the page; see [LargeTitlePage].
-  final List<Color>? colors;
 
   /// Page title.
   final String title;
@@ -52,7 +48,6 @@ class PagedScrollView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LargeTitlePage(
     title: title,
-    colors: colors,
     actions: actions,
     onRefresh: () async => onRefresh(),
     onNearEnd: onLoadMore,

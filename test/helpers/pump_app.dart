@@ -9,7 +9,6 @@ import 'package:melody/app.dart';
 import 'package:melody/core/device/client_identity.dart';
 import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/core/theme/system_colors.dart';
-import 'package:melody/core/widgets/color_wash.dart';
 import 'package:melody/data/db/app_database.dart';
 import 'package:melody/data/repositories/token_store.dart';
 import 'package:melody/domain/repositories/music_source.dart';
@@ -40,7 +39,6 @@ Future<ProviderContainer> createContainer({
   Override? engineOverride,
   List<Override> overrides = const [],
 }) async {
-  ColorWash.driftEnabled = false;
   SharedPreferences.setMockInitialValues(preferences);
   final prefs = await SharedPreferences.getInstance();
   final database = AppDatabase(NativeDatabase.memory());

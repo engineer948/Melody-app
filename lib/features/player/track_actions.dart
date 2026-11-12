@@ -171,16 +171,9 @@ class PlayShuffleButtons extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     final player = ref.read(playerControllerProvider.notifier);
     final enabled = tracks.isNotEmpty;
-    final accent = scheme.primary;
-    final playStyle = FilledButton.styleFrom(
-      backgroundColor: accent,
-      foregroundColor: scheme.onPrimary,
-      minimumSize: const Size.fromHeight(48),
-    );
     final style = FilledButton.styleFrom(
-      backgroundColor: accent.withValues(alpha: 0.16),
-      foregroundColor: accent,
-      minimumSize: const Size.fromHeight(48),
+      backgroundColor: scheme.surfaceContainerHigh,
+      foregroundColor: scheme.primary,
     );
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -188,7 +181,7 @@ class PlayShuffleButtons extends ConsumerWidget {
         children: [
           Expanded(
             child: FilledButton.icon(
-              style: playStyle,
+              style: style,
               onPressed: enabled
                   ? () => player.playTracks(tracks, albumInOrder: albumInOrder)
                   : null,

@@ -49,7 +49,7 @@ void main() {
       await controller.setPureBlack(value: true);
       await controller.setUseSystemColors(value: true);
       await controller.setAccent(const Color(0x80123456));
-      await controller.setTint(0.3);
+      await controller.setTint(0.5);
       await controller.setBarOpacity(0.6);
       await controller.setFont(AppFont.inter);
 
@@ -57,7 +57,7 @@ void main() {
         mode: AppThemeMode.dark,
         pureBlack: true,
         accent: Color(0xFF123456),
-        tint: 0.3,
+        tint: 0.5,
         barOpacity: 0.6,
         font: AppFont.inter,
       );
