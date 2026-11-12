@@ -1,0 +1,3 @@
+Renkler hareketli ışık olarak.
+- Siyah ve beyaz arka planlar olduğu gibi kalır; kapak renkleri üstünde parlayıp hareket eder
+- Daha dolgun renkler, her sayfada hareketli

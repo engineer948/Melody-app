@@ -74,7 +74,6 @@ class NowPlayingScreen extends ConsumerWidget {
                     Theme.of(context).colorScheme.tertiary,
                   ],
             ),
-            const ColoredBox(color: Color(0x33000000)),
             SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
