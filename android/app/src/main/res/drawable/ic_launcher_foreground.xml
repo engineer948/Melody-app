@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Melody launcher icon: five bars of a sound wave tracing an "M". -->
+<!-- Melody launcher icon: five bars of different heights reading as an "M". -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <group
-        android:pivotX="54"
-        android:pivotY="54"
-        android:scaleX="0.92"
-        android:scaleY="0.92">
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M28,45.5 A3.5,3.5 0 0 1 35,45.5 L35,62.5 A3.5,3.5 0 0 1 28,62.5 Z M39,37.5 A3.5,3.5 0 0 1 46,37.5 L46,70.5 A3.5,3.5 0 0 1 39,70.5 Z M50,46.5 A3.5,3.5 0 0 1 57,46.5 L57,61.5 A3.5,3.5 0 0 1 50,61.5 Z M61,37.5 A3.5,3.5 0 0 1 68,37.5 L68,70.5 A3.5,3.5 0 0 1 61,70.5 Z M72,45.5 A3.5,3.5 0 0 1 79,45.5 L79,62.5 A3.5,3.5 0 0 1 72,62.5 Z" />
-    </group>
+    <path android:pathData="M29.00,38.23 A3.57,3.57 0 0 1 36.14,38.23 L36.14,69.77 A3.57,3.57 0 0 1 29.00,69.77 Z M39.71,53.11 A3.57,3.57 0 0 1 46.86,53.11 L46.86,69.77 A3.57,3.57 0 0 1 39.71,69.77 Z M50.43,65.01 A3.57,3.57 0 0 1 57.57,65.01 L57.57,69.77 A3.57,3.57 0 0 1 50.43,69.77 Z M61.14,53.11 A3.57,3.57 0 0 1 68.29,53.11 L68.29,69.77 A3.57,3.57 0 0 1 61.14,69.77 Z M71.86,38.23 A3.57,3.57 0 0 1 79.00,38.23 L79.00,69.77 A3.57,3.57 0 0 1 71.86,69.77 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="54"
+                android:startY="34.65"
+                android:endX="54"
+                android:endY="73.35"
+                android:startColor="#FFFF7A59"
+                android:endColor="#FFE5383B" />
+        </aapt:attr>
+    </path>
 </vector>
