@@ -42,15 +42,20 @@ kaynaktan derlenir. Güncellemek için `third_party/sqlite/README.md`'ye bak.
    ```
 
 Etiket gelince GitHub Actions (`.github/workflows/release.yml`) APK'ları
-derler ve GitHub sürümüne ekler: `melody-<sürüm>-debug.apk` (tüm
-işlemciler) ile `arm64-v8a`, `armeabi-v7a` ve `x86_64` için ayrı dosyalar.
-Sürüm notu `fastlane/metadata/android/tr-TR/changelogs/<sayı>.txt`
-dosyasından alınır. Etiket, `pubspec.yaml`'daki sürümle aynı olmalıdır.
+derler ve GitHub sürümüne ekler: `melody-<sürüm>.apk` (tüm işlemciler) ile
+`arm64-v8a`, `armeabi-v7a` ve `x86_64` için ayrı dosyalar. Sürüm notu
+`fastlane/metadata/android/tr-TR/changelogs/<sayı>.txt` dosyasından alınır.
+Etiket, `pubspec.yaml`'daki sürümle aynı olmalıdır.
 
-Bu APK'lar depodaki sabit debug anahtarıyla
-(`android/app/debug.keystore`, standart `android` / `androiddebugkey`
-şifreleri; gizli değildir) imzalanır. Böylece her sürüm bir öncekinin
-üzerine kurulabilir. Kendi yayın anahtarımız yoktur.
+Bu APK'lar depoda **olmayan** kendi anahtarımızla imzalanır. Anahtar GitHub
+deposunun gizli değişkenlerinde (Settings → Secrets and variables →
+Actions) durur:
+
+- `MELODY_KEYSTORE`: anahtar dosyasının base64 hâli (takma ad `melody`)
+- `MELODY_KEYSTORE_PASSWORD`: dosyanın ve anahtarın şifresi
+
+Anahtar dosyasının bir yedeği güvenli bir yerde saklanmalıdır; kaybolursa
+yeni APK'lar eskilerinin üzerine kurulamaz.
 
 F-Droid uygulamayı bir kez kabul ettikten sonra yeni etiketleri kendisi
 bulur ve yeni sürümü birkaç gün içinde yayınlar (`AutoUpdateMode`).
@@ -95,6 +100,6 @@ aylar sürebilir.
   değiştirilemez (değiştirmek yeni bir uygulama demektir).
 - **Tarif taslaktır.** Flutter sürümü (`srclibs: flutter@3.47.9`) ve çıktı
   yolu F-Droid'in derleme sunucusunda doğrulanmadı.
-- F-Droid kendi anahtarıyla imzaladığı için, GitHub'daki debug APK ile
+- F-Droid kendi anahtarıyla imzaladığı için, GitHub'daki APK ile
   F-Droid'in imzaladığı APK birbirinin üzerine güncellenemez; birinden
   diğerine geçmek için uygulamayı kaldırıp yeniden kurmak gerekir.
