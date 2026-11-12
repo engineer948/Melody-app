@@ -13,13 +13,13 @@ hazır derlenmiş ikili dosya indirilmemeli.
 | Kapalı kaynak bağımlılık yok (Play Services, Firebase, Cast SDK) | ✅ derlenen APK'da kontrol edildi |
 | Google'ın şifreli bağımlılık raporu kapalı (`dependenciesInfo`) | ✅ |
 | Özgün uygulama ikonu | ✅ |
-| Mağaza metinleri (`fastlane/metadata/android`, en / tr / az) | ✅ ekran görüntüleri hariç |
+| Mağaza metinleri (`fastlane/metadata/android`, en / tr / az) | ✅ |
 | İmzasız derleme seçeneği (`MELODY_UNSIGNED=1`) | ✅ |
 | `pubspec.lock` depoda | ✅ |
 | SQLite kaynaktan derleniyor | ✅ resmî 3.54.1 kaynağı, bkz. 2. madde |
 | Depo herkese açık | ❌ |
 | Sürüm etiketi (`v0.x.y`) ve GitHub sürümü | ✅ etiket gelince otomatik |
-| Ekran görüntüleri | ❌ henüz eklenmedi |
+| Ekran görüntüleri | ✅ `en-US/images/phoneScreenshots` (diğer diller buna düşer) |
 
 ## 2. SQLite
 
@@ -103,3 +103,10 @@ aylar sürebilir.
 - F-Droid kendi anahtarıyla imzaladığı için, GitHub'daki APK ile
   F-Droid'in imzaladığı APK birbirinin üzerine güncellenemez; birinden
   diğerine geçmek için uygulamayı kaldırıp yeniden kurmak gerekir.
+
+## 6. Ekran görüntüleri
+
+`fastlane/metadata/android/en-US/images/phoneScreenshots/` altındaki
+görüntülerde yalnızca CC0 (kamu malı) albüm kapakları vardır; kaynakları
+aynı klasördeki `CREDITS.md`'de. Gerçek kullanıcı ekranlarından alındı,
+telifli kapaklar ve adlar bunlarla değiştirildi.
