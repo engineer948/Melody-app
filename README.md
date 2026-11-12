@@ -10,8 +10,10 @@ background playback (queue, notification, sleep timer, volume
 normalisation, equalizer), lyrics, playlists, Wi-Fi / mobile streaming
 quality, offline downloads, Auto DJ, on-device recommendations, listening
 statistics (Year in Review), Android Auto, a home screen widget, playback
-on DLNA devices and sharing songs, albums, artists and playlists as story
-images (Instagram, WhatsApp, …).
+on DLNA devices, sharing songs, albums, artists and playlists as story
+images (Instagram, WhatsApp, …) and a built-in Tailscale node: friends join
+your server with an invite code, without the Tailscale app
+([docs/TAILSCALE.md](docs/TAILSCALE.md)).
 For the F-Droid release, see [docs/FDROID.md](docs/FDROID.md).
 
 ## Running
@@ -81,14 +83,19 @@ lib/
   data/       sources/jellyfin (API, DTOs, mapper, discovery), db (drift),
               repositories (cache, account store, LibraryRepository),
               downloads (download store and transport), history (listening
-              history), dlna (SSDP discovery, AVTransport)
+              history), dlna (SSDP discovery, AVTransport), tailnet
+              (invite codes, Tailscale bridge, sign-in routing)
   player/     queue (PlayQueue), player controller, audio engines
               (just_audio, DLNA), notification / lock screen (audio_service),
               Android Auto tree, Auto DJ, history recording, widget
   features/   auth, home, library, album, artist, genre, playlist, search,
-              player, share, downloads, stats, settings, shell
+              player, share, tailnet, downloads, stats, settings, shell
   l10n/       ARB files (tr, en, az)
 ```
+
+`native/tailscale/` is the Go side of the built-in Tailscale node
+(`tool/build_tailscale.sh` turns it into `android/app/libs/tsbridge.aar`;
+without it the feature is simply left out).
 
 The UI (and the player) only know the `MusicSource` interface; everything
 Jellyfin-specific lives under `lib/data/sources/jellyfin/`.

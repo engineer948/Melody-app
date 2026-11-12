@@ -1,0 +1,4 @@
+Listen together through Tailscale.
+- Join a friend's Jellyfin with an invite code or a QR picture: no Tailscale app or account needed (Android)
+- Create invite codes in Settings, with a security checklist and access rule
+- Encrypted keys, no log upload, no app backups

@@ -25,6 +25,7 @@ import 'package:melody/features/settings/settings_screen.dart';
 import 'package:melody/features/shell/app_shell.dart';
 import 'package:melody/features/stats/stats_screen.dart';
 import 'package:melody/features/stats/wrap_screen.dart';
+import 'package:melody/features/tailnet/join_tailnet_screen.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -180,6 +181,10 @@ GoRouter appRouter(Ref ref) {
         path: AppRoutes.connect,
         builder: (context, state) => const AddServerScreen(),
         routes: [
+          GoRoute(
+            path: 'tailnet',
+            builder: (context, state) => const JoinTailnetScreen(),
+          ),
           GoRoute(
             path: 'login',
             redirect: (context, state) =>

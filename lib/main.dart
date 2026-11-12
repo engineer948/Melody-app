@@ -12,8 +12,10 @@ import 'package:melody/core/widgets/app_error_view.dart';
 import 'package:melody/data/db/app_database.dart';
 import 'package:melody/data/repositories/account_store.dart';
 import 'package:melody/data/repositories/token_store.dart';
+import 'package:melody/data/tailnet/tailnet_bridge.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
+import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:melody/player/auto_queue.dart';
 import 'package:melody/player/carplay_bridge.dart';
 import 'package:melody/player/history_recorder.dart';
@@ -29,22 +31,31 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _installErrorHandling();
   registerFontLicenses();
+  registerGoLicenses();
   final preferences = await SharedPreferences.getInstance();
   final database = AppDatabase();
   final accounts = await _loadAccounts(database);
   final version = await _loadVersion();
+  final tailnet = await TailnetBootstrap.load(
+    const ChannelTailnetBridge(),
+    const SecureTailnetSecretStore(),
+  );
   final container = ProviderContainer(
     overrides: [
       preferencesProvider.overrideWithValue(preferences),
       appDatabaseProvider.overrideWithValue(database),
       sessionBootstrapProvider.overrideWithValue(accounts),
+      tailnetBootstrapProvider.overrideWithValue(tailnet),
       clientIdentityProvider.overrideWithValue(
         ClientIdentity.load(preferences, version: version),
       ),
     ],
   );
-  // Downloads first, so the restored queue plays from disk where it can.
-  final downloads = container.read(downloadControllerProvider.notifier);
+  // Reconnects the built-in Tailscale node (if an invite was used), then
+  // downloads, so the restored queue plays from disk where it can.
+  final downloads = (container..read(tailnetControllerProvider)).read(
+    downloadControllerProvider.notifier,
+  );
   await downloads.ready;
   unawaited(downloads.sync());
   // Restores the saved queue, then connects notification and lock screen.

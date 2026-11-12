@@ -15,6 +15,7 @@
 <li>Dinləmə statistikası və İlin Xülasəsi (cihazda saxlanılır; söndürülə və ya silinə bilər)</li>
 <li>Android Auto, ana ekran vidceti və DLNA cihazlarında oxutma</li>
 <li>Mahnı, albom, ifaçı və pleylistləri hekayə şəkli kimi paylaşma (Instagram, WhatsApp, …)</li>
+<li>Daxili Tailscale: dostların Tailscale tətbiqi olmadan dəvət kodu ilə serverinə qoşulur</li>
 <li>Əvvəl yüklənmiş məzmunla oflayn işləyir</li>
 <li>Açıq, tünd və tam qara mövzu; Azərbaycan, Türk və İngilis dilləri</li>
 </ul>

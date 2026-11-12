@@ -598,5 +598,82 @@
         "type": "String"
       }
     }
+  },
+  "tailnetSection": "Tailscale",
+  "tailnetJoin": "Join with an invite code",
+  "tailnetJoinSubtitle": "Listen to a friend's server through Tailscale",
+  "tailnetJoinIntro": "Paste the invite code your friend sent you. Melody connects to their music server through Tailscale by itself: no Tailscale app and no account needed.",
+  "tailnetCodeLabel": "Invite code",
+  "tailnetPaste": "Paste",
+  "tailnetReadQr": "Read QR from a picture",
+  "tailnetQrNotFound": "No invite QR code was found in this picture.",
+  "tailnetConnect": "Connect",
+  "tailnetConnecting": "Connecting to Tailscale…",
+  "tailnetWaitingApproval": "Waiting for approval. Ask the server owner to approve this device in the Tailscale admin console.",
+  "tailnetErrorMalformed": "This is not a valid invite code.",
+  "tailnetErrorCorrupted": "The invite code is damaged. Copy it again.",
+  "tailnetErrorNotAuthKey": "This is not a Tailscale auth key (tskey-auth-…). API keys and OAuth secrets are refused for safety.",
+  "tailnetErrorNotTailnet": "The server must be a Tailscale address (100.x.y.z or name.ts.net).",
+  "tailnetErrorKeyRefused": "The auth key was refused. It may be used up, expired or revoked: ask for a new invite.",
+  "tailnetErrorGeneric": "Could not connect: {error}",
+  "tailnetServerNoAnswer": "Connected to Tailscale, but the music server did not answer. Check that it is running and that the access rule allows it.",
+  "tailnetStatusStopped": "Not connected",
+  "tailnetStatusStarting": "Connecting…",
+  "tailnetStatusApproval": "Waiting for approval",
+  "tailnetStatusRunning": "Connected · {ip}",
+  "tailnetStatusError": "Error: {error}",
+  "tailnetLeave": "Leave this network",
+  "tailnetLeaveTitle": "Leave the Tailscale network?",
+  "tailnetLeaveBody": "This device is removed from the network, its keys are deleted and you are signed out of {server}.",
+  "tailnetInviteCreate": "Create an invite code",
+  "tailnetInviteCreateSubtitle": "Let a friend listen to your server without installing Tailscale",
+  "tailnetInviteIntro": "Create a one-time auth key in the Tailscale admin console, then enter it here with your server's Tailscale address. Melody packs both into one code for your friend.",
+  "tailnetAuthKeyLabel": "Auth key",
+  "tailnetServerLabel": "Server address",
+  "tailnetServerHint": "100.101.102.103:8096 or name.tailnet.ts.net",
+  "tailnetNameLabel": "Name (optional)",
+  "tailnetShowKey": "Show key",
+  "tailnetHideKey": "Hide key",
+  "tailnetInviteGenerate": "Create code",
+  "tailnetInviteCopy": "Copy code",
+  "tailnetInviteCopied": "Invite code copied",
+  "tailnetInviteShareText": "Share code",
+  "tailnetInviteShareQr": "Share QR",
+  "tailnetInviteSecretWarning": "Treat this code like a password: whoever has it can join your network. Send it only to this friend.",
+  "tailnetChecklistTitle": "Security checklist",
+  "tailnetChecklist1": "Make the key one-time (not reusable) with a short expiry, e.g. 1 day.",
+  "tailnetChecklist2": "Give the key the tag tag:melody-friend.",
+  "tailnetChecklist3": "Add the access rule below and remove the default rule that allows everything, so friends can only reach the music server.",
+  "tailnetChecklist4": "Turn on device approval, so no device joins without you.",
+  "tailnetChecklist5": "One key per friend. To cut a friend off, remove their device in the admin console.",
+  "tailnetAclCopy": "Copy access rule",
+  "tailnetAclCopied": "Access rule copied",
+  "@tailnetErrorGeneric": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@tailnetStatusRunning": {
+    "placeholders": {
+      "ip": {
+        "type": "String"
+      }
+    }
+  },
+  "@tailnetStatusError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@tailnetLeaveBody": {
+    "placeholders": {
+      "server": {
+        "type": "String"
+      }
+    }
   }
 }

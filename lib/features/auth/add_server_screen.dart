@@ -13,6 +13,7 @@ import 'package:melody/features/auth/auth_providers.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/auth/source_picker.dart';
 import 'package:melody/features/settings/widgets/section_header.dart';
+import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// First step of signing in: find or type a server address.
@@ -233,6 +234,20 @@ class _AddServerScreenState extends ConsumerState<AddServerScreen> {
                           : Text(l10n.connectButton),
                     ),
                   ),
+                  if (type == SourceType.jellyfin &&
+                      ref.watch(
+                        tailnetControllerProvider.select((s) => s.available),
+                      ))
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: OutlinedButton.icon(
+                        onPressed: _busy
+                            ? null
+                            : () => context.push(AppRoutes.joinTailnet),
+                        icon: const Icon(Icons.vpn_lock_outlined),
+                        label: Text(l10n.tailnetJoin),
+                      ),
+                    ),
                   Row(
                     children: [
                       Expanded(child: SectionHeader(l10n.connectDiscovered)),

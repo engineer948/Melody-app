@@ -114,18 +114,21 @@ abstract class _$SelectedSourceType extends $Notifier<SourceType> {
   }
 }
 
-/// Signs users in to sources of the selected kind.
+/// Signs users in to sources of the selected kind; a server reached
+/// through the built-in Tailscale node goes through its proxy.
 
 @ProviderFor(serverConnector)
 final serverConnectorProvider = ServerConnectorProvider._();
 
-/// Signs users in to sources of the selected kind.
+/// Signs users in to sources of the selected kind; a server reached
+/// through the built-in Tailscale node goes through its proxy.
 
 final class ServerConnectorProvider
     extends
         $FunctionalProvider<ServerConnector, ServerConnector, ServerConnector>
     with $Provider<ServerConnector> {
-  /// Signs users in to sources of the selected kind.
+  /// Signs users in to sources of the selected kind; a server reached
+  /// through the built-in Tailscale node goes through its proxy.
   ServerConnectorProvider._()
     : super(
         from: null,
@@ -159,7 +162,7 @@ final class ServerConnectorProvider
   }
 }
 
-String _$serverConnectorHash() => r'4d7d9343dfe71e5b510f385509f5499d481c7dca';
+String _$serverConnectorHash() => r'ccac2d8e070fde33b31ad0dccdd1821fb55082ba';
 
 /// Users [server] lists on its sign-in page; empty when it hides them.
 

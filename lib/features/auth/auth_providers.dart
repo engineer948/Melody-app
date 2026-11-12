@@ -1,8 +1,10 @@
 import 'package:melody/core/config/feature_flags.dart';
 import 'package:melody/core/device/client_identity.dart';
 import 'package:melody/data/repositories/source_factory.dart';
+import 'package:melody/data/tailnet/tailnet_routing_connector.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/domain/repositories/server_connector.dart';
+import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_providers.g.dart';
@@ -28,11 +30,15 @@ class SelectedSourceType extends _$SelectedSourceType {
   }
 }
 
-/// Signs users in to sources of the selected kind.
+/// Signs users in to sources of the selected kind; a server reached
+/// through the built-in Tailscale node goes through its proxy.
 @Riverpod(keepAlive: true)
-ServerConnector serverConnector(Ref ref) => createServerConnector(
-  ref.watch(selectedSourceTypeProvider),
-  ref.watch(clientIdentityProvider),
+ServerConnector serverConnector(Ref ref) => TailnetRoutingConnector(
+  createServerConnector(
+    ref.watch(selectedSourceTypeProvider),
+    ref.watch(clientIdentityProvider),
+  ),
+  ref.watch(tailnetRouterProvider),
 );
 
 /// Users [server] lists on its sign-in page; empty when it hides them.

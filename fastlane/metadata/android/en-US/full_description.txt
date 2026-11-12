@@ -15,6 +15,7 @@
 <li>Listening statistics and a year in review (kept on the device; can be turned off or deleted)</li>
 <li>Android Auto, a home screen widget and playback on DLNA devices</li>
 <li>Share songs, albums, artists and playlists as story images (Instagram, WhatsApp, …)</li>
+<li>Built-in Tailscale: friends join your server with an invite code, without the Tailscale app</li>
 <li>Works offline with what was loaded before</li>
 <li>Light, dark and pure black themes; English, Turkish and Azerbaijani</li>
 </ul>

@@ -12,6 +12,7 @@ import 'package:melody/data/sources/radio/radio_source.dart';
 import 'package:melody/data/sources/subsonic/subsonic_music_source.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/domain/repositories/music_source.dart';
+import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -199,8 +200,11 @@ MusicSource? activeSource(Ref ref) {
     sessionControllerProvider.select((s) => (s.active, s.activeToken)),
   );
   if (account == null || token == null) return null;
+  // A server joined with a Tailscale invite is reached through the
+  // built-in node's loopback proxy.
+  final router = ref.watch(tailnetRouterProvider);
   final source = createMusicSource(
-    account: account,
+    account: account.copyWith(baseUrl: router.route(account.baseUrl)),
     token: token,
     identity: ref.watch(clientIdentityProvider),
     prefs: ref.watch(preferencesProvider),

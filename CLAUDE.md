@@ -38,6 +38,12 @@ flutter analyze
 flutter test
 ```
 
+- `native/tailscale/` (Go): run its tests with
+  `go test -race -tags "$(cat build_tags.txt)" ./...`, rebuild the library
+  with `tool/build_tailscale.sh`, and after any go.mod change run
+  `tool/go_licenses.sh`. Keep security properties listed in
+  `docs/TAILSCALE.md` intact (no auth key storage, encrypted state, proxy
+  secret, shields up, no log upload, reduced feature tags).
 - F-Droid builds from source: only add dependencies with permissive
   licenses (MIT / BSD / Apache-2.0) and no Google Play Services / Firebase;
   list each new one in `THIRD_PARTY_LICENSES.md`.

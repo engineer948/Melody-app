@@ -21,7 +21,7 @@ jobs:
   release:
     name: Build and publish APKs
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Read version
@@ -48,6 +48,16 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: native/tailscale/go.mod
+          cache-dependency-path: native/tailscale/go.sum
+      - name: Android NDK
+        run: |
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "ndk;28.2.13676358" > /dev/null
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/28.2.13676358" >> "$GITHUB_ENV"
+      - name: Build the Tailscale library
+        run: tool/build_tailscale.sh
       - name: Signing key from secrets
         env:
           KEYSTORE: ${{ secrets.MELODY_KEYSTORE }}

@@ -101,6 +101,13 @@ prepares the recipe; this can take weeks, sometimes months.
 
 ## 5. Watch out
 
+- **Tailscale (optional feature).** The build compiles the Go library in
+  `native/tailscale` (`tool/build_tailscale.sh`, needs Go and the NDK; see
+  the recipe). Log upload is disabled, but the feature talks to
+  Tailscale's coordination servers when a user joins with an invite, so the
+  listing should carry the `NonFreeNet` anti-feature. See
+  [TAILSCALE.md](TAILSCALE.md).
+
 - **The application id** is `io.github.engineer948.melody`; it cannot be
   changed after the first release (changing it means a new app).
 - **The recipe is a draft.** The Flutter version (`srclibs: flutter@3.47.9`)

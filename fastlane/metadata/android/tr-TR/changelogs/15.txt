@@ -1,0 +1,4 @@
+Tailscale ile birlikte dinle.
+- Arkadaşının Jellyfin'ine davet kodu veya QR görseliyle katıl: Tailscale uygulaması ya da hesap gerekmez (Android)
+- Ayarlar'da güvenlik listesi ve erişim kuralıyla davet kodu oluştur
+- Şifreli anahtarlar, log gönderimi yok, uygulama yedeği yok

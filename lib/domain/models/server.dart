@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:melody/core/config/feature_flags.dart';
+import 'package:melody/core/network/tailnet_address.dart';
 
 part 'server.freezed.dart';
 part 'server.g.dart';
@@ -18,8 +19,10 @@ abstract class ServerInfo with _$ServerInfo {
 
   const ServerInfo._();
 
-  /// Whether traffic to the server is unencrypted.
-  bool get isInsecure => baseUrl.scheme == 'http';
+  /// Whether traffic to the server is unencrypted. Tailscale addresses
+  /// are reached inside WireGuard, so plain HTTP to them is encrypted too.
+  bool get isInsecure =>
+      baseUrl.scheme == 'http' && !TailnetAddress.isTailnetHost(baseUrl.host);
 }
 
 /// A user the server lists on its sign-in page.

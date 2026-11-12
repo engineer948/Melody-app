@@ -23,6 +23,9 @@ abstract final class AppRoutes {
   /// Sign-in screen of a server.
   static const login = '/connect/login';
 
+  /// Joining a friend's server with a Tailscale invite code.
+  static const joinTailnet = '/connect/tailnet';
+
   /// Full-screen player.
   static const nowPlaying = '/player';
 

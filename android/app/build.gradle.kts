@@ -17,6 +17,7 @@ val keyProperties = Properties().apply {
     if (file.exists()) file.inputStream().use(::load)
 }
 val unsignedRelease = System.getenv("MELODY_UNSIGNED") == "1"
+val tailscaleAar = file("libs/tsbridge.aar")
 
 android {
     namespace = "io.github.engineer948.melody"
@@ -61,6 +62,24 @@ android {
         }
     }
 
+    // The built-in Tailscale node (native/tailscale, built with
+    // tool/build_tailscale.sh) is only compiled in when its library exists;
+    // otherwise a stub hides the feature.
+    sourceSets {
+        getByName("main") {
+            java.srcDir(if (tailscaleAar.exists()) "src/tailscale/kotlin" else "src/notailscale/kotlin")
+        }
+    }
+
+    // Native libraries are stored compressed: much smaller APK downloads
+    // (the Tailscale library is ~20 MB per CPU uncompressed); Android
+    // unpacks them once at install time.
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     // Google's encrypted dependency report is not wanted in F-Droid builds.
     dependenciesInfo {
         includeInApk = false
@@ -76,4 +95,10 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    if (tailscaleAar.exists()) {
+        implementation(files(tailscaleAar))
+    }
 }

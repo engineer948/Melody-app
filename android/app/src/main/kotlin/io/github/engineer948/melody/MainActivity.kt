@@ -38,8 +38,9 @@ class MainActivity : AudioServiceActivity() {
                 }
             }
         // The engine outlives the activity (background playback), so the
-        // handler only keeps the application context.
+        // handlers only keep the application context.
         val app = applicationContext
+        TailscaleChannel.register(flutterEngine.dartExecutor.binaryMessenger, app)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "melody/widget")
             .setMethodCallHandler { call, result ->
                 if (call.method == "update") {
