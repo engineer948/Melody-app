@@ -33,6 +33,9 @@ abstract final class LibraryRoutes {
 
   /// Favourite songs.
   static const favorites = '/library/favorites';
+
+  /// Songs available offline.
+  static const downloads = '/library/downloads';
 }
 
 /// Every album, sortable.

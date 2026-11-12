@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -7,6 +8,7 @@ import 'package:melody/core/config/feature_flags.dart';
 import 'package:melody/core/device/client_identity.dart';
 import 'package:melody/core/errors/failure.dart';
 import 'package:melody/core/errors/result.dart';
+import 'package:melody/data/downloads/download_transport.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/domain/repositories/music_source.dart';
@@ -367,6 +369,12 @@ class FakeMusicSource implements MusicSource {
       );
 
   @override
+  Uri downloadUri(
+    Track track, [
+    StreamOptions options = const StreamOptions(),
+  ]) => Uri.parse('https://music.example.com/download/${track.id}');
+
+  @override
   Uri? artworkUri(Artwork? artwork, {int size = 300}) => null;
 }
 
@@ -435,4 +443,42 @@ class FakeConnector implements ServerConnector {
     ServerInfo server,
     QuickConnectRequest request,
   ) async => Ok(_session);
+}
+
+/// [DownloadTransport] writing canned bytes instead of using the network.
+class FakeDownloadTransport implements DownloadTransport {
+  /// Bytes "served" for every address.
+  List<int> body = List.filled(1000, 7);
+
+  /// Addresses that fail.
+  final failing = <String>{};
+
+  /// When set, transfers wait here until it completes (or are cancelled).
+  Completer<void>? gate;
+
+  /// Addresses requested, in order.
+  final requests = <Uri>[];
+
+  @override
+  Future<void> fetch(
+    Uri uri,
+    File target, {
+    required DownloadHandle handle,
+    Map<String, String> headers = const {},
+    void Function(int bytes, int total)? onProgress,
+  }) async {
+    requests.add(uri);
+    final wait = gate;
+    if (wait != null) {
+      await Future.any([wait.future, handle.whenCancelled]);
+    }
+    if (handle.isCancelled) throw const DownloadCancelled();
+    if (failing.contains('$uri')) throw const SocketException('offline');
+    final offset = target.existsSync() ? target.lengthSync() : 0;
+    await target.writeAsBytes(
+      body.sublist(offset.clamp(0, body.length)),
+      mode: FileMode.append,
+    );
+    onProgress?.call(body.length, body.length);
+  }
 }

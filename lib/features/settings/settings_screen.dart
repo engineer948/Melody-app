@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/config/app_config.dart';
 import 'package:melody/features/settings/app_info.dart';
 import 'package:melody/features/settings/widgets/account_section.dart';
+import 'package:melody/features/settings/widgets/android_auto_section.dart';
 import 'package:melody/features/settings/widgets/appearance_section.dart';
+import 'package:melody/features/settings/widgets/auto_dj_section.dart';
+import 'package:melody/features/settings/widgets/downloads_section.dart';
 import 'package:melody/features/settings/widgets/language_section.dart';
 import 'package:melody/features/settings/widgets/media_sections.dart';
 import 'package:melody/features/settings/widgets/playback_section.dart';
+import 'package:melody/features/settings/widgets/privacy_section.dart';
 import 'package:melody/features/settings/widgets/section_header.dart';
 import 'package:melody/l10n/l10n.dart';
 
@@ -32,12 +38,21 @@ class SettingsScreen extends ConsumerWidget {
           const AppearanceSection(),
           SectionHeader(l10n.settingsPlayback),
           const PlaybackSection(),
+          const AutoDjSection(),
           SectionHeader(l10n.settingsStreaming),
           const StreamingSection(),
+          SectionHeader(l10n.settingsDownloads),
+          const DownloadsSection(),
           SectionHeader(l10n.settingsLyrics),
           const LyricsSection(),
           SectionHeader(l10n.settingsStorage),
           const StorageSection(),
+          if (Platform.isAndroid) ...[
+            SectionHeader(l10n.settingsAndroidAuto),
+            const AndroidAutoSection(),
+          ],
+          SectionHeader(l10n.settingsPrivacy),
+          const PrivacySection(),
           SectionHeader(l10n.settingsLanguage),
           const LanguageSection(),
           SectionHeader(l10n.settingsAbout),

@@ -369,5 +369,200 @@
         "type": "int"
       }
     }
-  }
+  },
+  "close": "Close",
+  "minutesValue": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "@minutesValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursMinutesValue": "{hours} h {minutes} min",
+  "@hoursMinutesValue": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "daysValue": "{count, plural, =1{1 day} other{{count} days}}",
+  "@daysValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playsValue": "{count, plural, =1{1 play} other{{count} plays}}",
+  "@playsValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statsTitle": "Listening statistics",
+  "statsBody": "Top artists, songs and your year in review",
+  "statsPeriodMonth": "Last 4 weeks",
+  "statsPeriodHalfYear": "Last 6 months",
+  "statsPeriodYear": "This year",
+  "statsPeriodAll": "All time",
+  "statsEmptyTitle": "Nothing to show yet",
+  "statsEmptyBody": "Play some music and your statistics will appear here. They never leave this device.",
+  "statsListened": "Listened",
+  "statsPlays": "Songs played",
+  "statsCurrentStreak": "Current streak",
+  "statsLongestStreak": "Longest streak",
+  "statsTopArtists": "Top artists",
+  "statsTopTracks": "Top songs",
+  "statsTopAlbums": "Top albums",
+  "statsTopGenres": "Top genres",
+  "statsByHour": "Time of day",
+  "statsBusiestDay": "Most active day",
+  "statsBusiestWeekday": "Favourite day of the week",
+  "wrapOpen": "Your {year} in review",
+  "@wrapOpen": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "wrapTitle": "{year} in review",
+  "@wrapTitle": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "wrapEmptyBody": "Nothing was recorded in {year}.",
+  "@wrapEmptyBody": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "wrapIntro": "A look back at the music that kept you company. Tap to continue.",
+  "wrapListenedKicker": "You listened for",
+  "wrapListenedBody": "{plays} songs on {days} days",
+  "@wrapListenedBody": {
+    "placeholders": {
+      "plays": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "wrapTopArtistKicker": "Your top artist",
+  "wrapTopTrackKicker": "Your top song",
+  "wrapTopAlbumKicker": "Your top album",
+  "wrapTopGenreKicker": "Your top genre",
+  "wrapBusiestHour": "You listen most around {time}",
+  "@wrapBusiestHour": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "wrapOutro": "Days in a row with music. See you next year!",
+  "wrapBanner": "Your {year} in review is ready",
+  "@wrapBanner": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "homeMixForYou": "Mix for you",
+  "homeForgotten": "Forgotten favourites",
+  "homeDiscover": "Discover: never played",
+  "settingsPrivacy": "Privacy",
+  "privacyHistory": "Listening history",
+  "privacyHistoryBody": "Kept on this device only; used for statistics and suggestions.",
+  "privacySuggestions": "Suggestions on the home tab",
+  "privacyClearHistory": "Delete listening history",
+  "privacyClearHistoryConfirm": "Delete the whole listening history? Statistics and suggestions start over.",
+  "privacyHistoryCleared": "Listening history deleted",
+  "autoDj": "Auto DJ",
+  "autoDjBody": "Adds songs when the queue is about to end",
+  "autoDjMode": "Auto DJ picks",
+  "autoDjSimilar": "Similar songs",
+  "autoDjArtist": "Same artist",
+  "autoDjGenre": "Same genre",
+  "autoDjRandom": "Random from library",
+  "autoDjSmart": "Smart mix",
+  "autoDjThreshold": "Add when songs left",
+  "libraryDownloads": "Downloaded",
+  "settingsDownloads": "Downloads",
+  "download": "Download",
+  "downloaded": "Downloaded",
+  "downloadRemove": "Remove download",
+  "downloadKeepSynced": "Download and keep in sync",
+  "downloadStarted": "{count, plural, =1{Downloading 1 song} other{Downloading {count} songs}}",
+  "@downloadStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "downloadRemoveConfirm": "{count, plural, =1{Remove this download?} other{Remove these {count} downloads?}}",
+  "@downloadRemoveConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "downloadRemoveAll": "Remove all downloads",
+  "downloadRemoveAllConfirm": "Remove all downloads? Automatic downloads (favourites, synced playlists) are turned off too.",
+  "downloadsEmptyTitle": "No downloads yet",
+  "downloadsEmptyBody": "Download albums, playlists or songs to listen without a connection.",
+  "downloadsSummary": "{count, plural, =1{1 song} other{{count} songs}} · {size}",
+  "@downloadsSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadsPending": "{count, plural, =1{1 download in progress} other{{count} downloads in progress}}",
+  "@downloadsPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "downloadPauseAll": "Pause all",
+  "downloadResumeAll": "Resume all",
+  "downloadPause": "Pause",
+  "downloadResume": "Resume",
+  "downloadRunning": "Downloading…",
+  "downloadQueued": "Waiting",
+  "downloadPaused": "Paused",
+  "downloadFailed": "Failed",
+  "downloadWifiOnly": "Download on Wi-Fi only",
+  "downloadQuality": "Download quality",
+  "downloadQualityBody": "Applies to new downloads",
+  "downloadParallel": "Downloads at the same time",
+  "downloadAutoFavorites": "Download favourites automatically",
+  "outputTitle": "Play on",
+  "outputThisDevice": "This device",
+  "outputNone": "No DLNA devices found on this network.",
+  "settingsAndroidAuto": "Android Auto",
+  "androidAutoBody": "Sections shown in the car. Apps not installed from Google Play appear in Android Auto only after enabling \"Unknown sources\" in its developer settings."
 }

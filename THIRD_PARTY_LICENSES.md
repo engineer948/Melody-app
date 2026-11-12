@@ -32,6 +32,7 @@ with the app and shown under **Settings → About → Open source licenses**.
 | `meta` | BSD-3-Clause |
 | `package_info_plus` | BSD-3-Clause |
 | `shared_preferences` | BSD-3-Clause |
+| `xml` (DLNA device descriptions and control messages) | MIT |
 
 ## Fonts
 

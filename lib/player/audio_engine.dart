@@ -12,6 +12,10 @@ class EngineSource {
     this.headers = const {},
     this.tag,
     this.cacheKey,
+    this.title,
+    this.artist,
+    this.album,
+    this.artUri,
   });
 
   /// Stream address.
@@ -25,6 +29,18 @@ class EngineSource {
 
   /// When set, the stream is saved to (and replayed from) the disk cache.
   final String? cacheKey;
+
+  /// Song title, for outputs that show what they play (DLNA).
+  final String? title;
+
+  /// Artist name, see [title].
+  final String? artist;
+
+  /// Album title, see [title].
+  final String? album;
+
+  /// Cover address, see [title].
+  final Uri? artUri;
 }
 
 /// Coarse state of the engine.

@@ -9,6 +9,7 @@ import 'package:melody/core/widgets/failure_view.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_widgets.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
@@ -129,6 +130,8 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
         onLoadMore: () =>
             ref.read(trackListProvider(_query).notifier).loadMore(),
         actions: [
+          if (state.items.isNotEmpty)
+            DownloadButton(tracks: state.items, playlistId: widget.id),
           if (editable)
             PopupMenuButton<_Action>(
               tooltip: l10n.moreOptions,

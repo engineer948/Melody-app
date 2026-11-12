@@ -269,6 +269,23 @@ class CatalogCache {
     return [for (final row in rows) ?_decode(kind, row.payload)];
   }
 
+  /// Up to [limit] cached items of [kind] in random order.
+  Future<List<T>> sample<T>(
+    String accountId,
+    CacheKind<T> kind, {
+    int limit = 500,
+  }) async {
+    final rows =
+        await (_db.select(_db.cachedItems)
+              ..where(
+                (t) => t.accountId.equals(accountId) & t.kind.equals(kind.name),
+              )
+              ..orderBy([(t) => OrderingTerm.random()])
+              ..limit(limit))
+            .get();
+    return [for (final row in rows) ?_decode(kind, row.payload)];
+  }
+
   /// Applies [change] to a cached item, if present.
   Future<void> updateItem<T>(
     String accountId,

@@ -4,8 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/player/audio_engine.dart';
+import 'package:melody/player/dlna_engine.dart';
 import 'package:melody/player/just_audio_engine.dart';
+import 'package:melody/player/output_controller.dart';
 import 'package:melody/player/play_queue.dart';
 import 'package:melody/player/playback_reporter.dart';
 import 'package:melody/player/playback_settings.dart';
@@ -24,7 +27,11 @@ StreamCache streamCache(Ref ref) => StreamCache();
 /// The audio engine; overridden with a fake in tests.
 @Riverpod(keepAlive: true)
 AudioEngine audioEngine(Ref ref) {
-  final engine = JustAudioEngine(cache: ref.watch(streamCacheProvider));
+  final renderer = ref.watch(outputControllerProvider);
+  AudioEngine create() => renderer == null
+      ? JustAudioEngine(cache: ref.watch(streamCacheProvider))
+      : DlnaEngine(renderer, client: ref.watch(dlnaClientProvider));
+  final engine = create();
   ref.onDispose(engine.dispose);
   return engine;
 }
@@ -121,6 +128,9 @@ class PlayerController extends _$PlayerController {
     return PlayerState(queue: saved.queue);
   }
 
+  /// Saves the queue and position now, e.g. before the output changes.
+  Future<void> saveQueue() => _persist();
+
   Future<void> _persist() async {
     if (!ref.mounted) return;
     final accountId = ref.read(sessionControllerProvider).activeId;
@@ -138,14 +148,25 @@ class PlayerController extends _$PlayerController {
     final options = streaming.optionsFor(mobile: mobile);
     final accountId = ref.read(sessionControllerProvider).activeId;
     final cache = options.isOriginal && streaming.cacheMb > 0;
+    final downloads = ref.read(downloadControllerProvider.notifier);
+    // A renderer on the network cannot read files on this device.
+    final local = ref.read(outputControllerProvider) == null;
     return [
       for (final entry in queue.entries)
-        EngineSource(
-          uri: source.streamUri(entry.track, options),
-          headers: source.requestHeaders,
-          tag: entry.uid,
-          cacheKey: cache ? '${accountId}_${entry.track.id}' : null,
-        ),
+        if (local ? downloads.localPath(entry.track.id) : null case final path?)
+          // Downloaded: played from disk, no network needed.
+          EngineSource(uri: Uri.file(path), tag: entry.uid)
+        else
+          EngineSource(
+            uri: source.streamUri(entry.track, options),
+            headers: source.requestHeaders,
+            tag: entry.uid,
+            cacheKey: cache && local ? '${accountId}_${entry.track.id}' : null,
+            title: entry.track.title,
+            artist: entry.track.artistLine,
+            album: entry.track.albumTitle,
+            artUri: source.artworkUri(entry.track.artwork, size: 640),
+          ),
     ];
   }
 

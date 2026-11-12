@@ -11,5 +11,7 @@ GeneratedPluginRegistrant.java
 # See https://flutter.dev/to/reference-keystore
 key.properties
 **/*.keystore
+# The shared debug key is public on purpose (see app/build.gradle.kts).
+!/app/debug.keystore
 **/*.jks
 /build/

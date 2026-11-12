@@ -13,6 +13,10 @@ import 'package:melody/data/db/app_database.dart';
 import 'package:melody/data/repositories/account_store.dart';
 import 'package:melody/data/repositories/token_store.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_controller.dart';
+import 'package:melody/player/auto_queue.dart';
+import 'package:melody/player/history_recorder.dart';
+import 'package:melody/player/home_widget.dart';
 import 'package:melody/player/media_session.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -38,10 +42,20 @@ Future<void> main() async {
       ),
     ],
   );
+  // Downloads first, so the restored queue plays from disk where it can.
+  final downloads = container.read(downloadControllerProvider.notifier);
+  await downloads.ready;
+  unawaited(downloads.sync());
   // Restores the saved queue, then connects notification and lock screen.
   unawaited(
-    MelodyAudioHandler.start(container..read(playerControllerProvider)),
+    MelodyAudioHandler.start(
+      container
+        ..read(playerControllerProvider)
+        ..read(historyRecorderProvider)
+        ..read(autoQueueProvider),
+    ),
   );
+  HomeWidgetUpdater.start(container);
   runApp(
     UncontrolledProviderScope(container: container, child: const MelodyApp()),
   );

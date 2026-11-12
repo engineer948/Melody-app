@@ -8,6 +8,7 @@ import 'package:melody/features/artist/artist_screen.dart';
 import 'package:melody/features/auth/add_server_screen.dart';
 import 'package:melody/features/auth/login_screen.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/downloads_page.dart';
 import 'package:melody/features/genre/genre_screen.dart';
 import 'package:melody/features/home/home_screen.dart';
 import 'package:melody/features/library/library_pages.dart';
@@ -20,6 +21,8 @@ import 'package:melody/features/settings/equalizer_screen.dart';
 import 'package:melody/features/settings/font_picker_screen.dart';
 import 'package:melody/features/settings/settings_screen.dart';
 import 'package:melody/features/shell/app_shell.dart';
+import 'package:melody/features/stats/stats_screen.dart';
+import 'package:melody/features/stats/wrap_screen.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -53,6 +56,20 @@ List<RouteBase> _detailRoutes() => [
     routes: [
       _page('font', const FontPickerScreen()),
       _page('equalizer', const EqualizerScreen()),
+    ],
+  ),
+  GoRoute(
+    path: 'stats',
+    builder: (context, state) => const StatsScreen(),
+    routes: [
+      GoRoute(
+        path: 'wrap/:year',
+        builder: (context, state) => WrapScreen(
+          year:
+              int.tryParse(state.pathParameters['year'] ?? '') ??
+              DateTime.now().year,
+        ),
+      ),
     ],
   ),
   GoRoute(
@@ -104,6 +121,7 @@ final _libraryRoutes = <RouteBase>[
   _page('playlists', const PlaylistsPage()),
   _page('genres', const GenresPage()),
   _page('favorites', const SongsPage(favoritesOnly: true)),
+  _page('downloads', const DownloadsPage()),
 ];
 
 /// The player slides up from the bottom.

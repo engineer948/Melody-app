@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +14,7 @@ import 'package:melody/data/repositories/token_store.dart';
 import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/auth/auth_providers.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/settings/app_info.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:melody/player/streaming_settings.dart';
@@ -31,12 +34,16 @@ Future<ProviderContainer> createContainer({
   FakeConnector? connector,
   TokenStore? tokens,
   FakeAudioEngine? engine,
+  FakeDownloadTransport? downloadTransport,
+  bool mobileData = false,
+  Override? engineOverride,
   List<Override> overrides = const [],
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
   final prefs = await SharedPreferences.getInstance();
   final database = AppDatabase(NativeDatabase.memory());
   final fakeSource = source ?? FakeMusicSource();
+  Directory? downloadFolder;
   final container = ProviderContainer(
     overrides: [
       preferencesProvider.overrideWithValue(prefs),
@@ -49,8 +56,17 @@ Future<ProviderContainer> createContainer({
       sessionBootstrapProvider.overrideWithValue([
         if (signedIn) (account: testAccount, token: 'token-1'),
       ]),
-      audioEngineProvider.overrideWithValue(engine ?? FakeAudioEngine()),
-      onMobileDataProvider.overrideWith((ref) => Stream.value(false)),
+      engineOverride ??
+          audioEngineProvider.overrideWithValue(engine ?? FakeAudioEngine()),
+      downloadDirectoryProvider.overrideWithValue(
+        () async => downloadFolder ??= Directory.systemTemp.createTempSync(
+          'melody_downloads',
+        ),
+      ),
+      downloadTransportProvider.overrideWithValue(
+        downloadTransport ?? FakeDownloadTransport(),
+      ),
+      onMobileDataProvider.overrideWith((ref) => Stream.value(mobileData)),
       ...overrides,
       activeSourceProvider.overrideWith(
         (ref) => ref.watch(sessionControllerProvider).activeToken == null
@@ -62,6 +78,10 @@ Future<ProviderContainer> createContainer({
   addTearDown(() async {
     container.dispose();
     await database.close();
+    final folder = downloadFolder;
+    if (folder != null && folder.existsSync()) {
+      folder.deleteSync(recursive: true);
+    }
   });
   return container;
 }

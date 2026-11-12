@@ -1,0 +1,6 @@
+Oflayn dinləmə, Auto DJ və statistika.
+- Mahnı, albom və pleylist yükləmə; pleylistləri və sevimliləri sinxron saxlama
+- Auto DJ: növbə bitəndə musiqi kəsilmir
+- Ana səhifədə cihazında hesablanan tövsiyələr
+- Dinləmə statistikası və İlin Xülasəsi; tarixçə söndürülə və ya silinə bilər
+- Android Auto, ana ekran vidceti və DLNA cihazlarında oxutma

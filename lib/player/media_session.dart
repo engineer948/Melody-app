@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/logging/app_logger.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/player/media_browser.dart';
 import 'package:melody/player/play_queue.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:melody/player/player_state.dart';
@@ -16,9 +17,10 @@ const _log = AppLogger('media-session');
 /// and Bluetooth buttons, audio focus and "headphones unplugged".
 class MelodyAudioHandler extends BaseAudioHandler
     with QueueHandler, SeekHandler {
-  MelodyAudioHandler._(this._container);
+  MelodyAudioHandler._(this._container) : _browser = MediaBrowser(_container);
 
   final ProviderContainer _container;
+  final MediaBrowser _browser;
   Timer? _clickTimer;
   int _clicks = 0;
 
@@ -34,6 +36,7 @@ class MelodyAudioHandler extends BaseAudioHandler
           androidNotificationChannelId: 'io.github.engineer948.melody.playback',
           androidNotificationChannelName: AppConfig.appName,
           androidNotificationOngoing: true,
+          androidBrowsableRootExtras: MediaBrowser.rootExtras,
         ),
       );
       handler._bind();
@@ -102,6 +105,8 @@ class MelodyAudioHandler extends BaseAudioHandler
           MediaAction.skipToQueueItem,
           MediaAction.setShuffleMode,
           MediaAction.setRepeatMode,
+          MediaAction.playFromMediaId,
+          MediaAction.playFromSearch,
         },
         androidCompactActionIndices: const [0, 1, 2],
         processingState: !state.hasQueue
@@ -124,6 +129,32 @@ class MelodyAudioHandler extends BaseAudioHandler
       ),
     );
   }
+
+  // ---- Android Auto and other media browsers ---------------------------
+
+  @override
+  Future<List<MediaItem>> getChildren(
+    String parentMediaId, [
+    Map<String, dynamic>? options,
+  ]) => _browser.children(parentMediaId);
+
+  @override
+  Future<void> playFromMediaId(
+    String mediaId, [
+    Map<String, dynamic>? extras,
+  ]) => _browser.play(mediaId);
+
+  @override
+  Future<List<MediaItem>> search(
+    String query, [
+    Map<String, dynamic>? extras,
+  ]) => _browser.search(query);
+
+  @override
+  Future<void> playFromSearch(String query, [Map<String, dynamic>? extras]) =>
+      _browser.playFromSearch(query, extras);
+
+  // ---- Transport controls ------------------------------------------------
 
   @override
   Future<void> play() => _player.play();

@@ -47,6 +47,11 @@ class LibraryScreen extends ConsumerWidget {
           l10n.libraryFavorites,
           LibraryRoutes.favorites,
         ),
+      (
+        Icons.download_for_offline_rounded,
+        l10n.libraryDownloads,
+        LibraryRoutes.downloads,
+      ),
     ];
     final recent = ref.watch(albumListProvider(recentlyAddedQuery));
     return Scaffold(

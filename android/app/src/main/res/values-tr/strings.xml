@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Çalan şarkı ve oynatma düğmeleri</string>
+    <string name="widget_idle">Çalan bir şey yok</string>
+    <string name="widget_previous">Önceki</string>
+    <string name="widget_play_pause">Çal ya da duraklat</string>
+    <string name="widget_next">Sonraki</string>
+</resources>

@@ -1,0 +1,6 @@
+Çevrimdışı dinleme, Auto DJ ve istatistikler.
+- Şarkı, albüm ve çalma listesi indirme; çalma listelerini ve favorileri senkronize tutma
+- Auto DJ: sıra bitince müzik kesilmez
+- Ana sayfada cihazında hesaplanan öneriler
+- Dinleme istatistikleri ve Yıl Özeti; geçmiş kapatılabilir ya da silinebilir
+- Android Auto, ana ekran widget'ı ve DLNA cihazlarında çalma

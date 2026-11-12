@@ -49,6 +49,9 @@ _Track _$TrackFromJson(Map<String, dynamic> json) => _Track(
   container: json['container'] as String?,
   isFavorite: json['isFavorite'] as bool? ?? false,
   playCount: (json['playCount'] as num?)?.toInt() ?? 0,
+  genres:
+      (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const <String>[],
   trackGainDb: (json['trackGainDb'] as num?)?.toDouble(),
   albumGainDb: (json['albumGainDb'] as num?)?.toDouble(),
   playlistItemId: json['playlistItemId'] as String?,
@@ -69,6 +72,7 @@ Map<String, dynamic> _$TrackToJson(_Track instance) => <String, dynamic>{
   'container': instance.container,
   'isFavorite': instance.isFavorite,
   'playCount': instance.playCount,
+  'genres': instance.genres,
   'trackGainDb': instance.trackGainDb,
   'albumGainDb': instance.albumGainDb,
   'playlistItemId': instance.playlistItemId,

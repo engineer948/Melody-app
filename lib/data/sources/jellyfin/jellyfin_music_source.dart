@@ -435,6 +435,35 @@ class JellyfinMusicSource implements MusicSource {
   }
 
   @override
+  Uri downloadUri(
+    Track track, [
+    StreamOptions options = const StreamOptions(),
+  ]) {
+    if (options.isOriginal) {
+      return _api.resolve('Items/${track.id}/Download', {
+        'api_key': ?_api.token,
+      });
+    }
+    // A plain progressive file (no HLS), so it can be saved and resumed.
+    final codec = switch (options.format) {
+      StreamFormat.opus => 'opus',
+      StreamFormat.aac => 'aac',
+      StreamFormat.original || StreamFormat.mp3 => 'mp3',
+    };
+    final container = switch (options.format) {
+      StreamFormat.opus => 'ogg',
+      StreamFormat.aac => 'aac',
+      StreamFormat.original || StreamFormat.mp3 => 'mp3',
+    };
+    return _api.resolve('Audio/${track.id}/stream.$container', {
+      'audioCodec': codec,
+      'audioBitRate': '${(options.maxBitrateKbps ?? 320) * 1000}',
+      'deviceId': _api.identity.deviceId,
+      'api_key': ?_api.token,
+    });
+  }
+
+  @override
   Uri? artworkUri(Artwork? artwork, {int size = 300}) {
     if (artwork == null) return null;
     return _api.resolve('Items/${artwork.itemId}/Images/Primary', {

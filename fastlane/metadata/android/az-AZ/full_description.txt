@@ -10,6 +10,10 @@
 <li>Ana səhifə rəfləri: son əlavə edilənlər, son dinlənilənlər, ən çox dinlənilənlər, təsadüfi albomlar</li>
 <li>Albomlar, ifaçılar, mahnılar, pleylistlər, janrlar və sevimlilər</li>
 <li>Sürətli axtarış və son axtarışlar</li>
+<li>Oflayn yükləmə: mahnı, albom və pleylist; pleylistlər və sevimlilər sinxron saxlanıla bilər</li>
+<li>Auto DJ və cihazında hesablanan tövsiyələr</li>
+<li>Dinləmə statistikası və İlin Xülasəsi (cihazda saxlanılır; söndürülə və ya silinə bilər)</li>
+<li>Android Auto, ana ekran vidceti və DLNA cihazlarında oxutma</li>
 <li>Əvvəl yüklənmiş məzmunla oflayn işləyir</li>
 <li>Açıq, tünd və tam qara mövzu; Azərbaycan, Türk və İngilis dilləri</li>
 </ul>

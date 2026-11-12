@@ -7,6 +7,7 @@ import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
@@ -35,6 +36,8 @@ Future<void> showTrackMenu(
   final capabilities = ref.read(activeSourceProvider)?.capabilities;
   final canFavorite = capabilities?.favorites ?? false;
   final canEditPlaylists = capabilities?.editablePlaylists ?? false;
+  final downloads = ref.read(downloadControllerProvider.notifier);
+  final isDownloaded = ref.read(downloadControllerProvider)[track.id] != null;
   final outer = context;
   await showModalBottomSheet<void>(
     context: context,
@@ -85,6 +88,22 @@ Future<void> showTrackMenu(
                 unawaited(showAddToPlaylistSheet(outer, ref, [track]));
               },
             ),
+          ListTile(
+            leading: Icon(
+              isDownloaded
+                  ? Icons.download_done_rounded
+                  : Icons.download_outlined,
+            ),
+            title: Text(isDownloaded ? l10n.downloadRemove : l10n.download),
+            onTap: () {
+              Navigator.pop(context);
+              unawaited(
+                isDownloaded
+                    ? downloads.remove([track.id])
+                    : downloads.enqueue([track]),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.playlist_play),
             title: Text(l10n.playNext),
