@@ -19,7 +19,7 @@ hazır derlenmiş ikili dosya indirilmemeli.
 | SQLite kaynaktan derleniyor | ✅ resmî 3.54.1 kaynağı, bkz. 2. madde |
 | Depo herkese açık | ❌ |
 | Sürüm etiketi (`v0.x.y`) ve GitHub sürümü | ✅ etiket gelince otomatik |
-| Ekran görüntüleri | ✅ `en-US/images/phoneScreenshots` (diğer diller buna düşer) |
+| Ekran görüntüleri | ❌ henüz eklenmedi |
 
 ## 2. SQLite
 
@@ -104,9 +104,3 @@ aylar sürebilir.
   F-Droid'in imzaladığı APK birbirinin üzerine güncellenemez; birinden
   diğerine geçmek için uygulamayı kaldırıp yeniden kurmak gerekir.
 
-## 6. Ekran görüntüleri
-
-`fastlane/metadata/android/en-US/images/phoneScreenshots/` altındaki
-görüntülerde yalnızca CC0 (kamu malı) albüm kapakları vardır; kaynakları
-aynı klasördeki `CREDITS.md`'de. Gerçek kullanıcı ekranlarından alındı,
-telifli kapaklar ve adlar bunlarla değiştirildi.
