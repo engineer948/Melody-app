@@ -6,14 +6,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Signing:
-// - Debug key: the fixed, public android/app/debug.keystore, so builds made
-//   on any machine (and the APKs on GitHub releases) update each other.
-// - Release builds:
-//   - android/key.properties present (storeFile, storePassword, keyAlias,
-//     keyPassword): sign with that key.
-//   - MELODY_UNSIGNED=1: leave the APK unsigned; F-Droid signs it itself.
-//   - otherwise: the debug key above.
+// Release signing:
+// - android/key.properties present (storeFile, storePassword, keyAlias,
+//   keyPassword): sign with that key. GitHub releases write it from the
+//   repository secrets; the key itself is never committed.
+// - MELODY_UNSIGNED=1: leave the APK unsigned; F-Droid signs it itself.
+// - otherwise: this machine's own debug key, for local testing only.
 val keyProperties = Properties().apply {
     val file = rootProject.file("key.properties")
     if (file.exists()) file.inputStream().use(::load)
@@ -43,13 +41,6 @@ android {
     }
 
     signingConfigs {
-        getByName("debug") {
-            // Not a secret: the standard Android debug credentials.
-            storeFile = file("debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
         if (keyProperties.isNotEmpty()) {
             create("release") {
                 storeFile = rootProject.file(keyProperties.getProperty("storeFile"))
