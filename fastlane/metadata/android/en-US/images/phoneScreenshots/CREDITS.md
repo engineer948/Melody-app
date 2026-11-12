@@ -9,4 +9,4 @@ from Wikimedia Commons. Song and artist names are those of the covers.
 - Imbecility Album Cover.jpg — Don Tushmadic, CC0: https://commons.wikimedia.org/wiki/File:Imbecility_Album_Cover.jpg
 - Album Cover The Variation Problem - StankBottom.png — lalesh aldarwish, CC0: https://commons.wikimedia.org/wiki/File:Album_Cover_The_Variation_Problem_-_StankBottom.png
 - Joey Bond Steel Dragonfly CD Cover Art.jpg — Michael Laucke, CC0: https://commons.wikimedia.org/wiki/File:Joey_Bond_Steel_Dragonfly_CD_Cover_Art.jpg
-- Extinction Cover 2.jpg — Uvuloid, CC0: https://commons.wikimedia.org/wiki/File:Extinction_Cover_2.jpg
+- Winterglow COVER (1).png — NoelBrouer, CC0: https://commons.wikimedia.org/wiki/File:Winterglow_COVER_(1).png
