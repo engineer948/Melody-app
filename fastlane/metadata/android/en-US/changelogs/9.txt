@@ -1,0 +1,3 @@
+Colours glow and move on black.
+- Smaller, livelier colour glows that drift visibly; black stays visible between them
+- Fixed colour bleeding below the top of pages

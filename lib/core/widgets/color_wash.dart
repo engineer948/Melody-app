@@ -40,7 +40,7 @@ class _ColorWashState extends State<ColorWash>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(seconds: 24),
+    duration: const Duration(seconds: 14),
   );
 
   @override
@@ -120,16 +120,18 @@ class _WashPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = base);
+    canvas
+      ..clipRect(Offset.zero & size)
+      ..drawRect(Offset.zero & size, Paint()..color = base);
     // Blobs leave the base colour showing around them: ambient light, not
     // a coloured background.
-    final radius = max(size.width, size.height) * 0.5;
+    final radius = size.shortestSide * 0.62;
     for (var i = 0; i < _anchors.length; i++) {
       final color = colors[i % colors.length];
       final angle = 2 * pi * (t + i / _anchors.length);
       final wobble =
           Offset(cos(angle), sin(angle * (i.isEven ? 1 : -1))) *
-          (size.shortestSide * 0.12);
+          (size.shortestSide * 0.32);
       final center =
           Offset(_anchors[i].dx * size.width, _anchors[i].dy * size.height) +
           wobble;
@@ -140,10 +142,10 @@ class _WashPainter extends CustomPainter {
           ..shader = RadialGradient(
             colors: [
               color.withValues(alpha: opacity),
-              color.withValues(alpha: 0.55 * opacity),
+              color.withValues(alpha: 0.6 * opacity),
               color.withValues(alpha: 0),
             ],
-            stops: const [0, 0.35, 1],
+            stops: const [0, 0.45, 1],
           ).createShader(Rect.fromCircle(center: center, radius: radius)),
       );
     }

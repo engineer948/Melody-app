@@ -1,0 +1,3 @@
+Renkler siyah üstünde parlayıp hareket eder.
+- Daha küçük, canlı ve belirgin şekilde hareket eden renk ışıkları; aralarında siyah görünür
+- Sayfaların üst kısmındaki rengin aşağı taşması düzeltildi

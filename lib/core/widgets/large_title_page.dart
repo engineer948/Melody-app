@@ -133,7 +133,7 @@ class _LargeTitlePageState extends State<LargeTitlePage> {
     final fromCover = widget.colors;
     final colors =
         fromCover ?? [scheme.primary, scheme.tertiary, scheme.secondary];
-    final strength = (fromCover != null ? 0.9 : 0.6) * (dark ? 1 : 0.75);
+    final strength = (fromCover != null ? 1.0 : 0.8) * (dark ? 1 : 0.75);
     return Stack(
       children: [
         Positioned(
@@ -142,19 +142,30 @@ class _LargeTitlePageState extends State<LargeTitlePage> {
           right: 0,
           height: MediaQuery.sizeOf(context).height * 0.55,
           child: IgnorePointer(
-            child: ShaderMask(
-              blendMode: BlendMode.dstIn,
-              shaderCallback: (rect) => const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.black, Colors.black, Colors.transparent],
-                stops: [0, 0.45, 1],
-              ).createShader(rect),
-              child: ColorWash(
-                colors: colors,
-                base: scheme.surface,
-                opacity: strength,
-              ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ColorWash(
+                  colors: colors,
+                  base: scheme.surface,
+                  opacity: strength,
+                ),
+                // Fades into the page colour below.
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        scheme.surface.withValues(alpha: 0),
+                        scheme.surface.withValues(alpha: 0),
+                        scheme.surface,
+                      ],
+                      stops: const [0, 0.45, 1],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
