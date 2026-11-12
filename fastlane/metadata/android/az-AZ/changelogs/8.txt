@@ -1,0 +1,3 @@
+Rənglər hərəkətli işıq kimi.
+- Qara və ağ fonlar olduğu kimi qalır; üz qabığının rəngləri üstündə parlayıb hərəkət edir
+- Daha dolğun rənglər, hər səhifədə hərəkətli

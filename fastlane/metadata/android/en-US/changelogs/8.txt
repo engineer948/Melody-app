@@ -1,0 +1,3 @@
+Colours as moving light.
+- Black and white backgrounds stay black and white; cover colours glow and drift on top
+- Fuller colours, moving on every page

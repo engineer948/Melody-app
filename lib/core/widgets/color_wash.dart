@@ -23,7 +23,7 @@ class ColorWash extends StatefulWidget {
   /// Colours of the blobs, most important first.
   final List<Color> colors;
 
-  /// Colour underneath; defaults to a dark version of the first colour.
+  /// Colour underneath, left visible between the blobs; black by default.
   final Color? base;
 
   /// Whether the blobs drift.
@@ -79,7 +79,7 @@ class _ColorWashState extends State<ColorWash>
     final colors = widget.colors.isEmpty
         ? [Theme.of(context).colorScheme.primary]
         : widget.colors;
-    final base = widget.base ?? Color.lerp(colors.first, Colors.black, 0.55)!;
+    final base = widget.base ?? Colors.black;
     return RepaintBoundary(
       child: AnimatedBuilder(
         animation: _controller,
@@ -121,7 +121,9 @@ class _WashPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(Offset.zero & size, Paint()..color = base);
-    final radius = max(size.width, size.height) * 0.75;
+    // Blobs leave the base colour showing around them: ambient light, not
+    // a coloured background.
+    final radius = max(size.width, size.height) * 0.5;
     for (var i = 0; i < _anchors.length; i++) {
       final color = colors[i % colors.length];
       final angle = 2 * pi * (t + i / _anchors.length);
@@ -137,9 +139,11 @@ class _WashPainter extends CustomPainter {
         Paint()
           ..shader = RadialGradient(
             colors: [
-              color.withValues(alpha: 0.85 * opacity),
+              color.withValues(alpha: opacity),
+              color.withValues(alpha: 0.55 * opacity),
               color.withValues(alpha: 0),
             ],
+            stops: const [0, 0.35, 1],
           ).createShader(Rect.fromCircle(center: center, radius: radius)),
       );
     }

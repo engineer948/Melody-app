@@ -133,7 +133,7 @@ class _LargeTitlePageState extends State<LargeTitlePage> {
     final fromCover = widget.colors;
     final colors =
         fromCover ?? [scheme.primary, scheme.tertiary, scheme.secondary];
-    final strength = (fromCover != null ? 0.75 : 0.42) * (dark ? 1 : 0.7);
+    final strength = (fromCover != null ? 0.9 : 0.6) * (dark ? 1 : 0.75);
     return Stack(
       children: [
         Positioned(
@@ -154,9 +154,6 @@ class _LargeTitlePageState extends State<LargeTitlePage> {
                 colors: colors,
                 base: scheme.surface,
                 opacity: strength,
-                // Still behind scrolling lists: smoother and kinder to the
-                // battery.
-                animate: false,
               ),
             ),
           ),
