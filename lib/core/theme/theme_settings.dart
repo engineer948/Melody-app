@@ -31,7 +31,7 @@ class ThemeSettings {
   static const defaultAccent = Color(0xFFE5383B);
 
   /// How strongly surfaces are tinted with the accent out of the box.
-  static const defaultTint = 0.0;
+  static const defaultTint = 0.5;
 
   /// Opacity of the frosted navigation bars out of the box.
   static const defaultBarOpacity = 0.8;

@@ -1,0 +1,4 @@
+Her yerde daha çok renk.
+- Oynatıcı, albüm, sanatçı ve çalma listesi sayfaları kapaktan canlı renkler alır
+- Her sayfanın üstünde renkli arka plan; mini oynatıcı şarkının renginde
+- Daha belirgin Çal düğmesi; yüzeyler varsayılan olarak tema renginle hafifçe renklenir
