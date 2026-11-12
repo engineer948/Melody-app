@@ -9,6 +9,8 @@ import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
+import 'package:melody/features/share/share_screen.dart';
+import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -44,107 +46,118 @@ Future<void> showTrackMenu(
     showDragHandle: true,
     useSafeArea: true,
     builder: (context) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: ArtworkImage(
-              artwork: track.artwork,
-              size: 48,
-              radius: 6,
-              icon: Icons.music_note_outlined,
-            ),
-            title: Text(
-              track.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text(
-              track.artistLine,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const Divider(),
-          if (canFavorite)
+      // Scrolls when the menu is taller than the sheet (small screens).
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             ListTile(
-              leading: Icon(
-                track.isFavorite ? Icons.favorite : Icons.favorite_border,
+              leading: ArtworkImage(
+                artwork: track.artwork,
+                size: 48,
+                radius: 6,
+                icon: Icons.music_note_outlined,
               ),
               title: Text(
-                track.isFavorite ? l10n.favoriteRemove : l10n.favoriteAdd,
+                track.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              onTap: () {
-                Navigator.pop(context);
-                unawaited(toggleTrackFavorite(outer, ref, track));
-              },
+              subtitle: Text(
+                track.artistLine,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          if (canEditPlaylists)
+            const Divider(),
+            if (canFavorite)
+              ListTile(
+                leading: Icon(
+                  track.isFavorite ? Icons.favorite : Icons.favorite_border,
+                ),
+                title: Text(
+                  track.isFavorite ? l10n.favoriteRemove : l10n.favoriteAdd,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  unawaited(toggleTrackFavorite(outer, ref, track));
+                },
+              ),
+            if (canEditPlaylists)
+              ListTile(
+                leading: const Icon(Icons.playlist_add_check),
+                title: Text(l10n.addToPlaylist),
+                onTap: () {
+                  Navigator.pop(context);
+                  unawaited(showAddToPlaylistSheet(outer, ref, [track]));
+                },
+              ),
             ListTile(
-              leading: const Icon(Icons.playlist_add_check),
-              title: Text(l10n.addToPlaylist),
-              onTap: () {
-                Navigator.pop(context);
-                unawaited(showAddToPlaylistSheet(outer, ref, [track]));
-              },
-            ),
-          ListTile(
-            leading: Icon(
-              isDownloaded
-                  ? Icons.download_done_rounded
-                  : Icons.download_outlined,
-            ),
-            title: Text(isDownloaded ? l10n.downloadRemove : l10n.download),
-            onTap: () {
-              Navigator.pop(context);
-              unawaited(
+              leading: Icon(
                 isDownloaded
-                    ? downloads.remove([track.id])
-                    : downloads.enqueue([track]),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.playlist_play),
-            title: Text(l10n.playNext),
-            onTap: () {
-              Navigator.pop(context);
-              unawaited(player.playNext([track]));
-              messenger.showSnackBar(
-                SnackBar(content: Text(l10n.addedToQueue)),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.playlist_add),
-            title: Text(l10n.addToQueue),
-            onTap: () {
-              Navigator.pop(context);
-              unawaited(player.addToQueue([track]));
-              messenger.showSnackBar(
-                SnackBar(content: Text(l10n.addedToQueue)),
-              );
-            },
-          ),
-          if (albumRoute != null)
-            ListTile(
-              leading: const Icon(Icons.album_outlined),
-              title: Text(l10n.goToAlbum),
+                    ? Icons.download_done_rounded
+                    : Icons.download_outlined,
+              ),
+              title: Text(isDownloaded ? l10n.downloadRemove : l10n.download),
               onTap: () {
                 Navigator.pop(context);
-                open(albumRoute);
+                unawaited(
+                  isDownloaded
+                      ? downloads.remove([track.id])
+                      : downloads.enqueue([track]),
+                );
               },
             ),
-          if (artistRoute != null)
             ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: Text(l10n.goToArtist),
+              leading: const Icon(Icons.playlist_play),
+              title: Text(l10n.playNext),
               onTap: () {
                 Navigator.pop(context);
-                open(artistRoute);
+                unawaited(player.playNext([track]));
+                messenger.showSnackBar(
+                  SnackBar(content: Text(l10n.addedToQueue)),
+                );
               },
             ),
-        ],
+            ListTile(
+              leading: const Icon(Icons.playlist_add),
+              title: Text(l10n.addToQueue),
+              onTap: () {
+                Navigator.pop(context);
+                unawaited(player.addToQueue([track]));
+                messenger.showSnackBar(
+                  SnackBar(content: Text(l10n.addedToQueue)),
+                );
+              },
+            ),
+            if (albumRoute != null)
+              ListTile(
+                leading: const Icon(Icons.album_outlined),
+                title: Text(l10n.goToAlbum),
+                onTap: () {
+                  Navigator.pop(context);
+                  open(albumRoute);
+                },
+              ),
+            if (artistRoute != null)
+              ListTile(
+                leading: const Icon(Icons.person_outline),
+                title: Text(l10n.goToArtist),
+                onTap: () {
+                  Navigator.pop(context);
+                  open(artistRoute);
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.share_outlined),
+              title: Text(l10n.share),
+              onTap: () {
+                Navigator.pop(context);
+                unawaited(showShareScreen(outer, ShareSubject.track(track)));
+              },
+            ),
+          ],
+        ),
       ),
     ),
   );

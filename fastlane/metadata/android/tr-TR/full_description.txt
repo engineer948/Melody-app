@@ -14,6 +14,7 @@
 <li>Auto DJ ve cihazında hesaplanan öneriler</li>
 <li>Dinleme istatistikleri ve Yıl Özeti (cihazda tutulur; kapatılabilir ya da silinebilir)</li>
 <li>Android Auto, ana ekran widget'ı ve DLNA cihazlarında çalma</li>
+<li>Şarkı, albüm, sanatçı ve çalma listelerini hikaye görseli olarak paylaşma (Instagram, WhatsApp, …)</li>
 <li>Daha önce yüklenen içerikle çevrimdışı çalışır</li>
 <li>Açık, koyu ve saf siyah tema; Türkçe, İngilizce ve Azerbaycan Türkçesi</li>
 </ul>

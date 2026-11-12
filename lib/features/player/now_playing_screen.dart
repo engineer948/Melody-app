@@ -16,6 +16,8 @@ import 'package:melody/features/player/track_actions.dart';
 import 'package:melody/features/player/widgets/output_sheet.dart';
 import 'package:melody/features/player/widgets/player_sheets.dart';
 import 'package:melody/features/player/widgets/seek_bar.dart';
+import 'package:melody/features/share/share_screen.dart';
+import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/play_queue.dart';
 import 'package:melody/player/player_controller.dart';
@@ -94,6 +96,15 @@ class NowPlayingScreen extends ConsumerWidget {
                               onPressed: () => context.pop(),
                             ),
                             const Spacer(),
+                            IconButton(
+                              color: fg,
+                              tooltip: l10n.share,
+                              icon: const Icon(Icons.share_outlined),
+                              onPressed: () => showShareScreen(
+                                context,
+                                ShareSubject.track(track),
+                              ),
+                            ),
                             IconButton(
                               color: fg,
                               tooltip: l10n.moreOptions,

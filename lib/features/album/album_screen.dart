@@ -13,6 +13,8 @@ import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/player/track_actions.dart';
 import 'package:melody/features/settings/widgets/section_header.dart';
+import 'package:melody/features/share/share_screen.dart';
+import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// Album page: centred cover, title, Play / Shuffle and the track list.
@@ -68,6 +70,13 @@ class AlbumScreen extends ConsumerWidget {
                   ? l10n.favoriteRemove
                   : l10n.favoriteAdd,
               onPressed: () => _toggleFavorite(context, ref, album),
+            ),
+          if (album != null)
+            IconButton(
+              icon: const Icon(Icons.share_outlined),
+              tooltip: l10n.share,
+              onPressed: () =>
+                  showShareScreen(context, ShareSubject.album(album)),
             ),
         ],
         slivers: loadedSlivers(

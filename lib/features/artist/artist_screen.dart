@@ -8,6 +8,8 @@ import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/player/track_actions.dart';
+import 'package:melody/features/share/share_screen.dart';
+import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// Artist page: portrait, name, popular songs, albums and biography.
@@ -28,6 +30,15 @@ class ArtistScreen extends ConsumerWidget {
         header: detail == null
             ? const SizedBox(height: 1)
             : _ArtistHeader(detail: detail),
+        actions: [
+          if (detail != null)
+            IconButton(
+              icon: const Icon(Icons.share_outlined),
+              tooltip: context.l10n.share,
+              onPressed: () =>
+                  showShareScreen(context, ShareSubject.artist(detail.artist)),
+            ),
+        ],
         slivers: loadedSlivers(
           value: value,
           onRetry: () => ref.invalidate(artistDetailProvider(id)),

@@ -15,6 +15,8 @@ import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/player/track_actions.dart';
+import 'package:melody/features/share/share_screen.dart';
+import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// Tracks of one playlist; can be renamed, reordered, trimmed and deleted.
@@ -132,6 +134,14 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
         actions: [
           if (state.items.isNotEmpty)
             DownloadButton(tracks: state.items, playlistId: widget.id),
+          IconButton(
+            icon: const Icon(Icons.share_outlined),
+            tooltip: l10n.share,
+            onPressed: () => showShareScreen(
+              context,
+              ShareSubject.playlist(_name, tracks: state.items),
+            ),
+          ),
           if (editable)
             PopupMenuButton<_Action>(
               tooltip: l10n.moreOptions,

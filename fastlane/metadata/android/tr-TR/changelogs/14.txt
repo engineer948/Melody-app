@@ -1,0 +1,4 @@
+Dinlediğini paylaş.
+- Şarkı, albüm, sanatçı veya çalma listesini hikaye görseli (Instagram, Facebook, WhatsApp durumu vb.) ya da metin olarak paylaş
+- Üç kart stili: bulanık kapak, kapak renkleri veya koyu
+- Şarkı menüsü küçük ekranlarda kaydırılabiliyor

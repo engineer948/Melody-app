@@ -574,5 +574,29 @@
   "connectIntroLocal": "Play the music files stored on this device. Melody will ask for permission to read them.",
   "connectIntroRadio": "Listen to thousands of stations from the free Radio Browser directory.",
   "debugSourcesTitle": "Source test",
-  "debugSourcesProbe": "Check address"
+  "debugSourcesProbe": "Check address",
+  "share": "Share",
+  "shareToStory": "Share image",
+  "shareAsText": "Share as text",
+  "shareHint": "Pick Instagram → Stories, WhatsApp → Status or any other app.",
+  "shareMessage": "{line}\nShared from {app}",
+  "shareFailed": "Could not share",
+  "shareStyleBlur": "Blur",
+  "shareStyleColor": "Color",
+  "shareStyleDark": "Dark",
+  "shareKindTrack": "Song",
+  "shareKindAlbum": "Album",
+  "shareKindArtist": "Artist",
+  "shareKindPlaylist": "Playlist",
+  "@shareMessage": {
+    "description": "Plain-text share: the item line and the app name.",
+    "placeholders": {
+      "line": {
+        "type": "String"
+      },
+      "app": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -317,5 +317,18 @@
   "connectIntroLocal": "Bu cihazdakı musiqi fayllarını oxut. Melody onları oxumaq üçün icazə istəyəcək.",
   "connectIntroRadio": "Pulsuz Radio Browser kataloqundakı minlərlə stansiyanı dinlə.",
   "debugSourcesTitle": "Mənbə testi",
-  "debugSourcesProbe": "Ünvanı yoxla"
+  "debugSourcesProbe": "Ünvanı yoxla",
+  "share": "Paylaş",
+  "shareToStory": "Şəkil paylaş",
+  "shareAsText": "Mətn paylaş",
+  "shareHint": "Instagram → Hekayə, WhatsApp → Status və ya başqa tətbiq seç.",
+  "shareMessage": "{line}\n{app} ilə paylaşıldı",
+  "shareFailed": "Paylaşmaq alınmadı",
+  "shareStyleBlur": "Bulanıq",
+  "shareStyleColor": "Rəngli",
+  "shareStyleDark": "Tünd",
+  "shareKindTrack": "Mahnı",
+  "shareKindAlbum": "Albom",
+  "shareKindArtist": "İfaçı",
+  "shareKindPlaylist": "Pleylist"
 }
