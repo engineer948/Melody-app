@@ -1,87 +1,91 @@
-# F-Droid'e başvuru rehberi
+# Submitting to F-Droid
 
-Melody yalnızca F-Droid'de (ve GitHub sürümlerinde APK olarak) yayınlanır.
-F-Droid uygulamayı **kendi sunucularında kaynak koddan derler** ve kendi
-anahtarıyla imzalar. Bu yüzden depodaki her şey açık kaynak olmalı ve
-hazır derlenmiş ikili dosya indirilmemeli.
+Melody is only published on F-Droid (and as APKs on GitHub releases).
+F-Droid **builds the app from source on its own servers** and signs it with
+its own key. So everything in the repository must be open source and no
+prebuilt binaries may be downloaded.
 
-## 1. Hazırlık durumu
+## 1. Readiness
 
-| Şart | Durum |
+| Requirement | Status |
 |---|---|
-| Özgür lisans (MIT) | ✅ |
-| Kapalı kaynak bağımlılık yok (Play Services, Firebase, Cast SDK) | ✅ derlenen APK'da kontrol edildi |
-| Google'ın şifreli bağımlılık raporu kapalı (`dependenciesInfo`) | ✅ |
-| Özgün uygulama ikonu | ✅ |
-| Mağaza metinleri (`fastlane/metadata/android`, en / tr / az) | ✅ |
-| İmzasız derleme seçeneği (`MELODY_UNSIGNED=1`) | ✅ |
-| `pubspec.lock` depoda | ✅ |
-| SQLite kaynaktan derleniyor | ✅ resmî 3.54.1 kaynağı, bkz. 2. madde |
-| Depo herkese açık | ❌ |
-| Sürüm etiketi (`v0.x.y`) ve GitHub sürümü | ✅ etiket gelince otomatik |
-| Ekran görüntüleri | ❌ henüz eklenmedi |
+| Free license (MIT) | ✅ |
+| No closed-source dependencies (Play Services, Firebase, Cast SDK) | ✅ checked in the built APK |
+| Google's encrypted dependency report turned off (`dependenciesInfo`) | ✅ |
+| Original app icon | ✅ |
+| Store texts (`fastlane/metadata/android`, en / tr / az) | ✅ |
+| Unsigned build option (`MELODY_UNSIGNED=1`) | ✅ |
+| `pubspec.lock` in the repository | ✅ |
+| SQLite built from source | ✅ official 3.54.1 source, see section 2 |
+| Public repository | ❌ |
+| Version tag (`v0.x.y`) and GitHub release | ✅ automatic when a tag is pushed |
+| Screenshots | ❌ not added yet |
 
 ## 2. SQLite
 
-`package:sqlite3` varsayılan olarak hazır derlenmiş SQLite kütüphanesini
-GitHub'dan indirir; F-Droid bunu kabul etmez. Bu yüzden resmî SQLite kaynağı
-(`third_party/sqlite/sqlite3.c`, public domain) depoda tutulur ve
-`pubspec.yaml`'daki `hooks.user_defines.sqlite3` ayarıyla derleme sırasında
-kaynaktan derlenir. Güncellemek için `third_party/sqlite/README.md`'ye bak.
+By default `package:sqlite3` downloads a prebuilt SQLite library from
+GitHub; F-Droid does not accept that. So the official SQLite source
+(`third_party/sqlite/sqlite3.c`, public domain) is kept in the repository
+and compiled from source during the build through the
+`hooks.user_defines.sqlite3` setting in `pubspec.yaml`. To update it, see
+`third_party/sqlite/README.md`.
 
-## 3. Sürüm yayınlama (her sürümde)
+## 3. Publishing a release (every release)
 
-1. `pubspec.yaml` içindeki `version:` değerini artır (ör. `0.3.0+3`; `+`'dan
-   sonraki sayı her sürümde büyümeli).
-2. `fastlane/metadata/android/<dil>/changelogs/<sayı>.txt` dosyalarını yaz.
-3. Ana dala birleştir ve etiketle:
+1. Bump `version:` in `pubspec.yaml` (e.g. `0.3.0+3`; the number after `+`
+   must grow with every release).
+2. Write `fastlane/metadata/android/<locale>/changelogs/<number>.txt` for
+   every locale (`en-US`, `tr-TR`, `az-AZ`).
+3. Merge into the main branch and tag it:
 
    ```bash
    git tag v0.3.0
    git push origin v0.3.0
    ```
 
-Etiket gelince GitHub Actions (`.github/workflows/release.yml`) APK'ları
-derler ve GitHub sürümüne ekler: `melody-<sürüm>.apk` (tüm işlemciler) ile
-`arm64-v8a`, `armeabi-v7a` ve `x86_64` için ayrı dosyalar. Sürüm notu
-`fastlane/metadata/android/tr-TR/changelogs/<sayı>.txt` dosyasından alınır.
-Etiket, `pubspec.yaml`'daki sürümle aynı olmalıdır.
+When the tag arrives, GitHub Actions (`.github/workflows/release.yml`)
+builds the APKs and attaches them to the GitHub release:
+`melody-<version>.apk` (all CPUs) plus separate files for `arm64-v8a`,
+`armeabi-v7a` and `x86_64`. The release notes are taken from
+`fastlane/metadata/android/en-US/changelogs/<number>.txt`, so **GitHub
+release notes are always in English**. The tag must match the version in
+`pubspec.yaml`.
 
-Bu APK'lar depoda **olmayan** kendi anahtarımızla imzalanır. Anahtar GitHub
-deposunun gizli değişkenlerinde (Settings → Secrets and variables →
-Actions) durur:
+These APKs are signed with our own key, which is **not** in the repository.
+The key lives in the GitHub repository secrets (Settings → Secrets and
+variables → Actions):
 
-- `MELODY_KEYSTORE`: anahtar dosyasının base64 hâli (takma ad `melody`)
-- `MELODY_KEYSTORE_PASSWORD`: dosyanın ve anahtarın şifresi
+- `MELODY_KEYSTORE`: the keystore file in base64 (alias `melody`)
+- `MELODY_KEYSTORE_PASSWORD`: the password of the file and of the key
 
-Anahtar dosyasının bir yedeği güvenli bir yerde saklanmalıdır; kaybolursa
-yeni APK'lar eskilerinin üzerine kurulamaz.
+Keep a backup of the keystore file somewhere safe; if it is lost, new APKs
+can no longer be installed over the old ones.
 
-F-Droid uygulamayı bir kez kabul ettikten sonra yeni etiketleri kendisi
-bulur ve yeni sürümü birkaç gün içinde yayınlar (`AutoUpdateMode`).
-F-Droid'de yayınlanan APK (F-Droid'in kendi kalıcı anahtarıyla imzalı)
-f-droid.org'dan indirilip aynı GitHub sürümüne, debug APK'nın yanına
-eklenir:
+Once F-Droid has accepted the app, it finds new tags by itself and
+publishes the new version within a few days (`AutoUpdateMode`).
+The APK published on F-Droid (signed with F-Droid's own permanent key) is
+downloaded from f-droid.org and attached to the same GitHub release, next
+to the debug APK:
 
 ```bash
 gh release upload v0.5.0 io.github.engineer948.melody_6.apk
 ```
 
-## 4. İlk başvuru
+## 4. First submission
 
-İki yol var.
+There are two ways.
 
-**Kolay yol: istek aç.** https://gitlab.com/fdroid/rfp/-/issues adresinde
-GitLab hesabıyla yeni bir "Request For Packaging" aç. Depo adresini, lisansı
-ve kısa açıklamayı yaz. Bir gönüllü tarifi hazırlar; bu haftalar, bazen
-aylar sürebilir.
+**Easy way: open a request.** Open a new "Request For Packaging" at
+https://gitlab.com/fdroid/rfp/-/issues with a GitLab account. Give the
+repository address, the license and a short description. A volunteer
+prepares the recipe; this can take weeks, sometimes months.
 
-**Hızlı yol: tarifi kendin gönder.**
+**Fast way: submit the recipe yourself.**
 
-1. GitLab hesabı aç, https://gitlab.com/fdroid/fdroiddata deposunu fork'la.
-2. `docs/fdroid/io.github.engineer948.melody.yml` dosyasını fork'undaki
-   `metadata/io.github.engineer948.melody.yml` konumuna kopyala.
-3. İstersen yerelde dene (Linux / Docker):
+1. Create a GitLab account and fork https://gitlab.com/fdroid/fdroiddata.
+2. Copy `docs/fdroid/io.github.engineer948.melody.yml` to
+   `metadata/io.github.engineer948.melody.yml` in your fork.
+3. Optionally try it locally (Linux / Docker):
 
    ```bash
    fdroid readmeta
@@ -89,18 +93,18 @@ aylar sürebilir.
    fdroid build -v -l io.github.engineer948.melody
    ```
 
-4. Commit'le, fork'una push'la ve fdroiddata'ya merge request aç. GitLab CI
-   uygulamayı derler; hata verirse günlüğü oku, düzelt, tekrar push'la.
-5. İnceleyenlerin sorularını yanıtla. Birleştirildikten sonra uygulama
-   genellikle birkaç gün içinde F-Droid'de görünür.
+4. Commit, push to your fork and open a merge request against fdroiddata.
+   GitLab CI builds the app; if it fails, read the log, fix it and push
+   again.
+5. Answer the reviewers' questions. After the merge the app usually
+   appears on F-Droid within a few days.
 
-## 5. Dikkat
+## 5. Watch out
 
-- **Uygulama kimliği** `io.github.engineer948.melody`; ilk yayından sonra
-  değiştirilemez (değiştirmek yeni bir uygulama demektir).
-- **Tarif taslaktır.** Flutter sürümü (`srclibs: flutter@3.47.9`) ve çıktı
-  yolu F-Droid'in derleme sunucusunda doğrulanmadı.
-- F-Droid kendi anahtarıyla imzaladığı için, GitHub'daki APK ile
-  F-Droid'in imzaladığı APK birbirinin üzerine güncellenemez; birinden
-  diğerine geçmek için uygulamayı kaldırıp yeniden kurmak gerekir.
-
+- **The application id** is `io.github.engineer948.melody`; it cannot be
+  changed after the first release (changing it means a new app).
+- **The recipe is a draft.** The Flutter version (`srclibs: flutter@3.47.9`)
+  and the output path have not been verified on F-Droid's build server.
+- Because F-Droid signs with its own key, the GitHub APK and the APK signed
+  by F-Droid cannot be updated over each other; switching from one to the
+  other requires uninstalling and reinstalling the app.

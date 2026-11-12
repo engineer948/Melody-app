@@ -82,7 +82,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          notes=fastlane/metadata/android/tr-TR/changelogs/${{ steps.version.outputs.code }}.txt
+          notes=fastlane/metadata/android/en-US/changelogs/${{ steps.version.outputs.code }}.txt
           [ -f "$notes" ] || echo "Melody ${{ steps.version.outputs.name }}" > "$notes"
           tag=${{ steps.version.outputs.tag }}
           if gh release view "$tag" > /dev/null 2>&1; then
