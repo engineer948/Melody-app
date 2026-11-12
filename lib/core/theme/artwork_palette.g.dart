@@ -68,7 +68,7 @@ final class ArtworkPaletteProvider
   }
 }
 
-String _$artworkPaletteHash() => r'9333ce531574f00801498acdfc89bd9fd6dd39ac';
+String _$artworkPaletteHash() => r'c7a99f98b525123f73bf32b3b5d8ad4acaf35e79';
 
 /// Palette of [artwork], or `null` while loading, offline or without art.
 
