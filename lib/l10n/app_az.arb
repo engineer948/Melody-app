@@ -307,5 +307,6 @@
   "outputThisDevice": "Bu cihaz",
   "outputNone": "Bu şəbəkədə DLNA cihazı tapılmadı.",
   "settingsAndroidAuto": "Android Auto",
-  "androidAutoBody": "Avtomobildə göstərilən bölmələr. Google Play-dən kənar quraşdırılan tətbiqlər Android Auto-nun tərtibatçı ayarlarında \"Naməlum mənbələr\" açıldıqdan sonra görünür."
+  "androidAutoBody": "Avtomobildə göstərilən bölmələr. Google Play-dən kənar quraşdırılan tətbiqlər Android Auto-nun tərtibatçı ayarlarında \"Naməlum mənbələr\" açıldıqdan sonra görünür.",
+  "outputAirPlay": "AirPlay"
 }

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/data/dlna/dlna_models.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -82,6 +84,7 @@ class _OutputSheet extends ConsumerWidget {
                       onPressed: () => ref.invalidate(dlnaRenderersProvider),
                     ),
             ),
+            if (Platform.isIOS) const _AirPlayTile(),
             ListTile(
               leading: const Icon(Icons.smartphone_rounded),
               title: Text(l10n.outputThisDevice),
@@ -165,6 +168,28 @@ class _VolumeTileState extends ConsumerState<_VolumeTile> {
               .catchError((Object _) {}),
         ),
       ),
+    );
+  }
+}
+
+/// AirPlay devices are picked with the system's own route picker.
+class _AirPlayTile extends StatelessWidget {
+  const _AirPlayTile();
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.onSurface;
+    return ListTile(
+      leading: SizedBox.square(
+        dimension: 32,
+        child: UiKitView(
+          viewType: 'melody/airplay',
+          creationParams: {'color': color.toARGB32()},
+          creationParamsCodec: const StandardMessageCodec(),
+          gestureRecognizers: const {},
+        ),
+      ),
+      title: Text(context.l10n.outputAirPlay),
     );
   }
 }

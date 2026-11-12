@@ -1,0 +1,3 @@
+Groundwork for iOS.
+- Short vibration feedback on play, pause and skip
+- iOS: AirPlay, CarPlay and lock screen support (iOS builds are not published yet)
