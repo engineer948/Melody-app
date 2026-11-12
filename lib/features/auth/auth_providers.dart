@@ -7,10 +7,31 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_providers.g.dart';
 
-/// Signs users in; only Jellyfin is offered for now.
+/// Sources the UI may offer (build-time flags); overridden in tests.
+@Riverpod(keepAlive: true)
+Set<SourceType> enabledSources(Ref ref) => FeatureFlags.enabledSources;
+
+/// Kind of source being added or signed in to.
+@Riverpod(keepAlive: true)
+class SelectedSourceType extends _$SelectedSourceType {
+  @override
+  SourceType build() {
+    final enabled = ref.watch(enabledSourcesProvider);
+    return enabled.contains(SourceType.jellyfin)
+        ? SourceType.jellyfin
+        : enabled.first;
+  }
+
+  /// Switches to [type] when it is enabled.
+  void select(SourceType type) {
+    if (ref.read(enabledSourcesProvider).contains(type)) state = type;
+  }
+}
+
+/// Signs users in to sources of the selected kind.
 @Riverpod(keepAlive: true)
 ServerConnector serverConnector(Ref ref) => createServerConnector(
-  SourceType.jellyfin,
+  ref.watch(selectedSourceTypeProvider),
   ref.watch(clientIdentityProvider),
 );
 

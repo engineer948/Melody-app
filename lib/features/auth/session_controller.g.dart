@@ -352,7 +352,7 @@ final class ActiveSourceProvider
   }
 }
 
-String _$activeSourceHash() => r'ac9111f4737b51e3fc8b54a7a6a99bb3e74dd484';
+String _$activeSourceHash() => r'7512505f168410a9b1ca346c7a04b1586c2cf340';
 
 /// Library of the active account; `null` when signed out.
 

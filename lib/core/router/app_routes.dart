@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:melody/core/config/feature_flags.dart';
 import 'package:melody/domain/models/server.dart';
 
 /// Route locations used across the app.
@@ -39,6 +40,7 @@ abstract final class AppRoutes {
     String? version,
     String? userName,
     bool expired = false,
+    SourceType type = SourceType.jellyfin,
   }) => Uri(
     path: login,
     queryParameters: {
@@ -48,6 +50,7 @@ abstract final class AppRoutes {
       'version': ?version,
       'user': ?userName,
       if (expired) 'expired': '1',
+      if (type != SourceType.jellyfin) 'type': type.name,
     },
   ).toString();
 
@@ -57,6 +60,7 @@ abstract final class AppRoutes {
     name: server.name,
     id: server.id,
     version: server.version,
+    type: server.type,
   );
 
   /// Root of the tab shown in the tab bar; kept up to date by the shell.

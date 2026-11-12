@@ -15,6 +15,7 @@ with the app and shown under **Settings → About → Open source licenses**.
 | `audio_session` | MIT |
 | `cached_network_image` | MIT |
 | `connectivity_plus` | BSD-3-Clause |
+| `crypto` (Subsonic sign-in token) | BSD-3-Clause |
 | `dio` | MIT |
 | `drift`, `drift_flutter` (bundles SQLite, public domain) | MIT |
 | `dynamic_color` | Apache-2.0 |

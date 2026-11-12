@@ -18,7 +18,15 @@ class JellyfinConnector implements ServerConnector {
     required this.identity,
     this.adapter,
     this.discovery = const JellyfinDiscovery(),
+    this.type = SourceType.jellyfin,
+    this.authHeader = 'Authorization',
   });
+
+  /// Kind of server this connector signs in to (Jellyfin or Emby).
+  final SourceType type;
+
+  /// Header the server reads the client identity from.
+  final String authHeader;
 
   /// Identity sent to servers.
   final ClientIdentity identity;
@@ -35,6 +43,7 @@ class JellyfinConnector implements ServerConnector {
     adapter: adapter,
     retries: probing ? 0 : 2,
     connectTimeout: probing ? const Duration(seconds: 5) : null,
+    authHeader: authHeader,
   );
 
   Future<Result<T>> _run<T>(
@@ -50,7 +59,8 @@ class JellyfinConnector implements ServerConnector {
   }
 
   @override
-  Stream<ServerInfo> discover() => discovery.scan();
+  Stream<ServerInfo> discover() =>
+      discovery.scan().map((server) => server.copyWith(type: type));
 
   @override
   Future<Result<ServerInfo>> probe(String address) async {
@@ -81,6 +91,7 @@ class JellyfinConnector implements ServerConnector {
           name: dto.serverName ?? baseUrl.host,
           id: dto.id,
           version: dto.version,
+          type: type,
         );
       }, onError: mapNetworkError);
     } finally {
@@ -119,8 +130,8 @@ class JellyfinConnector implements ServerConnector {
     return AuthSession(
       accessToken: token,
       account: ServerAccount(
-        id: '${SourceType.jellyfin.name}:$serverId:$userId',
-        type: SourceType.jellyfin,
+        id: '${type.name}:$serverId:$userId',
+        type: type,
         baseUrl: server.baseUrl,
         serverName: server.name,
         serverId: serverId,

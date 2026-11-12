@@ -46,6 +46,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String? _error;
 
   @override
+  void initState() {
+    super.initState();
+    // Signing in again to an expired account: use that account's kind.
+    // Changed after this frame: providers cannot change while building.
+    final type = widget.server.type;
+    if (ref.read(selectedSourceTypeProvider) != type) {
+      unawaited(
+        Future.microtask(() {
+          if (mounted) {
+            ref.read(selectedSourceTypeProvider.notifier).select(type);
+          }
+        }),
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _user.dispose();
     _password.dispose();

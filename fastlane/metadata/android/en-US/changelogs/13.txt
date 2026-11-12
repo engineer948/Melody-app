@@ -1,0 +1,3 @@
+Groundwork for more sources.
+- Emby, Subsonic / Navidrome, files on the device and internet radio are built in but not shown yet
+- Small fixes

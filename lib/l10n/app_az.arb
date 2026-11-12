@@ -308,5 +308,14 @@
   "outputNone": "Bu şəbəkədə DLNA cihazı tapılmadı.",
   "settingsAndroidAuto": "Android Auto",
   "androidAutoBody": "Avtomobildə göstərilən bölmələr. Google Play-dən kənar quraşdırılan tətbiqlər Android Auto-nun tərtibatçı ayarlarında \"Naməlum mənbələr\" açıldıqdan sonra görünür.",
-  "outputAirPlay": "AirPlay"
+  "outputAirPlay": "AirPlay",
+  "sourceLocal": "Bu cihazdakı fayllar",
+  "sourceRadio": "İnternet radiosu",
+  "sourceAdd": "Əlavə et",
+  "connectIntroEmby": "Emby serverinin ünvanını daxil et.",
+  "connectIntroSubsonic": "Subsonic uyğun serverinin (Navidrome, Airsonic, Gonic, …) ünvanını daxil et.",
+  "connectIntroLocal": "Bu cihazdakı musiqi fayllarını oxut. Melody onları oxumaq üçün icazə istəyəcək.",
+  "connectIntroRadio": "Pulsuz Radio Browser kataloqundakı minlərlə stansiyanı dinlə.",
+  "debugSourcesTitle": "Mənbə testi",
+  "debugSourcesProbe": "Ünvanı yoxla"
 }

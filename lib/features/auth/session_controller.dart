@@ -8,6 +8,8 @@ import 'package:melody/data/repositories/library_repository.dart';
 import 'package:melody/data/repositories/source_factory.dart';
 import 'package:melody/data/repositories/token_store.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_music_source.dart';
+import 'package:melody/data/sources/radio/radio_source.dart';
+import 'package:melody/data/sources/subsonic/subsonic_music_source.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/domain/repositories/music_source.dart';
 import 'package:meta/meta.dart';
@@ -201,10 +203,18 @@ MusicSource? activeSource(Ref ref) {
     account: account,
     token: token,
     identity: ref.watch(clientIdentityProvider),
+    prefs: ref.watch(preferencesProvider),
     onUnauthorized: () =>
         ref.read(sessionControllerProvider.notifier).expire(account.id),
   );
-  if (source is JellyfinMusicSource) ref.onDispose(source.close);
+  switch (source) {
+    case JellyfinMusicSource():
+      ref.onDispose(source.close);
+    case SubsonicMusicSource():
+      ref.onDispose(source.close);
+    case RadioSource():
+      ref.onDispose(source.close);
+  }
   return source;
 }
 

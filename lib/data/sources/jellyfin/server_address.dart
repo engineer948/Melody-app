@@ -11,7 +11,11 @@ abstract final class ServerAddress {
   /// A missing scheme yields both HTTPS and HTTP variants; a missing port
   /// additionally yields the Jellyfin default port. Returns an empty list
   /// when [input] cannot be an address.
-  static List<Uri> candidates(String input) {
+  static List<Uri> candidates(
+    String input, {
+    int httpPort = defaultHttpPort,
+    int httpsPort = defaultHttpsPort,
+  }) {
     var text = input.trim();
     if (text.isEmpty || text.contains(RegExp(r'\s'))) return const [];
     while (text.endsWith('/')) {
@@ -28,7 +32,7 @@ abstract final class ServerAddress {
       if (!results.contains(normalized)) results.add(normalized);
       final authority = rest.split('/').first;
       if (!RegExp(r':\d+$').hasMatch(authority)) {
-        final port = scheme == 'https' ? defaultHttpsPort : defaultHttpPort;
+        final port = scheme == 'https' ? httpsPort : httpPort;
         final withPort = _normalize(uri.replace(port: port));
         if (!results.contains(withPort)) results.add(withPort);
       }

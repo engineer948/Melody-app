@@ -11,8 +11,12 @@ class JellyfinDiscovery {
   const JellyfinDiscovery({
     this.timeout = const Duration(seconds: 3),
     this.port = 7359,
+    this.message = probeMessage,
     this._log = const AppLogger('discovery'),
   });
+
+  /// Message sent to the network; Emby servers answer to their own.
+  final String message;
 
   /// How long to wait for answers.
   final Duration timeout;
@@ -81,7 +85,7 @@ class JellyfinDiscovery {
             }
           });
           bound.send(
-            utf8.encode(probeMessage),
+            utf8.encode(message),
             InternetAddress('255.255.255.255'),
             port,
           );
