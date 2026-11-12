@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:melody/core/errors/result.dart';
+import 'package:melody/core/theme/artwork_palette.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/failure_view.dart';
 import 'package:melody/domain/models/media.dart';
@@ -124,6 +125,17 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
     return Scaffold(
       body: PagedScrollView<Track>(
         title: _name,
+        colors: ref
+            .watch(
+              artworkPaletteProvider(
+                state.items
+                    .where((t) => t.artwork != null)
+                    .firstOrNull
+                    ?.artwork,
+              ),
+            )
+            .value
+            ?.colors,
         state: state,
         emptyIcon: Icons.queue_music_outlined,
         onRefresh: _reload,

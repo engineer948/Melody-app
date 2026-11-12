@@ -1,0 +1,4 @@
+More colour everywhere.
+- The player, album, artist and playlist pages take vivid colours from the cover
+- Colourful backgrounds at the top of every page; mini player tinted with the song
+- Brighter Play button; surfaces lightly tinted with your accent colour by default

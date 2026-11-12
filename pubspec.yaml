@@ -1,7 +1,7 @@
 name: melody
 description: "Jellyfin-first multi-source music player"
 publish_to: 'none'
-version: 0.5.0+6
+version: 0.5.1+7
 
 environment:
   sdk: ^3.13.7
@@ -27,6 +27,7 @@ dependencies:
   intl: ^0.20.3
   json_annotation: ^4.12.0
   just_audio: ^0.10.6
+  material_color_utilities: ^0.13.0
   meta: ^1.19.0
   package_info_plus: ^10.2.2
   path_provider: ^2.1.6

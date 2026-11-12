@@ -7,16 +7,19 @@ import 'package:melody/core/theme/theme_settings.dart';
 void main() {
   const systemSeed = Color(0xFF00629D);
 
-  test('defaults: system mode, red accent, Work Sans, neutral surfaces', () {
-    const settings = ThemeSettings();
-    final light = AppTheme.light(settings);
-    expect(settings.themeMode, ThemeMode.system);
-    expect(light.brightness, Brightness.light);
-    expect(AppTheme.dark(settings).brightness, Brightness.dark);
-    expect(light.colorScheme.primary, ThemeSettings.defaultAccent);
-    expect(light.colorScheme.surface, const Color(0xFFFFFFFF));
-    expect(light.textTheme.bodyMedium?.fontFamily, 'WorkSans');
-  });
+  test(
+    'defaults: system mode, red accent, Work Sans, lightly tinted surfaces',
+    () {
+      const settings = ThemeSettings();
+      final light = AppTheme.light(settings);
+      expect(settings.themeMode, ThemeMode.system);
+      expect(light.brightness, Brightness.light);
+      expect(AppTheme.dark(settings).brightness, Brightness.dark);
+      expect(light.colorScheme.primary, ThemeSettings.defaultAccent);
+      expect(light.colorScheme.surface, isNot(const Color(0xFFFFFFFF)));
+      expect(light.textTheme.bodyMedium?.fontFamily, 'WorkSans');
+    },
+  );
 
   test('the accent is used exactly, not as a pastel tone', () {
     for (final accent in accentPresets) {

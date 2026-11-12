@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:melody/core/theme/artwork_palette.dart';
 import 'package:melody/core/widgets/failure_view.dart';
 import 'package:melody/core/widgets/large_title_page.dart';
 import 'package:melody/core/widgets/shelf_header.dart';
@@ -25,6 +26,10 @@ class ArtistScreen extends ConsumerWidget {
     return Scaffold(
       body: LargeTitlePage(
         title: detail?.artist.name ?? '',
+        colors: ref
+            .watch(artworkPaletteProvider(detail?.artist.artwork))
+            .value
+            ?.colors,
         header: detail == null
             ? const SizedBox(height: 1)
             : _ArtistHeader(detail: detail),

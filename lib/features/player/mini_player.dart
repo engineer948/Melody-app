@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:melody/core/router/app_routes.dart';
+import 'package:melody/core/theme/artwork_palette.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/frosted.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -34,72 +35,90 @@ class MiniPlayer extends ConsumerWidget {
           color: Colors.transparent,
           child: Frosted(
             borderRadius: BorderRadius.circular(14),
-            child: InkWell(
-              onTap: open,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 4, 6),
-                    child: Row(
-                      children: [
-                        Hero(
-                          tag: 'now-playing-artwork',
-                          child: ArtworkImage(
-                            artwork: track.artwork,
-                            size: 44,
-                            icon: Icons.music_note_outlined,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Semantics(
-                            label: '${l10n.nowPlaying}: ${track.title}',
-                            excludeSemantics: true,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  track.title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                ),
-                                Text(
-                                  track.artistLine,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: scheme.onSurfaceVariant,
-                                      ),
-                                ),
-                              ],
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    for (final c
+                        in ref
+                                .watch(artworkPaletteProvider(track.artwork))
+                                .value
+                                ?.colors
+                                .take(2) ??
+                            [scheme.primary, scheme.tertiary])
+                      c.withValues(alpha: 0.32),
+                  ],
+                ),
+              ),
+              child: InkWell(
+                onTap: open,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 4, 6),
+                      child: Row(
+                        children: [
+                          Hero(
+                            tag: 'now-playing-artwork',
+                            child: ArtworkImage(
+                              artwork: track.artwork,
+                              size: 44,
+                              icon: Icons.music_note_outlined,
                             ),
                           ),
-                        ),
-                        IconButton(
-                          iconSize: 32,
-                          tooltip: state.playing ? l10n.pause : l10n.play,
-                          icon: Icon(
-                            state.playing
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Semantics(
+                              label: '${l10n.nowPlaying}: ${track.title}',
+                              excludeSemantics: true,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    track.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    track.artistLine,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: scheme.onSurfaceVariant,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          onPressed: player.togglePlay,
-                        ),
-                        IconButton(
-                          iconSize: 30,
-                          tooltip: l10n.next,
-                          icon: const Icon(Icons.skip_next_rounded),
-                          onPressed: player.next,
-                        ),
-                      ],
+                          IconButton(
+                            iconSize: 32,
+                            tooltip: state.playing ? l10n.pause : l10n.play,
+                            icon: Icon(
+                              state.playing
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
+                            ),
+                            onPressed: player.togglePlay,
+                          ),
+                          IconButton(
+                            iconSize: 30,
+                            tooltip: l10n.next,
+                            icon: const Icon(Icons.skip_next_rounded),
+                            onPressed: player.next,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  _MiniProgress(duration: duration),
-                ],
+                    _MiniProgress(duration: duration),
+                  ],
+                ),
               ),
             ),
           ),

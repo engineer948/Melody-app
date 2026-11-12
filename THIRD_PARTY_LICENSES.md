@@ -27,6 +27,7 @@ with the app and shown under **Settings → About → Open source licenses**.
 | `intl` | BSD-3-Clause |
 | `json_annotation` | BSD-3-Clause |
 | `just_audio` (ExoPlayer / Media3 on Android: Apache-2.0) | MIT |
+| `material_color_utilities` (colours taken from covers) | Apache-2.0 |
 | `path_provider` | BSD-3-Clause |
 | SQLite (`third_party/sqlite`, built from source) | Public domain |
 | `meta` | BSD-3-Clause |

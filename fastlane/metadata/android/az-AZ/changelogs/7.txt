@@ -1,0 +1,4 @@
+Hər yerdə daha çox rəng.
+- Oxuducu, albom, ifaçı və pleylist səhifələri üz qabığından canlı rənglər alır
+- Hər səhifənin yuxarısında rəngli fon; mini oxuducu mahnının rəngində
+- Daha nəzərəçarpan Oxut düyməsi; səthlər standart olaraq tema rənginlə yüngülcə rənglənir

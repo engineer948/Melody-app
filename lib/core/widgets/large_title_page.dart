@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:melody/core/widgets/color_wash.dart';
 import 'package:melody/core/widgets/frosted.dart';
 
 /// Scrolling page with a big bold title that turns into a small one in a
@@ -16,8 +17,13 @@ class LargeTitlePage extends StatefulWidget {
     this.onRefresh,
     this.onNearEnd,
     this.automaticallyImplyLeading = true,
+    this.colors,
     super.key,
   });
+
+  /// Colours washed behind the top of the page, e.g. taken from a cover;
+  /// the accent colours of the theme when `null`.
+  final List<Color>? colors;
 
   /// Page title.
   final String title;
@@ -115,12 +121,48 @@ class _LargeTitlePageState extends State<LargeTitlePage> {
       ],
     );
     final refresh = widget.onRefresh;
-    return refresh == null
+    final content = refresh == null
         ? view
         : RefreshIndicator(
             onRefresh: refresh,
             edgeOffset: MediaQuery.paddingOf(context).top + kToolbarHeight,
             child: view,
           );
+    final scheme = theme.colorScheme;
+    final dark = theme.brightness == Brightness.dark;
+    final fromCover = widget.colors;
+    final colors =
+        fromCover ?? [scheme.primary, scheme.tertiary, scheme.secondary];
+    final strength = (fromCover != null ? 0.75 : 0.42) * (dark ? 1 : 0.7);
+    return Stack(
+      children: [
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: MediaQuery.sizeOf(context).height * 0.55,
+          child: IgnorePointer(
+            child: ShaderMask(
+              blendMode: BlendMode.dstIn,
+              shaderCallback: (rect) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black, Colors.black, Colors.transparent],
+                stops: [0, 0.45, 1],
+              ).createShader(rect),
+              child: ColorWash(
+                colors: colors,
+                base: scheme.surface,
+                opacity: strength,
+                // Still behind scrolling lists: smoother and kinder to the
+                // battery.
+                animate: false,
+              ),
+            ),
+          ),
+        ),
+        content,
+      ],
+    );
   }
 }
