@@ -1,13 +1,13 @@
 import 'dart:async';
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:melody/core/router/app_routes.dart';
-import 'package:melody/core/theme/artwork_palette.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
-import 'package:melody/core/widgets/color_wash.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/lyrics/lyrics_view.dart';
@@ -62,18 +62,14 @@ class NowPlayingScreen extends ConsumerWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Vivid colours of the cover, drifting slowly.
-            ColorWash(
-              colors:
-                  ref
-                      .watch(artworkPaletteProvider(track.artwork))
-                      .value
-                      ?.colors ??
-                  [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.tertiary,
-                  ],
+            ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
+              child: Transform.scale(
+                scale: 1.4,
+                child: ArtworkImage(artwork: track.artwork, radius: 0),
+              ),
             ),
+            const ColoredBox(color: Color(0x8C000000)),
             SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {

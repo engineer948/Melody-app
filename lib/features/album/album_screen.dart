@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:melody/core/router/app_routes.dart';
-import 'package:melody/core/theme/artwork_palette.dart';
 import 'package:melody/core/utils/formatters.dart';
 import 'package:melody/core/widgets/failure_view.dart';
 import 'package:melody/core/widgets/large_title_page.dart';
@@ -54,7 +53,6 @@ class AlbumScreen extends ConsumerWidget {
     return Scaffold(
       body: LargeTitlePage(
         title: album?.title ?? '',
-        colors: ref.watch(artworkPaletteProvider(album?.artwork)).value?.colors,
         header: loaded == null
             ? const SizedBox(height: 1)
             : _AlbumHeader(detail: loaded.value),
