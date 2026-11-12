@@ -1,0 +1,3 @@
+iOS üçün altyapı.
+- Oxut, dayandır və keç düymələrində qısa titrəmə
+- iOS: AirPlay, CarPlay və kilid ekranı dəstəyi (iOS versiyası hələ dərc edilmir)

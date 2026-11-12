@@ -564,5 +564,6 @@
   "outputThisDevice": "This device",
   "outputNone": "No DLNA devices found on this network.",
   "settingsAndroidAuto": "Android Auto",
-  "androidAutoBody": "Sections shown in the car. Apps not installed from Google Play appear in Android Auto only after enabling \"Unknown sources\" in its developer settings."
+  "androidAutoBody": "Sections shown in the car. Apps not installed from Google Play appear in Android Auto only after enabling \"Unknown sources\" in its developer settings.",
+  "outputAirPlay": "AirPlay"
 }

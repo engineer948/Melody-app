@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -161,6 +162,7 @@ class _SwipeableCover extends ConsumerWidget {
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         final v = details.primaryVelocity ?? 0;
+        if (v.abs() > 300) unawaited(HapticFeedback.selectionClick());
         if (v < -300) unawaited(player.next());
         if (v > 300) unawaited(player.previous());
       },
@@ -294,7 +296,10 @@ class _Transport extends ConsumerWidget {
           color: fg,
           iconSize: 44,
           icon: const Icon(Icons.skip_previous_rounded),
-          onPressed: player.previous,
+          onPressed: () {
+            unawaited(HapticFeedback.selectionClick());
+            unawaited(player.previous());
+          },
         ),
         IconButton(
           tooltip: state.playing ? l10n.pause : l10n.play,
@@ -313,14 +318,20 @@ class _Transport extends ConsumerWidget {
                       ? Icons.pause_rounded
                       : Icons.play_arrow_rounded,
                 ),
-          onPressed: player.togglePlay,
+          onPressed: () {
+            unawaited(HapticFeedback.selectionClick());
+            unawaited(player.togglePlay());
+          },
         ),
         IconButton(
           tooltip: l10n.next,
           color: fg,
           iconSize: 44,
           icon: const Icon(Icons.skip_next_rounded),
-          onPressed: player.next,
+          onPressed: () {
+            unawaited(HapticFeedback.selectionClick());
+            unawaited(player.next());
+          },
         ),
         IconButton(
           tooltip: switch (repeat) {

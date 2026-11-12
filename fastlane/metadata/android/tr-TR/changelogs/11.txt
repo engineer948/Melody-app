@@ -1,0 +1,3 @@
+iOS için altyapı.
+- Çal, duraklat ve atla düğmelerinde kısa titreşim
+- iOS: AirPlay, CarPlay ve kilit ekranı desteği (iOS sürümü henüz yayınlanmıyor)
