@@ -1,0 +1,3 @@
+Rənglər qara üstündə parlayıb hərəkət edir.
+- Daha kiçik, canlı və aydın hərəkət edən rəng işıqları; aralarında qara görünür
+- Səhifələrin yuxarısındakı rəngin aşağı daşması düzəldildi
