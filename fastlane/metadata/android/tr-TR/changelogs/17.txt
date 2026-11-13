@@ -1,0 +1,2 @@
+Tailscale düzeltmesi.
+- Düzeltildi: davetle katılma "no safe place found to store log state" hatasıyla duruyordu. Tailscale artık tüm dosyalarını uygulamanın özel klasöründe tutuyor

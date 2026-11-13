@@ -1,0 +1,2 @@
+Tailscale fix.
+- Fixed: joining with an invite stopped with "no safe place found to store log state". Tailscale now keeps all its files in the app's private folder

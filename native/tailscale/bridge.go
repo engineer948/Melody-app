@@ -116,6 +116,9 @@ func Start(dir, authKey, hostname, target, secret string, port int, keyHex strin
 	if err := os.MkdirAll(dir, 0o700); err != nil {
 		return 0, err
 	}
+	if err := prepareEnv(dir); err != nil {
+		return 0, err
+	}
 	store, err := newEncryptedStore(filepath.Join(dir, stateFileName), key)
 	if err != nil {
 		return 0, err

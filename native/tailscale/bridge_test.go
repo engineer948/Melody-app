@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"tailscale.com/ipn"
+	"tailscale.com/logpolicy"
 )
 
 const testSecret = "0123456789abcdef0123456789abcdef"
@@ -179,6 +180,7 @@ func TestParseInterfaces(t *testing.T) {
 }
 
 func TestStartValidatesInput(t *testing.T) {
+	isolateEnv(t)
 	dir := t.TempDir()
 	key := strings.Repeat("ab", 32)
 	cases := []struct{ target, secret, host, key string }{
@@ -223,5 +225,26 @@ func TestSetCrashFile(t *testing.T) {
 	}
 	if _, err := os.Stat(path); err != nil {
 		t.Fatal(err)
+	}
+}
+
+// Android has no $HOME, writable /var/lib or $TMPDIR; Tailscale must use
+// the app's directory for everything instead of panicking.
+func TestPrepareEnvGivesTailscaleAPlaceToWrite(t *testing.T) {
+	for _, name := range []string{"TS_LOGS_DIR", "HOME", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "TMPDIR"} {
+		t.Setenv(name, "")
+	}
+	dir := t.TempDir()
+	if err := prepareEnv(dir); err != nil {
+		t.Fatal(err)
+	}
+	if got := logpolicy.LogsDir(t.Logf); got != filepath.Join(dir, "logs") {
+		t.Fatalf("LogsDir = %q", got)
+	}
+	if got := os.TempDir(); got != filepath.Join(dir, "tmp") {
+		t.Fatalf("TempDir = %q", got)
+	}
+	if got, err := os.UserCacheDir(); err != nil || got != filepath.Join(dir, "cache") {
+		t.Fatalf("UserCacheDir = %q, %v", got, err)
 	}
 }

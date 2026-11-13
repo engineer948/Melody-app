@@ -105,6 +105,7 @@ func fetch(t *testing.T, port int, path string) (int, string) {
 }
 
 func TestEndToEnd(t *testing.T) {
+	isolateEnv(t)
 	if testing.Short() {
 		t.Skip("starts a tailnet")
 	}
@@ -261,6 +262,7 @@ func approveWhenSeen(ctx context.Context, control *testcontrol.Server, hostname 
 }
 
 func TestDeviceApproval(t *testing.T) {
+	isolateEnv(t)
 	if testing.Short() {
 		t.Skip("starts a tailnet")
 	}
@@ -278,5 +280,13 @@ func TestDeviceApproval(t *testing.T) {
 	waitState(t, ctx, StateRunning)
 	if code, body := fetch(t, port, "/"+testSecret+"/Items"); code != 200 || body != "jellyfin /Items" {
 		t.Fatalf("got %d %q", code, body)
+	}
+}
+
+// isolateEnv restores the variables Start changes once the test ends.
+func isolateEnv(t *testing.T) {
+	t.Helper()
+	for _, name := range []string{"TS_LOGS_DIR", "HOME", "XDG_CACHE_HOME", "XDG_CONFIG_HOME", "TMPDIR"} {
+		t.Setenv(name, os.Getenv(name))
 	}
 }

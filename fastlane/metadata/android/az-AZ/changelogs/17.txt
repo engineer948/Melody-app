@@ -1,0 +1,2 @@
+Tailscale düzəlişi.
+- Düzəldildi: dəvətlə qoşulma "no safe place found to store log state" xətası ilə dayanırdı. Tailscale indi bütün fayllarını tətbiqin özəl qovluğunda saxlayır
