@@ -16,6 +16,12 @@
 - The maintainer may write to you in Turkish; answer in Turkish, but keep
   repository content English.
 
+## Releasing (standing instruction from the maintainer)
+
+When a change is finished and its checks pass, **do not ask**: push it to
+`main` and start the Release workflow (Actions → Release → Run workflow
+on `main`), then report the release link. Bump the version first (below).
+
 ## Release checklist
 
 1. Bump `version:` in `pubspec.yaml` (`x.y.z+N`, `N` always grows).
