@@ -1,0 +1,2 @@
+Kiçik Tailscale düzəlişi.
+- Təklif olunan giriş qaydası indi öz cihazlarının tam girişini saxlayır (exit node da); dəvətli dostlar yenə yalnız musiqi serverinə çatır

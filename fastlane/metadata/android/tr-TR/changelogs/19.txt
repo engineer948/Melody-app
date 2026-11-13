@@ -1,0 +1,2 @@
+Küçük Tailscale düzeltmesi.
+- Önerilen erişim kuralı artık kendi cihazlarına tam erişimi koruyor (exit node dahil); davetli arkadaşlar yine yalnızca müzik sunucusuna ulaşır

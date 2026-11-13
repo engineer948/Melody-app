@@ -1,0 +1,2 @@
+Small Tailscale fix.
+- The suggested access rule now keeps full access for your own devices (also exit nodes); invited friends still reach only the music server
