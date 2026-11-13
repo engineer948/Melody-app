@@ -795,5 +795,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "profilePhoto": "Profile picture",
+  "profilePhotoHint": "Shown in the app and in the sign-in screen's user list",
+  "profilePhotoRemove": "Remove picture",
+  "profilePhotoFailed": "Could not change the picture"
 }

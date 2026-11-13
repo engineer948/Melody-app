@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:melody/core/errors/failure.dart';
 import 'package:melody/core/errors/result.dart';
 import 'package:melody/core/network/failure_mapper.dart';
@@ -26,6 +28,30 @@ class JellyfinMusicSource implements MusicSource {
 
   /// Sharing features (song dedications, shared playlist, greeting).
   SocialApi get social => JellyfinSocial(_api, selfId: userId);
+
+  /// The signed-in user's profile picture, or `null` when there is none.
+  Future<Uri?> avatar() async {
+    final me = await _api.getObject('Users/Me');
+    final tag = me['PrimaryImageTag'];
+    if (tag is! String) return null;
+    return _api.resolve('Users/$userId/Images/Primary', {
+      'tag': tag,
+      'fillWidth': '256',
+      'fillHeight': '256',
+    });
+  }
+
+  /// Sets the signed-in user's profile picture to the PNG [png]. Jellyfin
+  /// shows it everywhere, including the sign-in screen's user list.
+  Future<void> setAvatar(List<int> png) => _api.post(
+    'UserImage',
+    query: {'userId': userId},
+    body: base64Encode(png),
+    contentType: 'image/png',
+  );
+
+  /// Removes the signed-in user's profile picture.
+  Future<void> removeAvatar() => _api.delete('UserImage', {'userId': userId});
 
   /// Listening together (Jellyfin SyncPlay).
   SyncPlayTransport get syncPlay => JellyfinSyncPlay(_api, tracksById);

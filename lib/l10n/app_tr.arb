@@ -436,5 +436,9 @@
   "listenCreate": "Yeni grup",
   "listenGroupName": "Grup adı",
   "listenGroupDefault": "Birlikte dinle · {name}",
-  "listenNoGroups": "Açık grup yok. Bir tane başlat, sunucudaki diğerleri katılabilir."
+  "listenNoGroups": "Açık grup yok. Bir tane başlat, sunucudaki diğerleri katılabilir.",
+  "profilePhoto": "Profil resmi",
+  "profilePhotoHint": "Uygulamada ve giriş ekranındaki kullanıcı listesinde görünür",
+  "profilePhotoRemove": "Resmi kaldır",
+  "profilePhotoFailed": "Resim değiştirilemedi"
 }

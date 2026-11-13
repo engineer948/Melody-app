@@ -436,5 +436,9 @@
   "listenCreate": "Yeni qrup",
   "listenGroupName": "Qrup adı",
   "listenGroupDefault": "Birlikdə dinlə · {name}",
-  "listenNoGroups": "Açıq qrup yoxdur. Birini başlat, serverdəki digərləri qoşula bilər."
+  "listenNoGroups": "Açıq qrup yoxdur. Birini başlat, serverdəki digərləri qoşula bilər.",
+  "profilePhoto": "Profil şəkli",
+  "profilePhotoHint": "Tətbiqdə və giriş ekranındakı istifadəçi siyahısında görünür",
+  "profilePhotoRemove": "Şəkli sil",
+  "profilePhotoFailed": "Şəkli dəyişmək alınmadı"
 }

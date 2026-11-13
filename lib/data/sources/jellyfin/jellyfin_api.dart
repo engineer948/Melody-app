@@ -110,11 +110,13 @@ class JellyfinApi {
     String path, {
     Map<String, Object?> query = const {},
     Object? body,
+    String? contentType,
   }) async {
     final response = await _dio.post<Object?>(
       path,
       queryParameters: _clean(query),
       data: body,
+      options: contentType == null ? null : Options(contentType: contentType),
     );
     final data = response.data;
     return data is Map<String, dynamic> ? data : const {};

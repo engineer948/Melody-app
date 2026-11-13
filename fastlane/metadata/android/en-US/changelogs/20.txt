@@ -1,3 +1,3 @@
-Listen together with anyone.
-- Start a listening group or join an open one from the player (headphones button) or Settings; everyone on the server with SyncPlay access can join
-- Play, pause, seek and skip stay in sync for the whole group
+Listen together with anyone, and profile pictures.
+- Start or join Jellyfin SyncPlay groups from the player (headphones button) or Settings; groups from Jellyfin's web app show up too
+- Set your profile picture in Settings; it shows in the app and in the sign-in user list

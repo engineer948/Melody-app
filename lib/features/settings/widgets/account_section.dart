@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/settings/widgets/profile_picture.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -96,6 +97,7 @@ class AccountSection extends ConsumerWidget {
         .firstOrNull;
     return Column(
       children: [
+        if (active != null) ProfilePictureTile(name: active.userName),
         for (final account in session.accounts)
           ListTile(
             leading: Icon(

@@ -332,4 +332,27 @@ void main() {
       isTrue,
     );
   });
+
+  test('profile picture: read, upload as base64 PNG, remove', () async {
+    final s = source(
+      (r) => r.path.endsWith('Users/Me')
+          ? (status: 200, body: {'Id': 'u1', 'PrimaryImageTag': 'abc'})
+          : (status: 204, body: null),
+    );
+    final uri = await s.avatar();
+    expect(uri!.path, '/jf/Users/u1/Images/Primary');
+    expect(uri.queryParameters['tag'], 'abc');
+
+    await s.setAvatar([1, 2, 3]);
+    final upload = adapter.last;
+    expect(upload.method, 'POST');
+    expect(upload.path, 'UserImage');
+    expect(upload.queryParameters['userId'], 'u1');
+    expect(upload.contentType, 'image/png');
+    expect(upload.data, 'AQID');
+
+    await s.removeAvatar();
+    expect(adapter.last.method, 'DELETE');
+    expect(adapter.last.path, 'UserImage');
+  });
 }
