@@ -33,16 +33,30 @@ class NowPlayingWidget : AppWidgetProvider() {
         private const val MEDIA_BUTTON_RECEIVER =
             "com.ryanheise.audioservice.MediaButtonReceiver"
 
-        /** Redraws every placed widget. */
+        /** Redraws every placed widget of every kind. */
         fun updateAll(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
-            val ids = manager.getAppWidgetIds(
-                ComponentName(context, NowPlayingWidget::class.java),
+            val kinds = listOf(
+                NowPlayingWidget::class.java to { render(context) },
+                CoverWidget::class.java to {
+                    render(context, R.layout.cover_widget, coverSample = 1)
+                },
+                CompactWidget::class.java to {
+                    render(
+                        context,
+                        R.layout.compact_widget,
+                        withText = false,
+                        withPrevious = false,
+                    )
+                },
             )
-            if (ids.isEmpty()) return
-            val views = render(context)
-            for (id in ids) {
-                manager.updateAppWidget(id, views)
+            for ((kind, draw) in kinds) {
+                val ids = manager.getAppWidgetIds(ComponentName(context, kind))
+                if (ids.isEmpty()) continue
+                val views = draw()
+                for (id in ids) {
+                    manager.updateAppWidget(id, views)
+                }
             }
         }
 
@@ -61,15 +75,28 @@ class NowPlayingWidget : AppWidgetProvider() {
             )
         }
 
-        private fun render(context: Context): RemoteViews {
+        /**
+         * Draws [layout]. Every layout has widget_root, widget_cover,
+         * widget_play and widget_next; [withText] adds widget_title and
+         * widget_artist, [withPrevious] widget_previous.
+         */
+        fun render(
+            context: Context,
+            layout: Int = R.layout.now_playing_widget,
+            withText: Boolean = true,
+            withPrevious: Boolean = true,
+            coverSample: Int = 2,
+        ): RemoteViews {
             val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            val views = RemoteViews(context.packageName, R.layout.now_playing_widget)
-            val title = prefs.getString("title", null)
-            views.setTextViewText(
-                R.id.widget_title,
-                if (title.isNullOrEmpty()) context.getString(R.string.widget_idle) else title,
-            )
-            views.setTextViewText(R.id.widget_artist, prefs.getString("artist", "") ?: "")
+            val views = RemoteViews(context.packageName, layout)
+            if (withText) {
+                val title = prefs.getString("title", null)
+                views.setTextViewText(
+                    R.id.widget_title,
+                    if (title.isNullOrEmpty()) context.getString(R.string.widget_idle) else title,
+                )
+                views.setTextViewText(R.id.widget_artist, prefs.getString("artist", "") ?: "")
+            }
             views.setImageViewResource(
                 R.id.widget_play,
                 if (prefs.getBoolean("playing", false)) {
@@ -80,7 +107,7 @@ class NowPlayingWidget : AppWidgetProvider() {
             )
             val cover = prefs.getString("cover", null)?.let {
                 // Small on purpose: widgets may only carry little bitmap data.
-                val options = BitmapFactory.Options().apply { inSampleSize = 2 }
+                val options = BitmapFactory.Options().apply { inSampleSize = coverSample }
                 runCatching { BitmapFactory.decodeFile(it, options) }.getOrNull()
             }
             if (cover != null) {
@@ -89,10 +116,12 @@ class NowPlayingWidget : AppWidgetProvider() {
                 views.setImageViewResource(R.id.widget_cover, R.mipmap.ic_launcher)
             }
 
-            views.setOnClickPendingIntent(
-                R.id.widget_previous,
-                mediaButton(context, KeyEvent.KEYCODE_MEDIA_PREVIOUS),
-            )
+            if (withPrevious) {
+                views.setOnClickPendingIntent(
+                    R.id.widget_previous,
+                    mediaButton(context, KeyEvent.KEYCODE_MEDIA_PREVIOUS),
+                )
+            }
             views.setOnClickPendingIntent(
                 R.id.widget_play,
                 mediaButton(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE),
@@ -114,6 +143,43 @@ class NowPlayingWidget : AppWidgetProvider() {
                 )
             }
             return views
+        }
+    }
+}
+
+/** Large home screen widget: the cover with title and controls on it. */
+class CoverWidget : AppWidgetProvider() {
+    override fun onUpdate(
+        context: Context,
+        manager: AppWidgetManager,
+        appWidgetIds: IntArray,
+    ) {
+        val views = NowPlayingWidget.render(
+            context,
+            R.layout.cover_widget,
+            coverSample = 1,
+        )
+        for (id in appWidgetIds) {
+            manager.updateAppWidget(id, views)
+        }
+    }
+}
+
+/** Small home screen widget: cover, play / pause and next. */
+class CompactWidget : AppWidgetProvider() {
+    override fun onUpdate(
+        context: Context,
+        manager: AppWidgetManager,
+        appWidgetIds: IntArray,
+    ) {
+        val views = NowPlayingWidget.render(
+            context,
+            R.layout.compact_widget,
+            withText = false,
+            withPrevious = false,
+        )
+        for (id in appWidgetIds) {
+            manager.updateAppWidget(id, views)
         }
     }
 }

@@ -1,0 +1,6 @@
+Çevrimdışı, widget'lar ve fazlası.
+- İndirilen şarkılar internetsiz tam çalışır: albümler, albüm sayfaları ve kapaklar
+- Yenileyince Tailscale gerçekten yeniden bağlanır, ağ değişince de
+- İki yeni widget (kapak 2x2, küçük 2x1); beyaz uygulama simgesi
+- Paylaşım isteği geri çekilebilir
+- Yeni sürüm çıkınca bildirim

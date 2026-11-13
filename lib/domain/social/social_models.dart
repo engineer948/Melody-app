@@ -274,6 +274,7 @@ class SocialConsent {
     required this.features,
     this.seen = const {},
     this.liked = const {},
+    this.requestedAt,
   });
 
   /// Reads the stored text; `null` when there is none or it is broken.
@@ -304,8 +305,19 @@ class SocialConsent {
       },
       seen: strings(json['seen']),
       liked: strings(json['liked']),
+      requestedAt: _date(json['requestedAt']),
     );
   }
+
+  /// The request this answers ([SocialInbox.requestedAt]); a withdrawn and
+  /// repeated request must be answered again. `null` in answers stored by
+  /// older versions (they match any request from the same sender).
+  final DateTime? requestedAt;
+
+  /// Whether this is the answer to [inbox].
+  bool answers(SocialInbox inbox) =>
+      fromId == inbox.fromId &&
+      (requestedAt == null || requestedAt == inbox.requestedAt);
 
   /// The sender this answer is for.
   final String fromId;
@@ -332,6 +344,7 @@ class SocialConsent {
     'features': [for (final f in features) f.name],
     'seen': seen.toList(),
     'liked': liked.toList(),
+    if (requestedAt case final at?) 'requestedAt': at.toIso8601String(),
   });
 
   /// Copy with some fields replaced.
@@ -346,6 +359,7 @@ class SocialConsent {
     features: features ?? this.features,
     seen: seen ?? this.seen,
     liked: liked ?? this.liked,
+    requestedAt: requestedAt,
   );
 }
 
@@ -379,6 +393,10 @@ abstract interface class SocialApi {
 
   /// Writes [userId]'s inbox (administrators only).
   Future<void> writeInbox(String userId, SocialInbox inbox);
+
+  /// Empties [userId]'s inbox: the request is withdrawn (administrators
+  /// only).
+  Future<void> clearInbox(String userId);
 
   /// Answer stored by [userId] (default: the signed-in user).
   Future<SocialConsent?> readConsent([String? userId]);

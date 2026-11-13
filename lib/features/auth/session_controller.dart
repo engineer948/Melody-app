@@ -12,6 +12,7 @@ import 'package:melody/data/sources/radio/radio_source.dart';
 import 'package:melody/data/sources/subsonic/subsonic_music_source.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/domain/repositories/music_source.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -234,5 +235,10 @@ LibraryRepository? libraryRepository(Ref ref) {
     source: source,
     accountId: accountId,
     cache: ref.watch(catalogCacheProvider),
+    // Offline, finished downloads stand in for what was never cached.
+    downloaded: () => [
+      for (final item in ref.read(downloadControllerProvider).values)
+        if (item.isDone) item.track,
+    ],
   );
 }

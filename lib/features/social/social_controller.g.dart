@@ -93,7 +93,7 @@ final class SocialControllerProvider
   }
 }
 
-String _$socialControllerHash() => r'3f1d415ef4705f825052f8bb0f67621d734f1e2d';
+String _$socialControllerHash() => r'a3d3f5b36fe00f6132baeb6e8ee3fed291bda452';
 
 /// Loads and changes the sharing state; refreshes every few minutes.
 

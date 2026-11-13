@@ -236,6 +236,31 @@ class _SocialSenderScreenState extends ConsumerState<SocialSenderScreen> {
     }
   }
 
+  Future<void> _withdraw(String name) async {
+    final l10n = context.l10n;
+    final sure = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.socialWithdraw),
+        content: Text(l10n.socialWithdrawConfirm(name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.socialWithdraw),
+          ),
+        ],
+      ),
+    );
+    if (sure ?? false) {
+      _loadedOutbox = false;
+      await _run(_controller.withdraw);
+    }
+  }
+
   Future<void> _chooseRecipient() async {
     final users = await _controller.users();
     if (!mounted) return;
@@ -331,6 +356,15 @@ class _SocialSenderScreenState extends ConsumerState<SocialSenderScreen> {
                           () => _controller.requestPermission(_name.text),
                         ),
                   child: Text(l10n.socialAsk),
+                ),
+              ),
+            if (outbox != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: OutlinedButton.icon(
+                  onPressed: _busy ? null : () => _withdraw(recipient.name),
+                  icon: const Icon(Icons.undo_rounded),
+                  label: Text(l10n.socialWithdraw),
                 ),
               ),
             if (outbox != null) ...[

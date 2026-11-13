@@ -1,0 +1,6 @@
+Oflayn, widget-lər və daha çox.
+- Endirilən mahnılar internetsiz tam işləyir: albomlar, albom səhifələri və kapaklar
+- Yeniləyəndə Tailscale həqiqətən yenidən qoşulur, şəbəkə dəyişəndə də
+- İki yeni widget (kapak 2x2, kiçik 2x1); ağ tətbiq ikonası
+- Paylaşım istəyi geri çəkilə bilər
+- Yeni sürüm çıxanda bildiriş

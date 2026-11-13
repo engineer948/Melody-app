@@ -29,7 +29,14 @@ class LibraryRepository {
     required this.source,
     required this.accountId,
     required this._cache,
-  });
+    List<Track> Function()? downloaded,
+  }) : _downloaded = downloaded ?? _none;
+
+  static List<Track> _none() => const [];
+
+  /// Downloaded tracks: what the library shows when the server cannot be
+  /// reached and nothing was cached (albums never opened online).
+  final List<Track> Function() _downloaded;
 
   /// The backend.
   final MusicSource source;
@@ -43,6 +50,7 @@ class LibraryRepository {
     required Future<T?> Function() cached,
     required Future<Result<T>> Function() remote,
     required Future<void> Function(T value) save,
+    T? Function()? offline,
   }) async* {
     T? stale;
     try {
@@ -61,6 +69,7 @@ class LibraryRepository {
         }
         yield Loaded(value);
       case Err(:final failure):
+        stale ??= offline?.call();
         if (stale == null) throw failure;
         yield Loaded(stale, fromCache: true, refreshFailure: failure);
     }
@@ -69,15 +78,49 @@ class LibraryRepository {
   Stream<Loaded<List<T>>> _list<T>(
     String key,
     CacheKind<T> kind,
-    Future<Result<List<T>>> Function() remote,
-  ) => _swr(
+    Future<Result<List<T>>> Function() remote, {
+    List<T> Function()? offline,
+  }) => _swr(
     cached: () async {
       final items = await _cache.readList(accountId, key, kind);
       return items.isEmpty ? null : items;
     },
     remote: remote,
     save: (items) => _cache.writeList(accountId, key, kind, items),
+    offline: offline == null
+        ? null
+        : () {
+            final items = offline();
+            return items.isEmpty ? null : items;
+          },
   );
+
+  /// Albums of the downloaded tracks, newest download first.
+  List<Album> _downloadedAlbums() {
+    final albums = <String, Album>{};
+    for (final t in _downloaded()) {
+      final id = t.albumId;
+      if (id == null || albums.containsKey(id)) continue;
+      albums[id] = Album(
+        id: id,
+        title: t.albumTitle ?? '',
+        artistName: t.albumArtist ?? t.artistLine,
+        year: t.year,
+        artwork: Artwork(itemId: id),
+      );
+    }
+    return albums.values.toList();
+  }
+
+  List<Track> _downloadedTracks(TrackQuery query) => [
+    for (final t in _downloaded())
+      if ((query.albumId == null || t.albumId == query.albumId) &&
+          (query.artistId == null ||
+              t.artists.any((a) => a.id == query.artistId)) &&
+          (!query.favoritesOnly || t.isFavorite) &&
+          query.playlistId == null)
+        t,
+  ];
 
   Future<Result<List<T>>> _more<T>(
     String key,
@@ -96,8 +139,12 @@ class LibraryRepository {
   }
 
   /// First page of an album listing.
-  Stream<Loaded<List<Album>>> albums(AlbumQuery query) =>
-      _list(query.cacheKey, CacheKind.album, () => source.albums(query));
+  Stream<Loaded<List<Album>>> albums(AlbumQuery query) => _list(
+    query.cacheKey,
+    CacheKind.album,
+    () => source.albums(query),
+    offline: _downloadedAlbums,
+  );
 
   /// A later page of an album listing.
   Future<Result<List<Album>>> moreAlbums(AlbumQuery query) =>
@@ -116,8 +163,12 @@ class LibraryRepository {
       );
 
   /// First page of a track listing.
-  Stream<Loaded<List<Track>>> tracks(TrackQuery query) =>
-      _list(query.cacheKey, CacheKind.track, () => source.tracks(query));
+  Stream<Loaded<List<Track>>> tracks(TrackQuery query) => _list(
+    query.cacheKey,
+    CacheKind.track,
+    () => source.tracks(query),
+    offline: () => _downloadedTracks(query),
+  );
 
   /// A later page of a track listing.
   Future<Result<List<Track>>> moreTracks(TrackQuery query) =>
@@ -136,6 +187,29 @@ class LibraryRepository {
     cached: () => _cache.readItem(accountId, CacheKind.albumDetail, id),
     remote: () => source.album(id),
     save: (d) => _cache.writeItem(accountId, CacheKind.albumDetail, d),
+    offline: () {
+      final tracks =
+          [
+            for (final t in _downloaded())
+              if (t.albumId == id) t,
+          ]..sort(
+            (a, b) => ((a.discNumber ?? 1) * 1000 + (a.trackNumber ?? 0))
+                .compareTo((b.discNumber ?? 1) * 1000 + (b.trackNumber ?? 0)),
+          );
+      if (tracks.isEmpty) return null;
+      final first = tracks.first;
+      return AlbumDetail(
+        album: Album(
+          id: id,
+          title: first.albumTitle ?? '',
+          artistName: first.albumArtist ?? first.artistLine,
+          year: first.year,
+          trackCount: tracks.length,
+          artwork: Artwork(itemId: id),
+        ),
+        tracks: tracks,
+      );
+    },
   );
 
   /// An artist with albums and popular tracks.

@@ -68,6 +68,42 @@ void main() {
     );
   });
 
+  test('offline without a cache falls back to downloaded songs', () async {
+    final downloaded = [
+      makeTrack(
+        't2',
+        albumId: 'alb',
+      ).copyWith(albumTitle: 'Gülümse', albumArtist: 'Sezen', trackNumber: 2),
+      makeTrack(
+        't1',
+        albumId: 'alb',
+      ).copyWith(albumTitle: 'Gülümse', albumArtist: 'Sezen', trackNumber: 1),
+    ];
+    final offline = LibraryRepository(
+      source: source,
+      accountId: 'acc',
+      cache: CatalogCache(db),
+      downloaded: () => downloaded,
+    );
+    source.failure = const NetworkFailure();
+
+    final albums = await offline.albums(query).last;
+    expect(albums.value.single.title, 'Gülümse');
+    expect(albums.value.single.artwork?.itemId, 'alb');
+    expect(albums.refreshFailure, isA<NetworkFailure>());
+
+    final detail = await offline.album('alb').last;
+    expect(detail.value.tracks.map((t) => t.id), ['t1', 't2']);
+    expect(detail.value.album.title, 'Gülümse');
+
+    final songs = await offline.tracks(const TrackQuery(albumId: 'alb')).last;
+    expect(songs.value, hasLength(2));
+    await expectLater(
+      offline.album('other').toList(),
+      throwsA(isA<NetworkFailure>()),
+    );
+  });
+
   test('listings with different filters do not share a cache', () async {
     await repository.albums(query).drain<void>();
     source.failure = const NetworkFailure();

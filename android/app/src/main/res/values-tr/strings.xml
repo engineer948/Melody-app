@@ -5,4 +5,6 @@
     <string name="widget_previous">Önceki</string>
     <string name="widget_play_pause">Çal ya da duraklat</string>
     <string name="widget_next">Sonraki</string>
+    <string name="widget_cover_description">Kapak, çalan şarkı ve düğmeler</string>
+    <string name="widget_compact_description">Çal / duraklat ve sonraki</string>
 </resources>

@@ -283,11 +283,29 @@ class DownloadController extends _$DownloadController {
 
   /// Cover and lyrics, so the track is complete offline.
   Future<void> _saveExtras(MusicSource source, Track track) async {
-    final artwork = track.artwork;
+    // The song's own picture, and the album's (album pages and cards look
+    // up the album id, also offline).
+    final albumId = track.albumId;
+    final artworks = [
+      ?track.artwork,
+      if (albumId != null && track.artwork?.itemId != albumId)
+        Artwork(itemId: albumId),
+    ];
+    for (final artwork in artworks) {
+      await _saveCover(source, artwork);
+    }
+    try {
+      if (ref.mounted) await ref.read(trackLyricsProvider(track).future);
+    } on Object catch (error) {
+      _log.error('Could not save lyrics', error);
+    }
+  }
+
+  Future<void> _saveCover(MusicSource source, Artwork artwork) async {
     final uri = source.artworkUri(artwork, size: 640);
     final dir = _dir;
     try {
-      if (artwork != null && uri != null && dir != null) {
+      if (uri != null && dir != null) {
         final covers = Directory('${dir.path}/covers');
         if (!covers.existsSync()) await covers.create(recursive: true);
         final file = File('${covers.path}/${_safe(artwork.itemId)}');
@@ -305,9 +323,8 @@ class DownloadController extends _$DownloadController {
           await part.rename(file.path);
         }
       }
-      if (ref.mounted) await ref.read(trackLyricsProvider(track).future);
     } on Object catch (error) {
-      _log.error('Could not save cover or lyrics', error);
+      _log.error('Could not save cover', error);
     }
   }
 

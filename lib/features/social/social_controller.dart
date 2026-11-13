@@ -61,7 +61,7 @@ class SocialState {
 
   /// The answer that belongs to [inbox] (ignores answers to someone else).
   SocialConsent? get answer =>
-      inbox != null && consent?.fromId == inbox!.fromId ? consent : null;
+      inbox != null && (consent?.answers(inbox!) ?? false) ? consent : null;
 
   /// Whether the signed-in user still has to answer a request.
   bool get mustAnswer => inbox != null && answer == null;
@@ -71,7 +71,7 @@ class SocialState {
 
   /// The recipient's answer to the signed-in administrator.
   SocialConsent? get outgoingAnswer =>
-      outbox != null && recipientConsent?.fromId == outbox!.fromId
+      outbox != null && (recipientConsent?.answers(outbox!) ?? false)
       ? recipientConsent
       : null;
 
@@ -185,6 +185,7 @@ class SocialController extends _$SocialController {
         features: granted ? features : const {},
         seen: old?.seen ?? const {},
         liked: old?.liked ?? const {},
+        requestedAt: inbox.requestedAt,
       ),
     );
   }
@@ -253,6 +254,23 @@ class SocialController extends _$SocialController {
             fromName: fromName,
             requestedAt: DateTime.now().toUtc(),
           ),
+    );
+  }
+
+  /// Withdraws everything sent to the recipient: the request, songs,
+  /// greeting, invitations. Their app then shows nothing from the sender,
+  /// not even the option to allow it in Settings.
+  Future<void> withdraw() async {
+    final recipient = state.recipient;
+    final api = _api;
+    if (recipient == null || api == null) return;
+    await api.clearInbox(recipient.id);
+    state = SocialState(
+      available: state.available,
+      isAdmin: state.isAdmin,
+      inbox: state.inbox,
+      consent: state.consent,
+      recipient: recipient,
     );
   }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/data/tailnet/invite_code.dart';
 import 'package:melody/data/tailnet/tailnet_bridge.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/player/streaming_settings.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -130,6 +132,26 @@ TailnetBootstrap tailnetBootstrap(Ref ref) => const TailnetBootstrap();
 /// The platform side of the node.
 @Riverpod(keepAlive: true)
 TailnetBridge tailnetBridge(Ref ref) => const ChannelTailnetBridge();
+
+/// Whether the music server answers through the proxy at `local`
+/// (`<local>/System/Info/Public`, no sign-in needed); overridden in tests.
+@Riverpod(keepAlive: true)
+Future<bool> Function(Uri local) tailnetProbe(Ref ref) => (local) async {
+  if (Platform.environment.containsKey('FLUTTER_TEST')) return true;
+  final client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
+  try {
+    final request = await client
+        .getUrl(local.replace(path: '${local.path}/System/Info/Public'))
+        .timeout(const Duration(seconds: 8));
+    final response = await request.close().timeout(const Duration(seconds: 8));
+    await response.drain<void>();
+    return response.statusCode < 500;
+  } on Object {
+    return false;
+  } finally {
+    client.close(force: true);
+  }
+};
 
 /// Where the node's secrets are kept.
 @Riverpod(keepAlive: true)
@@ -308,6 +330,16 @@ class TailnetController extends _$TailnetController {
       _survived?.cancel();
     });
     final boot = ref.watch(tailnetBootstrapProvider);
+    // Wi-Fi <-> mobile data: check the connection once the new network
+    // has settled.
+    ref.listen(onMobileDataProvider, (before, after) {
+      final was = before?.value;
+      if (was == null || was == after.value) return;
+      Future<void>.delayed(
+        const Duration(seconds: 3),
+        () => ref.mounted ? ensureConnected() : null,
+      ).ignore();
+    });
     final prefs = ref.watch(preferencesProvider);
     final target = Uri.tryParse(prefs.getString(targetKey) ?? '');
     final secrets = boot.secrets;
@@ -450,10 +482,22 @@ class TailnetController extends _$TailnetController {
 
   /// Checks the connection now and reconnects when it is down (pull to
   /// refresh on the home screen, coming back to the app).
+  ///
+  /// Tailscale may still say "running" after the phone changed networks
+  /// while the connection is dead, so the music server is asked through
+  /// the proxy too; no answer means a full restart (as Settings does).
   Future<void> ensureConnected() async {
     if (!state.configured || state.crashed || _joining) return;
     final report = await refresh(heal: false);
-    if (_broken(report)) await _heal();
+    if (_broken(report)) {
+      await _heal();
+      return;
+    }
+    final local = state.local;
+    if (report.status == TailnetStatus.running && local != null) {
+      final reachable = await ref.read(tailnetProbeProvider)(local);
+      if (!reachable && state.configured && !_joining) await _heal();
+    }
   }
 
   /// Joins the tailnet of [invite]. Only one tailnet can be joined at a

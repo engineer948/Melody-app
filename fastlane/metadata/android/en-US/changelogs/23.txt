@@ -1,0 +1,6 @@
+Offline, widgets and more.
+- Downloaded songs work fully offline: albums, album pages and covers
+- Pull to refresh really reconnects Tailscale, also after switching networks
+- Two new widgets (cover 2x2, compact 2x1); white app icon
+- A sharing request can be withdrawn
+- Notice when a new version is out

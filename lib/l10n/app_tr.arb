@@ -451,5 +451,7 @@
   "updateAvailableBody": "En son düzeltmeleri içerir (Tailscale için de)",
   "updateDownload": "İndir",
   "updateCheck": "Yeni sürümleri denetle",
-  "updateCheckBody": "Uygulama açılınca GitHub'a son sürümü sorar; seninle ilgili hiçbir şey gönderilmez"
+  "updateCheckBody": "Uygulama açılınca GitHub'a son sürümü sorar; seninle ilgili hiçbir şey gönderilmez",
+  "socialWithdraw": "İsteği geri çek",
+  "socialWithdrawConfirm": "{name} için gönderdiğin her şey onun uygulamasından kalkar: istek, şarkılar, karşılama ve davetler. Yeniden sorarsan yeni bir cevap gerekir."
 }

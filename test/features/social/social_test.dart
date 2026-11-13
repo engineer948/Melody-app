@@ -153,6 +153,44 @@ void main() {
     expect(socialGreeting(state), isNull);
   });
 
+  test(
+    'a withdrawn request disappears and asking again needs a new yes',
+    () async {
+      final ali = await user('admin', admin: true);
+      final ayla = await user('ayla');
+      final aliCtl = await ready(ali);
+      await aliCtl.chooseRecipient(const SocialUser(id: 'ayla', name: 'Ayla'));
+      await aliCtl.requestPermission('Ali');
+      final aylaCtl = await ready(ayla);
+      await aylaCtl.answer(
+        granted: true,
+        features: SocialFeature.values.toSet(),
+      );
+      await aliCtl.refresh();
+      expect(await aliCtl.dedicate(track), isTrue);
+
+      await aliCtl.withdraw();
+      await aylaCtl.refresh();
+      var state = ayla.read(socialControllerProvider);
+      expect(state.inbox, isNull, reason: 'nothing left, not even in Settings');
+      expect(state.mustAnswer, isFalse);
+      expect(ali.read(socialControllerProvider).outbox, isNull);
+
+      // Asking again: her old "yes" does not count.
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      await aliCtl.requestPermission('Ali');
+      await aliCtl.refresh();
+      expect(
+        ali.read(socialControllerProvider).canSend(SocialFeature.dedications),
+        isFalse,
+      );
+      await aylaCtl.refresh();
+      state = ayla.read(socialControllerProvider);
+      expect(state.mustAnswer, isTrue);
+      expect(state.shows(SocialFeature.dedications), isFalse);
+    },
+  );
+
   test('a non-admin cannot write to someone else', () async {
     final ayla = FakeSocialApi(server, 'ayla');
     expect(

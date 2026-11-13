@@ -5,4 +5,6 @@
     <string name="widget_previous">Əvvəlki</string>
     <string name="widget_play_pause">Oxut və ya dayandır</string>
     <string name="widget_next">Növbəti</string>
+    <string name="widget_cover_description">Kapak, səslənən mahnı və düymələr</string>
+    <string name="widget_compact_description">Oxut / dayandır və növbəti</string>
 </resources>

@@ -83,6 +83,9 @@ class JellyfinSocial implements SocialApi {
       _write(_inboxId, userId, inbox.encode());
 
   @override
+  Future<void> clearInbox(String userId) => _write(_inboxId, userId, '');
+
+  @override
   Future<SocialConsent?> readConsent([String? userId]) async =>
       SocialConsent.decode(await _read(_consentId, userId));
 

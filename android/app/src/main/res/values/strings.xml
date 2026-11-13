@@ -5,4 +5,6 @@
     <string name="widget_previous">Previous</string>
     <string name="widget_play_pause">Play or pause</string>
     <string name="widget_next">Next</string>
+    <string name="widget_cover_description">Cover with the current song and controls</string>
+    <string name="widget_compact_description">Play / pause and next</string>
 </resources>

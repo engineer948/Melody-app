@@ -27,10 +27,12 @@ final invite = TailnetInvite.create(
 void main() {
   late FakeTailnetBridge bridge;
   late MemoryTailnetSecretStore secrets;
+  var probeAnswer = true;
 
   setUp(() {
     bridge = FakeTailnetBridge();
     secrets = MemoryTailnetSecretStore();
+    probeAnswer = true;
     TailnetController.fastPoll = const Duration(milliseconds: 1);
     TailnetController.joinTimeout = const Duration(seconds: 2);
     TailnetController.crashWindow = const Duration(milliseconds: 1);
@@ -45,6 +47,7 @@ void main() {
           ),
           tailnetBridgeProvider.overrideWithValue(bridge),
           tailnetSecretStoreProvider.overrideWithValue(secrets),
+          tailnetProbeProvider.overrideWithValue((_) async => probeAnswer),
         ],
       );
 
@@ -232,6 +235,21 @@ void main() {
     // Removed from the tailnet: reconnecting would not help.
     bridge.reports = [const TailnetReport(TailnetStatus.needsLogin)];
     await notifier.ensureConnected();
+    expect(bridge.starts, hasLength(2));
+  });
+
+  test('"running" but the server does not answer: full restart', () async {
+    final c = await container();
+    final notifier = c.read(tailnetControllerProvider.notifier);
+    await notifier.join(invite);
+    expect(bridge.starts, hasLength(1));
+
+    await notifier.ensureConnected();
+    expect(bridge.stops, 0, reason: 'healthy: nothing to do');
+
+    probeAnswer = false;
+    await notifier.ensureConnected();
+    expect(bridge.stops, 1);
     expect(bridge.starts, hasLength(2));
   });
 

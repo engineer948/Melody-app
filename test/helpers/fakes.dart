@@ -176,15 +176,17 @@ class FakeMusicSource implements MusicSource {
   }
 
   @override
-  Future<Result<AlbumDetail>> album(String id) async => _answer(
-    AlbumDetail(
-      album: albumItems.firstWhere((a) => a.id == id),
-      tracks: [
-        makeTrack('t1', title: 'Firuze', albumId: id),
-        makeTrack('t2', title: 'Hadi', albumId: id, disc: 2),
-      ],
-    ),
-  );
+  Future<Result<AlbumDetail>> album(String id) async => failure != null
+      ? Err(failure!)
+      : _answer(
+          AlbumDetail(
+            album: albumItems.firstWhere((a) => a.id == id),
+            tracks: [
+              makeTrack('t1', title: 'Firuze', albumId: id),
+              makeTrack('t2', title: 'Hadi', albumId: id, disc: 2),
+            ],
+          ),
+        );
 
   @override
   Future<Result<List<Artist>>> artists({

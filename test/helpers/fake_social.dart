@@ -65,6 +65,12 @@ class FakeSocialApi implements SocialApi {
   }
 
   @override
+  Future<void> clearInbox(String userId) async {
+    _check(userId);
+    server.inboxes.remove(userId);
+  }
+
+  @override
   Future<SocialConsent?> readConsent([String? userId]) async {
     _check(userId);
     return SocialConsent.decode(server.consents[userId ?? selfId]);

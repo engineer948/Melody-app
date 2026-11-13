@@ -817,5 +817,14 @@
         "type": "String"
       }
     }
+  },
+  "socialWithdraw": "Withdraw the request",
+  "socialWithdrawConfirm": "Everything you sent {name} disappears from their app: the request, songs, greeting and invitations. Asking again needs a new answer.",
+  "@socialWithdrawConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

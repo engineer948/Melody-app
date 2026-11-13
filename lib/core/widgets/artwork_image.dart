@@ -50,7 +50,20 @@ class ArtworkImage extends ConsumerWidget {
         final uri = source?.artworkUri(artwork, size: pixels);
         final placeholder = _Placeholder(icon: icon, extent: extent);
         final hash = artwork?.blurHash;
-        final child = uri == null
+        final id = artwork?.itemId;
+        // A cover saved with a download is shown at once, with or without
+        // a connection.
+        final saved = id == null
+            ? null
+            : ref.read(downloadControllerProvider.notifier).coverFile(id);
+        final child = saved != null
+            ? Image.file(
+                saved,
+                fit: BoxFit.cover,
+                cacheWidth: pixels,
+                errorBuilder: (_, _, _) => placeholder,
+              )
+            : uri == null
             ? placeholder
             : CachedNetworkImage(
                 imageUrl: uri.toString(),

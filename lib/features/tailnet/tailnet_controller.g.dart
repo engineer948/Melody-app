@@ -105,6 +105,63 @@ final class TailnetBridgeProvider
 
 String _$tailnetBridgeHash() => r'd3c98268cfbd9fed21a24ccca6693e211276a9b2';
 
+/// Whether the music server answers through the proxy at `local`
+/// (`<local>/System/Info/Public`, no sign-in needed); overridden in tests.
+
+@ProviderFor(tailnetProbe)
+final tailnetProbeProvider = TailnetProbeProvider._();
+
+/// Whether the music server answers through the proxy at `local`
+/// (`<local>/System/Info/Public`, no sign-in needed); overridden in tests.
+
+final class TailnetProbeProvider
+    extends
+        $FunctionalProvider<
+          Future<bool> Function(Uri local),
+          Future<bool> Function(Uri local),
+          Future<bool> Function(Uri local)
+        >
+    with $Provider<Future<bool> Function(Uri local)> {
+  /// Whether the music server answers through the proxy at `local`
+  /// (`<local>/System/Info/Public`, no sign-in needed); overridden in tests.
+  TailnetProbeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'tailnetProbeProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$tailnetProbeHash();
+
+  @$internal
+  @override
+  $ProviderElement<Future<bool> Function(Uri local)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  Future<bool> Function(Uri local) create(Ref ref) {
+    return tailnetProbe(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Future<bool> Function(Uri local) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Future<bool> Function(Uri local)>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$tailnetProbeHash() => r'e37a214304e15ea04a23aae3f69b57d1e1699019';
+
 /// Where the node's secrets are kept.
 
 @ProviderFor(tailnetSecretStore)
@@ -194,7 +251,7 @@ final class TailnetControllerProvider
   }
 }
 
-String _$tailnetControllerHash() => r'aa61207643a5950742856c63a8f35aaabc4bae7a';
+String _$tailnetControllerHash() => r'cdfe51fd9961fec826bc954248afbf9f4a6565da';
 
 /// Joins, runs and leaves the tailnet of an invite.
 
