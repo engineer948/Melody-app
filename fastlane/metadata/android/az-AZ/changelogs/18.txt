@@ -1,0 +1,4 @@
+Kimləsə musiqi paylaş.
+- Qısa qeydli mahnı göndər, ortaq pleylist yarat, ana ekranına salamlama və rəng qoy
+- Birlikdə dinlə: oxutma, dayandırma və keçmə sinxron (Jellyfin SyncPlay)
+- O icazə verməsə heç nə görünmür; hər hissə söndürülə bilər

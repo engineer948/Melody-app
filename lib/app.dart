@@ -9,6 +9,8 @@ import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/core/settings/theme_controller.dart';
 import 'package:melody/core/theme/app_theme.dart';
 import 'package:melody/core/theme/system_colors.dart';
+import 'package:melody/features/social/social_controller.dart';
+import 'package:melody/features/social/social_home.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// Root widget: wires routing, theming and localization together.
@@ -47,7 +49,12 @@ class _MelodyAppState extends ConsumerState<MelodyApp>
 
   @override
   Widget build(BuildContext context) {
-    final settings = ref.watch(themeControllerProvider);
+    final own = ref.watch(themeControllerProvider);
+    // A color someone chose for this user (only if they allowed it).
+    final accent = socialAccent(ref.watch(socialControllerProvider));
+    final settings = accent == null
+        ? own
+        : own.copyWith(accent: accent, useSystemColors: false);
     final systemSeed = ref.watch(systemSeedColorProvider).value;
     return MaterialApp.router(
       title: AppConfig.appName,

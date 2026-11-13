@@ -1,0 +1,4 @@
+Share music with someone.
+- Send a song with a short note, create a shared playlist, set a greeting and color for their home screen
+- Listen together: play, pause and skip in sync (Jellyfin SyncPlay)
+- Nothing is shown before they allow it; each part can be turned off

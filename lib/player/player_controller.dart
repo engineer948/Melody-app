@@ -47,6 +47,26 @@ Stream<Duration> playerPosition(Ref ref) async* {
   );
 }
 
+/// Receives the user's playback actions while playback is shared with
+/// others (listening together): the group decides, and its commands come
+/// back through the `remote…` methods of [PlayerController].
+abstract interface class PlaybackRelay {
+  /// The user started [tracks] at [start].
+  Future<void> playTracks(List<Track> tracks, int start);
+
+  /// The user pressed play.
+  Future<void> play();
+
+  /// The user pressed pause.
+  Future<void> pause();
+
+  /// The user moved to [position].
+  Future<void> seek(Duration position);
+
+  /// The user moved to entry [index] of the queue.
+  Future<void> skipTo(int index);
+}
+
 /// Owns the queue and drives the [AudioEngine].
 @Riverpod(keepAlive: true)
 class PlayerController extends _$PlayerController {
@@ -298,6 +318,12 @@ class PlayerController extends _$PlayerController {
 
   // ---- Commands ----------------------------------------------------------
 
+  /// Set while listening together; see [PlaybackRelay].
+  PlaybackRelay? relay;
+
+  /// Current position in the track.
+  Duration get position => _engine.position;
+
   /// Replaces the queue with [tracks] and starts at [start].
   ///
   /// [albumInOrder] marks an album played in its own order (ReplayGain).
@@ -308,6 +334,13 @@ class PlayerController extends _$PlayerController {
     bool albumInOrder = false,
   }) async {
     if (tracks.isEmpty) return;
+    if (relay case final relay?) {
+      if (!shuffle) return await relay.playTracks(tracks, start);
+      final order = PlayQueue.of(tracks, start: start, shuffle: true);
+      return await relay.playTracks([
+        for (final e in order.entries) e.track,
+      ], order.index);
+    }
     final queue = PlayQueue.of(
       tracks,
       start: start,
@@ -332,6 +365,7 @@ class PlayerController extends _$PlayerController {
   /// Starts or resumes playback, fading in.
   Future<void> play() async {
     if (!state.hasQueue) return;
+    if (relay case final relay?) return await relay.play();
     final fade = _fade;
     if (fade > Duration.zero) await _engine.setVolume(0);
     await _engine.play();
@@ -340,6 +374,7 @@ class PlayerController extends _$PlayerController {
 
   /// Pauses, fading out.
   Future<void> pause() async {
+    if (relay case final relay?) return await relay.pause();
     final fade = _fade;
     if (fade > Duration.zero && state.playing) {
       await _ramp(_volume, 0, fade);
@@ -366,7 +401,7 @@ class PlayerController extends _$PlayerController {
   /// Restarts the track, or goes to the previous one near its start.
   Future<void> previous() async {
     if (_engine.position > const Duration(seconds: 3)) {
-      await _engine.seek(Duration.zero);
+      await seek(Duration.zero);
       return;
     }
     final target = state.queue.previousIndex;
@@ -380,12 +415,51 @@ class PlayerController extends _$PlayerController {
   /// Plays the entry at [index] of the queue.
   Future<void> skipTo(int index) async {
     if (index < 0 || index >= state.queue.length) return;
+    if (relay case final relay?) return await relay.skipTo(index);
     await _engine.seek(Duration.zero, index: index);
     if (!state.playing) await _engine.play();
   }
 
   /// Seeks inside the current track.
-  Future<void> seek(Duration position) => _engine.seek(position);
+  Future<void> seek(Duration position) =>
+      relay?.seek(position) ?? _engine.seek(position);
+
+  // ---- Commands from a listening group (bypass [relay]) ----
+
+  /// Loads [tracks] at [index] and [position] without starting playback.
+  Future<void> remoteLoad(
+    List<Track> tracks,
+    int index,
+    Duration position,
+  ) async {
+    if (tracks.isEmpty) return;
+    final queue = PlayQueue.of(
+      tracks,
+      start: index.clamp(0, tracks.length - 1),
+      repeat: state.queue.repeat,
+    );
+    final sources = _sources(queue);
+    if (sources == null) return;
+    if (_lastUid != null) await _reporter.stopped(_engine.position);
+    _lastUid = null;
+    state = state.copyWith(queue: queue, albumInOrder: false, clearError: true);
+    await _engine.load(sources, index: queue.index, position: position);
+    await _engine.pause();
+    await _afterChange(wasPlaying: false);
+  }
+
+  /// Plays from [position] now.
+  Future<void> remotePlay(Duration position) async {
+    await _engine.seek(position);
+    await _engine.setVolume(_volume);
+    await _engine.play();
+  }
+
+  /// Pauses at [position].
+  Future<void> remotePause(Duration position) async {
+    await _engine.pause();
+    await _engine.seek(position);
+  }
 
   /// Inserts [tracks] after the current one.
   Future<void> playNext(List<Track> tracks) async {

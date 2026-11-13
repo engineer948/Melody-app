@@ -1,6 +1,7 @@
 package tsbridge
 
 import (
+	"bufio"
 	"bytes"
 	"io"
 	"net"
@@ -9,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -246,5 +248,70 @@ func TestPrepareEnvGivesTailscaleAPlaceToWrite(t *testing.T) {
 	}
 	if got, err := os.UserCacheDir(); err != nil || got != filepath.Join(dir, "cache") {
 		t.Fatalf("UserCacheDir = %q, %v", got, err)
+	}
+}
+
+// Listening together uses Jellyfin's WebSocket; it must pass the proxy.
+func TestProxyPassesWebSocketUpgrade(t *testing.T) {
+	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/socket" || r.Header.Get("Upgrade") != "websocket" {
+			http.Error(w, "want upgrade on /socket", http.StatusBadRequest)
+			return
+		}
+		conn, rw, err := w.(http.Hijacker).Hijack()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		defer conn.Close()
+		rw.WriteString("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n\r\n")
+		rw.Flush()
+		line, _ := rw.ReadString('\n')
+		rw.WriteString("echo " + line)
+		rw.Flush()
+	}))
+	defer backend.Close()
+	target, _ := url.Parse(backend.URL)
+	ready := make(chan struct{})
+	close(ready)
+	var d net.Dialer
+	h := newProxyHandler(target, testSecret, 0, d.DialContext, ready)
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	port := ln.Addr().(*net.TCPAddr).Port
+	h.port = port
+	srv := &http.Server{Handler: h}
+	go srv.Serve(ln)
+	defer srv.Close()
+
+	conn, err := net.Dial("tcp", ln.Addr().String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+	host := "127.0.0.1:" + strconv.Itoa(port)
+	io.WriteString(conn, "GET /"+testSecret+"/socket HTTP/1.1\r\nHost: "+host+
+		"\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n\r\n")
+	conn.SetDeadline(time.Now().Add(5 * time.Second))
+	br := bufio.NewReader(conn)
+	status, _ := br.ReadString('\n')
+	if !strings.Contains(status, "101") {
+		t.Fatalf("status %q", status)
+	}
+	for {
+		line, err := br.ReadString('\n')
+		if err != nil {
+			t.Fatal(err)
+		}
+		if line == "\r\n" {
+			break
+		}
+	}
+	io.WriteString(conn, "hello\n")
+	got, _ := br.ReadString('\n')
+	if got != "echo hello\n" {
+		t.Fatalf("got %q", got)
 	}
 }

@@ -13,7 +13,9 @@ statistics (Year in Review), Android Auto, a home screen widget, playback
 on DLNA devices, sharing songs, albums, artists and playlists as story
 images (Instagram, WhatsApp, …) and a built-in Tailscale node: friends join
 your server with an invite code, without the Tailscale app
-([docs/TAILSCALE.md](docs/TAILSCALE.md)).
+([docs/TAILSCALE.md](docs/TAILSCALE.md)), and sharing with one other
+user: songs with a note, a shared playlist, a greeting and listening
+together, each only after they allow it ([docs/SHARING.md](docs/SHARING.md)).
 For the F-Droid release, see [docs/FDROID.md](docs/FDROID.md).
 
 ## Running
@@ -89,7 +91,7 @@ lib/
               (just_audio, DLNA), notification / lock screen (audio_service),
               Android Auto tree, Auto DJ, history recording, widget
   features/   auth, home, library, album, artist, genre, playlist, search,
-              player, share, tailnet, downloads, stats, settings, shell
+              player, share, social, tailnet, downloads, stats, settings, shell
   l10n/       ARB files (tr, en, az)
 ```
 

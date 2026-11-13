@@ -17,6 +17,7 @@ import 'package:melody/features/settings/widgets/media_sections.dart';
 import 'package:melody/features/settings/widgets/playback_section.dart';
 import 'package:melody/features/settings/widgets/privacy_section.dart';
 import 'package:melody/features/settings/widgets/section_header.dart';
+import 'package:melody/features/social/social_settings.dart';
 import 'package:melody/features/tailnet/tailnet_section.dart';
 import 'package:melody/l10n/l10n.dart';
 
@@ -38,6 +39,7 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           SectionHeader(l10n.settingsAccounts),
           const AccountSection(),
+          const SocialSettingsSection(),
           SectionHeader(l10n.tailnetSection),
           const TailnetSection(),
           SectionHeader(l10n.settingsAppearance),

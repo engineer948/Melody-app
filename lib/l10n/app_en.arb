@@ -679,5 +679,110 @@
   "tailnetCrashed": "Tailscale closed the app the last time it started, so it was not started again.",
   "tailnetRetry": "Try again",
   "tailnetCopyReport": "Copy error report",
-  "tailnetReportCopied": "Error report copied. Please send it to the developer."
+  "tailnetReportCopied": "Error report copied. Please send it to the developer.",
+  "socialRequestTitle": "{name} wants to share music with you",
+  "socialRequestBody": "Songs with a short note, a playlist you both can add to, a greeting on your home screen and listening together. You choose what to allow and can change it any time in Settings.",
+  "socialAllow": "Allow",
+  "socialDecline": "No, thanks",
+  "socialChooseTitle": "What do you allow?",
+  "socialFeatureDedications": "Songs with a note",
+  "socialFeatureSharedPlaylist": "Shared playlist",
+  "socialFeatureWelcome": "Greeting and color",
+  "socialFeatureListen": "Listening together",
+  "socialFromShelf": "From {name}",
+  "socialLike": "Like",
+  "socialSharedWith": "Shared with {name}",
+  "socialSettingsTitle": "Sharing with {name}",
+  "socialRevoke": "Stop sharing",
+  "socialAllowAgain": "Allow sharing",
+  "socialSenderEntry": "Share with someone",
+  "socialSenderEntrySubtitle": "Songs, a shared playlist and a greeting",
+  "socialRecipient": "Person",
+  "socialChoose": "Choose",
+  "socialYourName": "Your name as they see it",
+  "socialAsk": "Ask for permission",
+  "socialStatusNotAsked": "Not asked yet",
+  "socialStatusWaiting": "Waiting for an answer",
+  "socialStatusGranted": "Allowed",
+  "socialStatusDenied": "Not allowed",
+  "socialNotAllowed": "They have not allowed this.",
+  "socialWelcomeLabel": "Greeting",
+  "socialWelcomeHint": "Shown instead of “Good morning”",
+  "socialColor": "Color",
+  "socialOwnColor": "Their own",
+  "socialSaved": "Saved",
+  "socialPlaylistName": "Playlist name",
+  "socialPlaylistDefault": "Our playlist",
+  "socialPlaylistCreate": "Create shared playlist",
+  "socialSent": "Sent songs",
+  "socialLiked": "Liked",
+  "socialSeen": "Seen",
+  "socialSendTo": "Send to {name}",
+  "socialNoteLabel": "Note (optional)",
+  "socialSend": "Send",
+  "socialSentSnack": "Sent to {name}",
+  "socialFailed": "Could not reach the server",
+  "@socialRequestTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@socialFromShelf": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@socialSharedWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@socialSettingsTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@socialSendTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@socialSentSnack": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "listenStart": "Start listening together",
+  "listenLeave": "Leave",
+  "listenInviteTitle": "{name} invites you to listen together",
+  "listenJoin": "Join",
+  "listenActive": "Listening together: {names}",
+  "listenFailed": "Could not start listening together",
+  "listenHint": "What one of you plays, pauses or skips happens for both.",
+  "@listenInviteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@listenActive": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  }
 }

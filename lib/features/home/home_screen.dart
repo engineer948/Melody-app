@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,8 @@ import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/shell/app_shell.dart';
+import 'package:melody/features/social/social_controller.dart';
+import 'package:melody/features/social/social_home.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
@@ -40,6 +44,7 @@ class HomeScreen extends ConsumerWidget {
       ..invalidate(trackListProvider(_recentlyPlayed))
       ..invalidate(trackListProvider(_mostPlayed))
       ..invalidate(suggestionsProvider);
+    unawaited(ref.read(socialControllerProvider.notifier).refresh());
   }
 
   @override
@@ -50,6 +55,7 @@ class HomeScreen extends ConsumerWidget {
     final played = ref.watch(trackListProvider(_recentlyPlayed));
     final most = ref.watch(trackListProvider(_mostPlayed));
     final suggested = ref.watch(suggestionsProvider).value;
+    final social = ref.watch(socialControllerProvider);
     final now = DateTime.now();
 
     final empty =
@@ -86,6 +92,7 @@ class HomeScreen extends ConsumerWidget {
     } else {
       slivers = [
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
+        ...socialHomeSlivers(context, social),
         // The year in review is put forward in December.
         if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))
           SliverToBoxAdapter(
@@ -151,7 +158,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       body: LargeTitlePage(
-        title: greeting(l10n, now),
+        title: socialGreeting(social) ?? greeting(l10n, now),
         automaticallyImplyLeading: false,
         actions: const [SettingsButton()],
         onRefresh: () async => _refresh(ref),

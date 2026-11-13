@@ -1,0 +1,4 @@
+Biriyle müzik paylaş.
+- Kısa notlu şarkı gönder, ortak çalma listesi oluştur, ana ekranına karşılama ve renk ayarla
+- Birlikte dinle: çalma, durdurma ve geçme senkron (Jellyfin SyncPlay)
+- O izin vermeden hiçbir şey görünmez; her parça kapatılabilir

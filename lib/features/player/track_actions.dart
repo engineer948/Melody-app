@@ -6,11 +6,14 @@ import 'package:go_router/go_router.dart';
 import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/domain/models/media.dart';
+import 'package:melody/domain/social/social_models.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/share/share_screen.dart';
 import 'package:melody/features/share/share_subject.dart';
+import 'package:melody/features/social/social_controller.dart';
+import 'package:melody/features/social/social_settings.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -41,6 +44,7 @@ Future<void> showTrackMenu(
   final downloads = ref.read(downloadControllerProvider.notifier);
   final isDownloaded = ref.read(downloadControllerProvider)[track.id] != null;
   final outer = context;
+  final social = ref.read(socialControllerProvider);
   await showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
@@ -146,6 +150,21 @@ Future<void> showTrackMenu(
                 onTap: () {
                   Navigator.pop(context);
                   open(artistRoute);
+                },
+              ),
+            if (social.isAdmin &&
+                social.recipient != null &&
+                social.outbox != null)
+              ListTile(
+                leading: const Icon(Icons.volunteer_activism_outlined),
+                title: Text(l10n.socialSendTo(social.recipient!.name)),
+                enabled: social.canSend(SocialFeature.dedications),
+                subtitle: social.canSend(SocialFeature.dedications)
+                    ? null
+                    : Text(l10n.socialNotAllowed),
+                onTap: () {
+                  Navigator.pop(context);
+                  unawaited(showDedicateSheet(outer, ref, track));
                 },
               ),
             ListTile(

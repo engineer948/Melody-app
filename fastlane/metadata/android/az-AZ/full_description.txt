@@ -16,6 +16,7 @@
 <li>Android Auto, ana ekran vidceti və DLNA cihazlarında oxutma</li>
 <li>Mahnı, albom, ifaçı və pleylistləri hekayə şəkli kimi paylaşma (Instagram, WhatsApp, …)</li>
 <li>Daxili Tailscale: dostların Tailscale tətbiqi olmadan dəvət kodu ilə serverinə qoşulur</li>
+<li>Kimləsə paylaş: qeydli mahnılar, ortaq pleylist, salamlama və birlikdə dinləmə; yalnız o icazə verəndə</li>
 <li>Əvvəl yüklənmiş məzmunla oflayn işləyir</li>
 <li>Açıq, tünd və tam qara mövzu; Azərbaycan, Türk və İngilis dilləri</li>
 </ul>

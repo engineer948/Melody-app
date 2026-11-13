@@ -5,9 +5,13 @@ import 'package:melody/core/utils/parallel.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_api.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_dtos.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_mapper.dart';
+import 'package:melody/data/sources/jellyfin/jellyfin_social.dart';
+import 'package:melody/data/sources/jellyfin/jellyfin_syncplay.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/domain/repositories/music_source.dart';
+import 'package:melody/domain/social/social_models.dart';
+import 'package:melody/domain/social/sync_play.dart';
 
 /// [MusicSource] backed by a Jellyfin server.
 class JellyfinMusicSource implements MusicSource {
@@ -19,6 +23,22 @@ class JellyfinMusicSource implements MusicSource {
   });
 
   final JellyfinApi _api;
+
+  /// Sharing features (song dedications, shared playlist, greeting).
+  SocialApi get social => JellyfinSocial(_api, selfId: userId);
+
+  /// Listening together (Jellyfin SyncPlay).
+  SyncPlayTransport get syncPlay => JellyfinSyncPlay(_api, tracksById);
+
+  /// The tracks with [ids], in that order (missing ones are left out).
+  Future<List<Track>> tracksById(List<String> ids) async {
+    if (ids.isEmpty) return const [];
+    final page = await _items({'Ids': ids.join(','), 'Fields': _itemFields});
+    final found = {
+      for (final t in JellyfinMapper.items(page, JellyfinMapper.track)) t.id: t,
+    };
+    return [for (final id in ids) ?found[id]];
+  }
 
   /// Signed-in user.
   final String userId;
