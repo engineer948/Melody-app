@@ -1,0 +1,3 @@
+Tailscale dəvəti ilə qoşulma düzəlişləri.
+- Düzəldildi: dəvət kodu yazılan kimi və sonrakı hər açılışda tətbiq bağlanırdı
+- Tailscale tətbiqi yenə bağlasa avtomatik yenidən başladılmır; Ayarlarda "Yenidən cəhd et" və kopyalana bilən xəta hesabatı var

@@ -33,6 +33,7 @@ void main() {
     secrets = MemoryTailnetSecretStore();
     TailnetController.fastPoll = const Duration(milliseconds: 1);
     TailnetController.joinTimeout = const Duration(seconds: 2);
+    TailnetController.crashWindow = const Duration(milliseconds: 1);
   });
 
   Future<ProviderContainer> container({bool signedIn = false}) =>
@@ -125,6 +126,8 @@ void main() {
   test('restarts without the auth key from saved settings', () async {
     final first = await container();
     await first.read(tailnetControllerProvider.notifier).join(invite);
+    // Let the start count as survived.
+    await Future<void>.delayed(const Duration(milliseconds: 20));
     final saved = secrets.secrets!;
     final prefs = first.read(preferencesProvider);
     final restarted = ProviderContainer(
@@ -174,6 +177,45 @@ void main() {
       expect(accounts.map((a) => a.id), [testAccount.id]);
     },
   );
+
+  test('a start that killed the app is not repeated by itself', () async {
+    TailnetController.crashWindow = const Duration(milliseconds: 50);
+    final first = await container();
+    await first.read(tailnetControllerProvider.notifier).join(invite);
+    final prefs = first.read(preferencesProvider);
+    // Survived the start: the guard is cleared.
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    expect(prefs.getBool(TailnetController.startingKey), isNull);
+
+    // Simulate being killed during the next start.
+    await prefs.setBool(TailnetController.startingKey, true);
+    bridge
+      ..starts.clear()
+      ..crash = 'panic: boom';
+    final restarted = ProviderContainer(
+      overrides: [
+        preferencesProvider.overrideWithValue(prefs),
+        tailnetBootstrapProvider.overrideWithValue(
+          TailnetBootstrap(available: true, secrets: secrets.secrets),
+        ),
+        tailnetBridgeProvider.overrideWithValue(bridge),
+        tailnetSecretStoreProvider.overrideWithValue(secrets),
+      ],
+    );
+    addTearDown(restarted.dispose);
+    final state = restarted.read(tailnetControllerProvider);
+    expect(state.crashed, isTrue);
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    expect(bridge.starts, isEmpty, reason: 'no automatic start after a crash');
+    expect(
+      restarted.read(tailnetControllerProvider).crashReport,
+      'panic: boom',
+    );
+
+    await restarted.read(tailnetControllerProvider.notifier).retry();
+    expect(bridge.starts, hasLength(1));
+    expect(restarted.read(tailnetControllerProvider).crashed, isFalse);
+  });
 
   group('TailnetRoutingConnector', () {
     test(

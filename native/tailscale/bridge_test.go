@@ -196,3 +196,32 @@ func TestStartValidatesInput(t *testing.T) {
 		t.Errorf("status %s", s)
 	}
 }
+
+func TestParseInterfacesEmpty(t *testing.T) {
+	got, err := parseInterfaces("")
+	if err != nil || len(got) != 0 {
+		t.Fatalf("got %v, %v", got, err)
+	}
+}
+
+func TestRecoverTo(t *testing.T) {
+	f := func() (err error) {
+		defer recoverTo(&err)
+		var m map[string]int
+		m["x"] = 1 // panics
+		return nil
+	}
+	if err := f(); err == nil || !strings.Contains(err.Error(), "internal error") {
+		t.Fatalf("got %v", err)
+	}
+}
+
+func TestSetCrashFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "crash.txt")
+	if err := SetCrashFile(path); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(path); err != nil {
+		t.Fatal(err)
+	}
+}

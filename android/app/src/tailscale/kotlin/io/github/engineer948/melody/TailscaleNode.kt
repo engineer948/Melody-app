@@ -2,11 +2,15 @@ package io.github.engineer948.melody
 
 import io.github.engineer948.melody.go.tsbridge.InterfaceSource
 import io.github.engineer948.melody.go.tsbridge.Tsbridge
+import java.io.File
 import java.net.NetworkInterface
 
 /** Thin wrapper over the Go library (native/tailscale). */
 object TailscaleNode {
     const val available = true
+
+    /** Crash report of the Go library, next to (not inside) its state. */
+    fun crashFile(dir: String) = File(File(dir).parentFile, "tailscale-crash.txt")
 
     @Volatile private var interfacesSet = false
 
@@ -15,29 +19,44 @@ object TailscaleNode {
      * they are listed here (see native/tailscale/interfaces.go).
      */
     private object Interfaces : InterfaceSource {
-        override fun list(): String = buildString {
-            val all = NetworkInterface.getNetworkInterfaces() ?: return@buildString
-            for (nif in all) {
-                val flags = buildString {
-                    if (nif.isUp) append('u')
-                    if (nif.isLoopback) append('l')
-                    if (nif.isPointToPoint) append('p')
-                    if (nif.supportsMulticast()) append('m')
+        /**
+         * Must never throw: an exception here would reach native code with a
+         * pending JNI exception and abort the whole app. Interfaces that
+         * cannot be read (Android throws SocketException for some) are
+         * skipped.
+         */
+        override fun list(): String = try {
+            buildString {
+                val all = NetworkInterface.getNetworkInterfaces() ?: return@buildString
+                for (nif in all) {
+                    val line = runCatching { describe(nif) }.getOrNull() ?: continue
+                    append(line).append('\n')
                 }
-                val addrs = nif.interfaceAddresses.mapNotNull { a ->
-                    // IPv6 addresses carry a "%scope" suffix that Go's
-                    // CIDR parser does not accept.
-                    val host = a.address?.hostAddress?.substringBefore('%')
+            }
+        } catch (t: Throwable) {
+            ""
+        }
+
+        private fun describe(nif: NetworkInterface): String? {
+            val name = nif.name ?: return null
+            if (name.contains('\t') || name.contains('\n')) return null
+            val flags = buildString {
+                if (runCatching { nif.isUp }.getOrDefault(false)) append('u')
+                if (runCatching { nif.isLoopback }.getOrDefault(false)) append('l')
+                if (runCatching { nif.isPointToPoint }.getOrDefault(false)) append('p')
+                if (runCatching { nif.supportsMulticast() }.getOrDefault(false)) append('m')
+            }
+            val addrs = runCatching {
+                nif.interfaceAddresses.mapNotNull { a ->
+                    // IPv6 addresses carry a "%scope" suffix that Go's CIDR
+                    // parser does not accept.
+                    val host = a?.address?.hostAddress?.substringBefore('%')
                         ?: return@mapNotNull null
                     "$host/${a.networkPrefixLength}"
                 }
-                append(nif.name).append('\t')
-                    .append(nif.index).append('\t')
-                    .append(runCatching { nif.mtu }.getOrDefault(1500)).append('\t')
-                    .append(flags).append('\t')
-                    .append(addrs.joinToString(","))
-                    .append('\n')
-            }
+            }.getOrDefault(emptyList())
+            val mtu = runCatching { nif.mtu }.getOrDefault(1500)
+            return "$name\t${nif.index}\t$mtu\t$flags\t${addrs.joinToString(",")}"
         }
     }
 
@@ -51,6 +70,8 @@ object TailscaleNode {
         stateKey: String,
     ): Int {
         if (!interfacesSet) {
+            // Fatal Go errors are written here and shown on the next start.
+            Tsbridge.setCrashFile(crashFile(dir).absolutePath)
             Tsbridge.setInterfaceSource(Interfaces)
             interfacesSet = true
         }

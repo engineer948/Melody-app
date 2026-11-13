@@ -1,0 +1,3 @@
+Tailscale davetiyle katılma düzeltmeleri.
+- Düzeltildi: davet kodu girildikten hemen sonra ve sonraki her açılışta uygulama kapanıyordu
+- Tailscale uygulamayı yine kapatırsa otomatik yeniden başlatılmaz; Ayarlar'da "Tekrar dene" ve kopyalanabilir hata raporu var

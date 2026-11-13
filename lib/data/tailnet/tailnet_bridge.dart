@@ -80,6 +80,10 @@ abstract interface class TailnetBridge {
 
   /// Removes this device from the tailnet and deletes its keys.
   Future<void> logout();
+
+  /// Report of the previous run's crash (Go report and the app's own error
+  /// log lines), once; `null` when there is nothing.
+  Future<String?> lastCrash();
 }
 
 /// [TailnetBridge] over the "melody/tailscale" platform channel.
@@ -128,4 +132,7 @@ class ChannelTailnetBridge implements TailnetBridge {
 
   @override
   Future<void> logout() => _channel.invokeMethod<void>('logout');
+
+  @override
+  Future<String?> lastCrash() => _channel.invokeMethod<String>('lastCrash');
 }

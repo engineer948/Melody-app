@@ -199,7 +199,16 @@ class TailnetState {
     this.port,
     this.secret,
     this.report = const TailnetReport(TailnetStatus.stopped),
+    this.crashed = false,
+    this.crashReport,
   });
+
+  /// Whether the previous start ended with the app being killed; the node
+  /// is then not started again until the user asks ([TailnetController.retry]).
+  final bool crashed;
+
+  /// What is known about that crash, to copy and send to the developer.
+  final String? crashReport;
 
   /// Whether this build has the Tailscale node.
   final bool available;
@@ -228,13 +237,20 @@ class TailnetState {
       : Uri(scheme: 'http', host: '127.0.0.1', port: port, path: '/$secret');
 
   /// Copy with some fields replaced.
-  TailnetState copyWith({int? port, TailnetReport? report}) => TailnetState(
+  TailnetState copyWith({
+    int? port,
+    TailnetReport? report,
+    bool? crashed,
+    String? crashReport,
+  }) => TailnetState(
     available: available,
     target: target,
     name: name,
     port: port ?? this.port,
     secret: secret,
     report: report ?? this.report,
+    crashed: crashed ?? this.crashed,
+    crashReport: crashReport ?? this.crashReport,
   );
 }
 
@@ -253,6 +269,13 @@ class TailnetController extends _$TailnetController {
   /// Last proxy port.
   static const portKey = 'tailnet.port';
 
+  /// Set while the node starts; still set on the next launch means the app
+  /// was killed during the start (crash-loop guard).
+  static const startingKey = 'tailnet.starting';
+
+  /// How long the app must survive a start before it counts as good.
+  static Duration crashWindow = const Duration(seconds: 20);
+
   /// How long [join] waits for the first answer.
   @visibleForTesting
   static Duration joinTimeout = const Duration(seconds: 45);
@@ -266,6 +289,8 @@ class TailnetController extends _$TailnetController {
   static Duration slowPoll = const Duration(seconds: 15);
 
   Timer? _poll;
+  Timer? _survived;
+  TailnetSecrets? _secrets;
   Future<void>? _starting;
   final _random = Random.secure();
 
@@ -273,21 +298,33 @@ class TailnetController extends _$TailnetController {
 
   @override
   TailnetState build() {
-    ref.onDispose(() => _poll?.cancel());
+    ref.onDispose(() {
+      _poll?.cancel();
+      _survived?.cancel();
+    });
     final boot = ref.watch(tailnetBootstrapProvider);
     final prefs = ref.watch(preferencesProvider);
     final target = Uri.tryParse(prefs.getString(targetKey) ?? '');
     final secrets = boot.secrets;
     final configured =
         boot.available && target != null && target.hasScheme && secrets != null;
+    _secrets = secrets;
+    final crashed = configured && (prefs.getBool(startingKey) ?? false);
     final state = TailnetState(
       available: boot.available,
       target: configured ? target : null,
       name: configured ? prefs.getString(nameKey) : null,
       port: configured ? prefs.getInt(portKey) : null,
       secret: secrets?.proxySecret,
+      crashed: crashed,
+      report: crashed
+          ? const TailnetReport(TailnetStatus.error, error: 'crashed')
+          : const TailnetReport(TailnetStatus.stopped),
     );
-    if (configured) {
+    if (crashed) {
+      // The last start killed the app: do not try again by ourselves.
+      unawaited(Future.microtask(_loadCrashReport));
+    } else if (configured) {
       // After the first frame: the node reconnects in the background.
       unawaited(Future.microtask(() => _ensureStarted(secrets)));
     }
@@ -298,6 +335,28 @@ class TailnetController extends _$TailnetController {
     for (var i = 0; i < bytes; i++)
       _random.nextInt(256).toRadixString(16).padLeft(2, '0'),
   ].join();
+
+  Future<void> _loadCrashReport() async {
+    try {
+      final report = await _bridge.lastCrash();
+      if (report != null) state = state.copyWith(crashReport: report);
+    } on Object catch (error, stack) {
+      _log.error('Could not read the crash report', error, stack);
+    }
+  }
+
+  /// Starts the node again after a crash.
+  Future<void> retry() async {
+    final secrets =
+        _secrets ?? await ref.read(tailnetSecretStoreProvider).read();
+    if (secrets == null || !state.configured) return;
+    await ref.read(preferencesProvider).remove(startingKey);
+    state = state.copyWith(
+      crashed: false,
+      report: const TailnetReport(TailnetStatus.starting),
+    );
+    await _ensureStarted(secrets);
+  }
 
   Future<void> _ensureStarted(TailnetSecrets secrets) =>
       _starting ??= _start(secrets).whenComplete(() => _starting = null);
@@ -311,6 +370,9 @@ class TailnetController extends _$TailnetController {
       hostname = 'melody-${_hex(3)}';
       await prefs.setString(hostnameKey, hostname);
     }
+    // Cleared once the app has survived the start for a while.
+    await prefs.setBool(startingKey, true);
+    _survived?.cancel();
     try {
       final port = await _bridge.start(
         hostname: hostname,
@@ -323,7 +385,13 @@ class TailnetController extends _$TailnetController {
       if (port != state.port) await prefs.setInt(portKey, port);
       state = state.copyWith(port: port);
       _schedulePoll(fastPoll);
+      _survived = Timer(
+        crashWindow,
+        () => unawaited(prefs.remove(startingKey)),
+      );
     } on Object catch (error, stack) {
+      // An error (not a crash): nothing to guard against.
+      await prefs.remove(startingKey);
       _log.error('Tailscale did not start', error, stack);
       state = state.copyWith(
         report: TailnetReport(TailnetStatus.error, error: '$error'),
@@ -368,6 +436,7 @@ class TailnetController extends _$TailnetController {
       stateKey: _hex(32),
     );
     await ref.read(tailnetSecretStoreProvider).write(secrets);
+    _secrets = secrets;
     final prefs = ref.read(preferencesProvider);
     await prefs.setString(targetKey, invite.server.toString());
     if (invite.name case final name?) {
@@ -425,7 +494,9 @@ class TailnetController extends _$TailnetController {
     }
     await ref.read(tailnetSecretStoreProvider).delete();
     final prefs = ref.read(preferencesProvider);
-    for (final key in [targetKey, nameKey, hostnameKey, portKey]) {
+    _survived?.cancel();
+    _secrets = null;
+    for (final key in [targetKey, nameKey, hostnameKey, portKey, startingKey]) {
       await prefs.remove(key);
     }
     final router = TailnetRouter(target: target, local: state.local);

@@ -7,6 +7,8 @@ package io.github.engineer948.melody
 object TailscaleNode {
     const val available = false
 
+    fun crashFile(dir: String) = java.io.File(java.io.File(dir).parentFile, "tailscale-crash.txt")
+
     private fun missing(): Nothing =
         throw UnsupportedOperationException("built without Tailscale")
 

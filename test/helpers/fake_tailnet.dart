@@ -48,4 +48,10 @@ class FakeTailnetBridge implements TailnetBridge {
 
   @override
   Future<void> logout() async => logouts++;
+
+  /// Answer of [lastCrash].
+  String? crash;
+
+  @override
+  Future<String?> lastCrash() async => crash;
 }

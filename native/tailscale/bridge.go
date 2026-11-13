@@ -86,7 +86,8 @@ func init() {
 // the proxy's path secret and port the preferred loopback port (0 picks
 // one). Returns the port the proxy listens on. Calling Start again with
 // the same settings returns the running proxy.
-func Start(dir, authKey, hostname, target, secret string, port int, keyHex string) (int, error) {
+func Start(dir, authKey, hostname, target, secret string, port int, keyHex string) (_ int, err error) {
+	defer recoverTo(&err)
 	mu.Lock()
 	defer mu.Unlock()
 	config := dir + "\x00" + target + "\x00" + secret
@@ -169,6 +170,11 @@ func listenLoopback(port int) (net.Listener, error) {
 
 // watch follows the backend state until ctx ends.
 func (n *node) watch(ctx context.Context) {
+	defer func() {
+		if r := recover(); r != nil {
+			n.set(StateError, fmt.Sprintf("internal error: %v", r))
+		}
+	}()
 	lc, err := n.srv.LocalClient()
 	if err != nil {
 		n.set(StateError, err.Error())
@@ -259,7 +265,12 @@ type statusJSON struct {
 
 // Status returns the current state as JSON:
 // {"state": "...", "error": "...", "ip": "100.x.y.z", "port": 41641}.
-func Status() string {
+func Status() (out string) {
+	defer func() {
+		if r := recover(); r != nil {
+			out = `{"state":"error","error":"internal error"}`
+		}
+	}()
 	mu.Lock()
 	n := current
 	mu.Unlock()
@@ -269,12 +280,13 @@ func Status() string {
 		s = statusJSON{State: n.state, Error: n.errText, IP: n.ip, Port: n.port}
 		n.mu.Unlock()
 	}
-	out, _ := json.Marshal(s)
-	return string(out)
+	data, _ := json.Marshal(s)
+	return string(data)
 }
 
 // Stop closes the proxy and disconnects, keeping the node's identity.
 func Stop() {
+	defer func() { _ = recover() }()
 	mu.Lock()
 	defer mu.Unlock()
 	if current != nil {
@@ -285,7 +297,8 @@ func Stop() {
 
 // Logout removes this device from the tailnet (when reachable) and
 // deletes everything stored in dir.
-func Logout(dir string) error {
+func Logout(dir string) (err error) {
+	defer recoverTo(&err)
 	mu.Lock()
 	defer mu.Unlock()
 	var logoutErr error

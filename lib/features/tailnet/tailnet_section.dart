@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:melody/core/router/app_routes.dart';
@@ -87,6 +88,27 @@ class TailnetSection extends ConsumerWidget {
             title: Text(server),
             subtitle: Text(text),
           ),
+          if (state.crashed) ...[
+            ListTile(
+              leading: const Icon(Icons.refresh_rounded),
+              title: Text(l10n.tailnetRetry),
+              onTap: () => unawaited(
+                ref.read(tailnetControllerProvider.notifier).retry(),
+              ),
+            ),
+            if (state.crashReport case final report?)
+              ListTile(
+                leading: const Icon(Icons.bug_report_outlined),
+                title: Text(l10n.tailnetCopyReport),
+                onTap: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  await Clipboard.setData(ClipboardData(text: report));
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(l10n.tailnetReportCopied)),
+                  );
+                },
+              ),
+          ],
           ListTile(
             leading: const Icon(Icons.link_off_rounded),
             title: Text(l10n.tailnetLeave),

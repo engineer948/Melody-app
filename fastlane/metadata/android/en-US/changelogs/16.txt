@@ -1,0 +1,3 @@
+Fixes for joining with a Tailscale invite.
+- Fixed: the app closed right after entering an invite code, and on every start after that
+- If Tailscale ever closes the app again, it is not restarted automatically; Settings offer "Try again" and an error report to copy

@@ -27,6 +27,7 @@ String inviteProblemText(AppLocalizations l10n, InviteProblem problem) =>
 /// Text for a failed connection report.
 String tailnetErrorText(AppLocalizations l10n, TailnetReport report) {
   final error = report.error ?? '';
+  if (error == 'crashed') return l10n.tailnetCrashed;
   final lower = error.toLowerCase();
   if (lower.contains('authkey') ||
       lower.contains('auth key') ||
@@ -179,6 +180,8 @@ class _JoinTailnetScreenState extends ConsumerState<JoinTailnetScreen> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                if (ref.watch(tailnetControllerProvider).crashed)
+                  const _CrashNotice(),
                 Text(l10n.tailnetJoinIntro, style: theme.textTheme.bodyLarge),
                 const SizedBox(height: 16),
                 TextField(
@@ -231,6 +234,47 @@ class _JoinTailnetScreenState extends ConsumerState<JoinTailnetScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shown after Tailscale took the app down: explains it and lets the user
+/// copy the error report for the developer.
+class _CrashNotice extends ConsumerWidget {
+  const _CrashNotice();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
+    final report = ref.watch(tailnetControllerProvider).crashReport;
+    return Card(
+      color: scheme.errorContainer,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.tailnetCrashed,
+              style: TextStyle(color: scheme.onErrorContainer),
+            ),
+            if (report != null)
+              TextButton.icon(
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  await Clipboard.setData(ClipboardData(text: report));
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(l10n.tailnetReportCopied)),
+                  );
+                },
+                icon: const Icon(Icons.bug_report_outlined),
+                label: Text(l10n.tailnetCopyReport),
+              ),
+          ],
         ),
       ),
     );

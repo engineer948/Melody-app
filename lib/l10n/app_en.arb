@@ -675,5 +675,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tailnetCrashed": "Tailscale closed the app the last time it started, so it was not started again.",
+  "tailnetRetry": "Try again",
+  "tailnetCopyReport": "Copy error report",
+  "tailnetReportCopied": "Error report copied. Please send it to the developer."
 }

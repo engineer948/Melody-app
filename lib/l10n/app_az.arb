@@ -379,5 +379,9 @@
   "tailnetChecklist4": "Cihaz təsdiqini aç; sənin təsdiqin olmadan heç bir cihaz qoşula bilməz.",
   "tailnetChecklist5": "Hər dosta ayrıca açar. Birinin girişini kəsmək üçün idarə panelində onun cihazını sil.",
   "tailnetAclCopy": "Giriş qaydasını kopyala",
-  "tailnetAclCopied": "Giriş qaydası kopyalandı"
+  "tailnetAclCopied": "Giriş qaydası kopyalandı",
+  "tailnetCrashed": "Tailscale son başladılanda tətbiqi bağladı, ona görə yenidən başladılmadı.",
+  "tailnetRetry": "Yenidən cəhd et",
+  "tailnetCopyReport": "Xəta hesabatını kopyala",
+  "tailnetReportCopied": "Xəta hesabatı kopyalandı. Zəhmət olmasa tərtibatçıya göndər."
 }

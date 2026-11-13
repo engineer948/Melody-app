@@ -379,5 +379,9 @@
   "tailnetChecklist4": "Cihaz onayını aç; senin onayın olmadan hiçbir cihaz katılamaz.",
   "tailnetChecklist5": "Her arkadaşa ayrı anahtar. Birinin erişimini kesmek için yönetim panelinde cihazını sil.",
   "tailnetAclCopy": "Erişim kuralını kopyala",
-  "tailnetAclCopied": "Erişim kuralı kopyalandı"
+  "tailnetAclCopied": "Erişim kuralı kopyalandı",
+  "tailnetCrashed": "Tailscale son başlatmada uygulamayı kapattı, bu yüzden yeniden başlatılmadı.",
+  "tailnetRetry": "Tekrar dene",
+  "tailnetCopyReport": "Hata raporunu kopyala",
+  "tailnetReportCopied": "Hata raporu kopyalandı. Lütfen geliştiriciye gönder."
 }
