@@ -446,5 +446,10 @@
   "downloadSyncLibrary": "Bütün kitabxananı endir",
   "downloadSyncLibraryBody": "Əvvəl ən yeni mahnılar; serverə gələn yeni mahnılar da endirilir",
   "downloadLibraryLimit": "Kitabxana üçün yer",
-  "downloadNoLimit": "Limitsiz"
+  "downloadNoLimit": "Limitsiz",
+  "updateAvailable": "Melody {version} çıxıb",
+  "updateAvailableBody": "Son düzəlişləri daxildir (Tailscale üçün də)",
+  "updateDownload": "Endir",
+  "updateCheck": "Yeni sürümləri yoxla",
+  "updateCheckBody": "Tətbiq açılanda GitHub-dan son sürümü soruşur; sənin haqqında heç nə göndərilmir"
 }

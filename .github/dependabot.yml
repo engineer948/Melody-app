@@ -1,0 +1,15 @@
+# Opens a pull request when a new version of the Go modules in the built-in
+# Tailscale node is out (security fixes reach Melody only through a new
+# release). After merging: run tool/go_licenses.sh, check build_tags.txt
+# (see docs/TAILSCALE.md), then release.
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /native/tailscale
+    schedule:
+      interval: weekly
+    groups:
+      tailscale:
+        patterns: ["*"]
+    commit-message:
+      prefix: "Tailscale deps"

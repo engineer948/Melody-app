@@ -1,0 +1,2 @@
+Update notices.
+- The home screen tells you when a new Melody version is out, with a button to the download page (Settings → About can turn this off)

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/features/settings/app_info.dart';
+import 'package:melody/features/settings/update_check.dart';
 import 'package:melody/features/settings/widgets/account_section.dart';
 import 'package:melody/features/settings/widgets/android_auto_section.dart';
 import 'package:melody/features/settings/widgets/appearance_section.dart';
@@ -69,6 +70,7 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l10n.aboutVersion),
             subtitle: version == null ? null : Text(version),
           ),
+          const UpdateCheckTile(),
           if (kDebugMode)
             ListTile(
               leading: const Icon(Icons.bug_report_outlined),

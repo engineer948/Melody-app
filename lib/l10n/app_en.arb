@@ -805,5 +805,17 @@
   "downloadSyncLibrary": "Download the whole library",
   "downloadSyncLibraryBody": "Newest songs first; new songs on the server are downloaded too",
   "downloadLibraryLimit": "Space for the library",
-  "downloadNoLimit": "No limit"
+  "downloadNoLimit": "No limit",
+  "updateAvailable": "Melody {version} is available",
+  "updateAvailableBody": "Includes the latest fixes (also for Tailscale)",
+  "updateDownload": "Download",
+  "updateCheck": "Check for new versions",
+  "updateCheckBody": "Asks GitHub for the latest release when the app starts; nothing about you is sent",
+  "@updateAvailable": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
 }

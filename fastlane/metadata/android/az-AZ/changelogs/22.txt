@@ -1,0 +1,2 @@
+Yeniləmə bildirişi.
+- Yeni Melody sürümü çıxanda ana ekran xəbər verir, endirmə səhifəsinə düymə ilə (Ayarlar → Haqqında-dan söndürülə bilər)

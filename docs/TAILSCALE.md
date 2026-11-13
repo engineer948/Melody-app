@@ -90,6 +90,20 @@ tailnet, deletes its keys and signs out of that server.
 - Tailscale's coordination servers are a non-free network service (F-Droid
   anti-feature `NonFreeNet` for this optional feature).
 
+## Updates
+
+The Tailscale admin console cannot update the node inside Melody (its
+"Update" button only works for the official clients, and the update
+feature is left out of the build). Tailscale fixes reach users only with a
+new Melody release:
+
+- Dependabot (`.github/dependabot.yml`) opens a pull request weekly when
+  the Go modules in `native/tailscale` have new versions. Merge it, run
+  `tool/go_licenses.sh`, check `build_tags.txt`, release.
+- The app shows "Melody X is available" on the home screen when GitHub has
+  a newer release (Settings → About → "Check for new versions" turns it
+  off). Watch https://tailscale.com/security-bulletins for urgent fixes.
+
 ## Development
 
 ```bash

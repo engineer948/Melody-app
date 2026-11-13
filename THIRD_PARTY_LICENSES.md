@@ -37,6 +37,7 @@ with the app and shown under **Settings → About → Open source licenses**.
 | `xml` (DLNA device descriptions and control messages) | MIT |
 | `zxing2` (invite QR codes: create and read from a picture) | BSD-3-Clause |
 | `file_selector` (pick a QR picture; no storage permission) | BSD-3-Clause |
+| `url_launcher` (open the release page of a new version) | BSD-3-Clause |
 
 ## Tailscale library (Android, `native/tailscale`)
 

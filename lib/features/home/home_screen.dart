@@ -13,6 +13,7 @@ import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
+import 'package:melody/features/settings/update_check.dart';
 import 'package:melody/features/shell/app_shell.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_home.dart';
@@ -104,6 +105,7 @@ class HomeScreen extends ConsumerWidget {
     } else {
       slivers = [
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
+        const SliverToBoxAdapter(child: UpdateBanner()),
         ...socialHomeSlivers(context, social),
         // The year in review is put forward in December.
         if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))

@@ -1,0 +1,2 @@
+Güncelleme bildirimi.
+- Yeni Melody sürümü çıkınca ana ekran haber verir, indirme sayfasına düğmeyle (Ayarlar → Hakkında'dan kapatılabilir)
