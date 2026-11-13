@@ -167,6 +167,12 @@ class FakeSyncTransport implements SyncPlayTransport {
   Future<void> close() async {}
 
   @override
+  Future<List<SyncGroup>> groups() async => [
+    if (server.groupId case final id?)
+      SyncGroup(id: id, name: 'Melody', participants: [server.log.first]),
+  ];
+
+  @override
   Future<void> newGroup(String name) async => server.handle(this, 'new');
 
   @override

@@ -142,19 +142,19 @@ class ListenTogether extends _$ListenTogether implements PlaybackRelay {
     return completer.future.timeout(joinTimeout);
   }
 
-  /// Creates a group, shares the current queue with it and invites the
-  /// chosen person (administrators, with their permission).
-  Future<bool> start() async {
-    final social = ref.read(socialControllerProvider);
-    final outbox = social.outbox;
-    if (outbox == null || !social.canSend(SocialFeature.listenTogether)) {
-      return false;
-    }
+  /// Listening groups open on the server.
+  Future<List<SyncGroup>> groups() async =>
+      await ref.read(syncPlayTransportProvider)?.groups() ?? const [];
+
+  /// Creates group [name] and shares the current queue with it; returns
+  /// the group id, or `null` when it failed. Open to everyone on the
+  /// server who may use SyncPlay.
+  Future<String?> createGroup(String name) async {
     state = const ListenState(status: ListenStatus.connecting);
     try {
       await _connect();
       final joined = _waitJoined();
-      await _transport!.newGroup('Melody · ${outbox.fromName}');
+      await _transport!.newGroup(name);
       final groupId = await joined;
       final player = ref.read(playerControllerProvider);
       final tracks = [for (final e in player.queue.entries) e.track];
@@ -165,24 +165,16 @@ class ListenTogether extends _$ListenTogether implements PlaybackRelay {
           _player.position,
         );
       }
-      await ref
-          .read(socialControllerProvider.notifier)
-          .setListenInvite(groupId);
-      return true;
+      return groupId;
     } on Object catch (error, stack) {
       _log.error('Could not start listening together', error, stack);
       await _teardown(error: '$error');
-      return false;
+      return null;
     }
   }
 
-  /// Joins the group the sender invited this user to.
-  Future<bool> join() async {
-    final social = ref.read(socialControllerProvider);
-    final groupId = social.inbox?.listenGroupId;
-    if (groupId == null || !social.shows(SocialFeature.listenTogether)) {
-      return false;
-    }
+  /// Joins group [groupId].
+  Future<bool> joinGroup(String groupId) async {
     state = const ListenState(status: ListenStatus.connecting);
     try {
       await _connect();
@@ -195,6 +187,37 @@ class ListenTogether extends _$ListenTogether implements PlaybackRelay {
       await _teardown(error: '$error');
       return false;
     }
+  }
+
+  /// Creates a group and invites the chosen person (administrators, with
+  /// their permission).
+  Future<bool> start() async {
+    final social = ref.read(socialControllerProvider);
+    final outbox = social.outbox;
+    if (outbox == null || !social.canSend(SocialFeature.listenTogether)) {
+      return false;
+    }
+    final groupId = await createGroup('Melody · ${outbox.fromName}');
+    if (groupId == null) return false;
+    try {
+      await ref
+          .read(socialControllerProvider.notifier)
+          .setListenInvite(groupId);
+      return true;
+    } on Object catch (error, stack) {
+      _log.error('Could not send the invitation', error, stack);
+      return false;
+    }
+  }
+
+  /// Joins the group the sender invited this user to.
+  Future<bool> join() async {
+    final social = ref.read(socialControllerProvider);
+    final groupId = social.inbox?.listenGroupId;
+    if (groupId == null || !social.shows(SocialFeature.listenTogether)) {
+      return false;
+    }
+    return await joinGroup(groupId);
   }
 
   /// Leaves the group (the sender also withdraws the invitation).

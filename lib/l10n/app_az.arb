@@ -432,5 +432,9 @@
   "listenJoin": "Qoşul",
   "listenActive": "Birlikdə dinlənilir: {names}",
   "listenFailed": "Birlikdə dinləməyə başlamaq alınmadı",
-  "listenHint": "Biriniz oxudanda, dayandıranda və ya keçəndə ikinizdə də olur."
+  "listenHint": "Biriniz oxudanda, dayandıranda və ya keçəndə ikinizdə də olur.",
+  "listenCreate": "Yeni qrup",
+  "listenGroupName": "Qrup adı",
+  "listenGroupDefault": "Birlikdə dinlə · {name}",
+  "listenNoGroups": "Açıq qrup yoxdur. Birini başlat, serverdəki digərləri qoşula bilər."
 }

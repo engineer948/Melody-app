@@ -432,5 +432,9 @@
   "listenJoin": "Katıl",
   "listenActive": "Birlikte dinleniyor: {names}",
   "listenFailed": "Birlikte dinleme başlatılamadı",
-  "listenHint": "Biriniz çaldığında, durdurduğunda veya geçtiğinde ikinizde de olur."
+  "listenHint": "Biriniz çaldığında, durdurduğunda veya geçtiğinde ikinizde de olur.",
+  "listenCreate": "Yeni grup",
+  "listenGroupName": "Grup adı",
+  "listenGroupDefault": "Birlikte dinle · {name}",
+  "listenNoGroups": "Açık grup yok. Bir tane başlat, sunucudaki diğerleri katılabilir."
 }

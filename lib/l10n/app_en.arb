@@ -784,5 +784,16 @@
         "type": "String"
       }
     }
+  },
+  "listenCreate": "New group",
+  "listenGroupName": "Group name",
+  "listenGroupDefault": "Listening with {name}",
+  "listenNoGroups": "No open groups. Start one and others on the server can join.",
+  "@listenGroupDefault": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

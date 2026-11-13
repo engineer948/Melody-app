@@ -1,0 +1,3 @@
+Hamı ilə birlikdə dinlə.
+- Pleyerdən (qulaqlıq düyməsi) və ya Ayarlardan dinləmə qrupu başlat və ya açıq qrupa qoşul; serverdə SyncPlay icazəsi olan hər kəs qoşula bilər
+- Oxutma, dayandırma, sarıma və keçmə bütün qrupda sinxron qalır

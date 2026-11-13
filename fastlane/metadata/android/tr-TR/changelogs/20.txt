@@ -1,0 +1,3 @@
+Herkesle birlikte dinle.
+- Çalardan (kulaklık düğmesi) veya Ayarlar'dan dinleme grubu başlat ya da açık bir gruba katıl; sunucuda SyncPlay izni olan herkes katılabilir
+- Çalma, durdurma, sarma ve geçme tüm grupta senkron kalır

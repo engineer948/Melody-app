@@ -93,6 +93,25 @@ class SyncCommand extends SyncPlayEvent {
   final String playlistItemId;
 }
 
+/// A listening group on the server.
+class SyncGroup {
+  /// Creates the entry.
+  const SyncGroup({
+    required this.id,
+    required this.name,
+    this.participants = const [],
+  });
+
+  /// Group id.
+  final String id;
+
+  /// Group name.
+  final String name;
+
+  /// User names in it.
+  final List<String> participants;
+}
+
 /// Server side of listening together.
 abstract interface class SyncPlayTransport {
   /// Messages from the server; open while [connect]ed.
@@ -103,6 +122,9 @@ abstract interface class SyncPlayTransport {
 
   /// Closes it.
   Future<void> close();
+
+  /// Groups open on the server.
+  Future<List<SyncGroup>> groups();
 
   /// Creates a group (the server then sends [SyncGroupJoined]).
   Future<void> newGroup(String name);

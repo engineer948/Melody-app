@@ -166,4 +166,31 @@ void main() {
     expect(aylaEngine.state.playing, isTrue);
     expect(aliEngine.state.playing, isTrue);
   });
+
+  test('anyone on the server can open a group and others can join', () async {
+    // No sharing permission at all: plain SyncPlay groups.
+    final ali = await member('admin', aliEngine, admin: true);
+    final ayla = await member('ayla', aylaEngine);
+    await ali.read(playerControllerProvider.notifier).playTracks([
+      makeTrack('t1'),
+    ]);
+    final groupId = await ali
+        .read(listenTogetherProvider.notifier)
+        .createGroup('Cuma akşamı');
+    expect(groupId, 'g1');
+    await settle();
+    expect(aliEngine.state.playing, isTrue);
+
+    final groups = await ayla.read(listenTogetherProvider.notifier).groups();
+    expect(groups.single.id, 'g1');
+    expect(
+      await ayla.read(listenTogetherProvider.notifier).joinGroup('g1'),
+      isTrue,
+    );
+    await settle();
+    expect(aylaEngine.loadedIds, ['t1']);
+    expect(aylaEngine.state.playing, isTrue);
+    // No invitation was written anywhere.
+    expect(social.inboxes, isEmpty);
+  });
 }

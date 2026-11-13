@@ -10,6 +10,7 @@ import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/settings/widgets/color_wheel.dart';
 import 'package:melody/features/settings/widgets/section_header.dart';
 import 'package:melody/features/social/listen_together.dart';
+import 'package:melody/features/social/listen_together_screen.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_home.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -56,6 +57,13 @@ class SocialSettingsSection extends ConsumerWidget {
               },
             ),
         ],
+        ListTile(
+          leading: const Icon(Icons.headphones_rounded),
+          title: Text(l10n.socialFeatureListen),
+          subtitle: Text(l10n.listenHint),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => unawaited(ListenTogetherScreen.open(context)),
+        ),
         if (state.isAdmin) ...[
           if (inbox == null) SectionHeader(l10n.socialSenderEntry),
           ListTile(

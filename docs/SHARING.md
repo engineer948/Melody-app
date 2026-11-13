@@ -45,6 +45,11 @@ and **Stop sharing**.
 
 ## Listening together
 
+Open to everyone on the server, without the sharing permission: the
+headphones button on the full-screen player (or Settings → Listening
+together) lists open groups, starts a new one with the current queue, or
+leaves. The sender's invitation above is a shortcut to the same thing.
+
 Built on Jellyfin SyncPlay (both users need SyncPlay access in their
 Jellyfin user settings, the default). While in a group, play, pause, seek,
 skip and choosing new songs go to the group; the server's commands are

@@ -141,6 +141,20 @@ class JellyfinSyncPlay implements SyncPlayTransport {
       _api.post('SyncPlay/$action', body: body);
 
   @override
+  Future<List<SyncGroup>> groups() async => [
+    for (final g in await _api.getList('SyncPlay/List'))
+      if (g is Map && g['GroupId'] != null)
+        SyncGroup(
+          id: '${g['GroupId']}',
+          name: '${g['GroupName'] ?? ''}',
+          participants: [
+            if (g['Participants'] case final List<dynamic> list)
+              for (final p in list) '$p',
+          ],
+        ),
+  ];
+
+  @override
   Future<void> newGroup(String name) => _post('New', {'GroupName': name});
 
   @override

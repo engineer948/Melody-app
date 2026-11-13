@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -18,6 +17,7 @@ import 'package:melody/features/player/widgets/player_sheets.dart';
 import 'package:melody/features/player/widgets/seek_bar.dart';
 import 'package:melody/features/share/share_screen.dart';
 import 'package:melody/features/share/share_subject.dart';
+import 'package:melody/features/social/listen_together_screen.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/play_queue.dart';
 import 'package:melody/player/player_controller.dart';
@@ -96,6 +96,13 @@ class NowPlayingScreen extends ConsumerWidget {
                               onPressed: () => context.pop(),
                             ),
                             const Spacer(),
+                            IconButton(
+                              color: fg,
+                              tooltip: l10n.socialFeatureListen,
+                              icon: const Icon(Icons.headphones_rounded),
+                              onPressed: () =>
+                                  ListenTogetherScreen.open(context),
+                            ),
                             IconButton(
                               color: fg,
                               tooltip: l10n.share,
