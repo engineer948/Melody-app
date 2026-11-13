@@ -211,7 +211,7 @@
   "cacheLimit": "Şarkı önbelleği",
   "cacheOff": "Kapalı",
   "mbValue": "{value} MB",
-  "gbValue": "{value} GB",
+  "gbValue": "{gb} GB",
   "cacheUsed": "Kullanılan: {size}",
   "cacheClear": "Önbelleği temizle",
   "cacheCleared": "Önbellek temizlendi",
@@ -440,5 +440,11 @@
   "profilePhoto": "Profil resmi",
   "profilePhotoHint": "Uygulamada ve giriş ekranındaki kullanıcı listesinde görünür",
   "profilePhotoRemove": "Resmi kaldır",
-  "profilePhotoFailed": "Resim değiştirilemedi"
+  "profilePhotoFailed": "Resim değiştirilemedi",
+  "downloadSaveSpace": "Yer kazan",
+  "downloadSaveSpaceBody": "128 kbps Opus: yaklaşık üçte bir boyut, kalite yine iyi",
+  "downloadSyncLibrary": "Tüm kütüphaneyi indir",
+  "downloadSyncLibraryBody": "Önce en yeni şarkılar; sunucuya gelen yeni şarkılar da indirilir",
+  "downloadLibraryLimit": "Kütüphane için yer",
+  "downloadNoLimit": "Sınırsız"
 }

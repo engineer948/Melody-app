@@ -101,6 +101,53 @@ class DownloadsSection extends ConsumerWidget {
             ],
           ),
         ),
+        ListTile(
+          leading: const Icon(Icons.compress_rounded),
+          title: Text(l10n.downloadSaveSpace),
+          subtitle: Text(l10n.downloadSaveSpaceBody),
+          trailing: s.bitrate == 128 && s.format == StreamFormat.opus
+              ? const Icon(Icons.check_rounded)
+              : null,
+          onTap: () => unawaited(
+            c.update(
+              (s) => s.copyWith(bitrate: 128, format: StreamFormat.opus),
+            ),
+          ),
+        ),
+        SwitchListTile(
+          secondary: const Icon(Icons.library_music_outlined),
+          title: Text(l10n.downloadSyncLibrary),
+          subtitle: Text(l10n.downloadSyncLibraryBody),
+          value: s.syncLibrary,
+          onChanged: (v) =>
+              unawaited(c.update((s) => s.copyWith(syncLibrary: v))),
+        ),
+        if (s.syncLibrary)
+          ListTile(
+            leading: const SizedBox(width: 24),
+            title: Text(l10n.downloadLibraryLimit),
+            trailing: DropdownButton<int?>(
+              value: s.libraryLimitGb,
+              underline: const SizedBox.shrink(),
+              onChanged: (v) => unawaited(
+                c.update(
+                  (s) => s.copyWith(
+                    libraryLimitGb: v,
+                    clearLibraryLimit: v == null,
+                  ),
+                ),
+              ),
+              items: [
+                for (final gb in DownloadSettings.libraryLimitChoices)
+                  DropdownMenuItem(
+                    value: gb,
+                    child: Text(
+                      gb == null ? l10n.downloadNoLimit : l10n.gbValue(gb),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         SwitchListTile(
           secondary: const Icon(Icons.favorite_border),
           title: Text(l10n.downloadAutoFavorites),

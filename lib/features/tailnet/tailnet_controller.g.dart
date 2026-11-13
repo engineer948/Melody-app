@@ -194,7 +194,7 @@ final class TailnetControllerProvider
   }
 }
 
-String _$tailnetControllerHash() => r'3318d9db193381955a622a94cb2fc834d17785b5';
+String _$tailnetControllerHash() => r'aa61207643a5950742856c63a8f35aaabc4bae7a';
 
 /// Joins, runs and leaves the tailnet of an invite.
 

@@ -1,0 +1,4 @@
+Sinxronizasiya və mahnı sözləri.
+- Bütün kitabxananı endir, əvvəl ən yenilər; yeni mahnılar özü gəlir. İstəyə bağlı yer limiti və tək toxunuşla "Yer qənaəti" keyfiyyəti
+- İcazə veriləndə düz sözlər LRCLIB-dəki vaxtlı sözlərlə əvəzlənir
+- Tailscale bağlantı qopsa özü yenidən qoşulur

@@ -217,6 +217,24 @@ void main() {
     expect(restarted.read(tailnetControllerProvider).crashed, isFalse);
   });
 
+  test('a dropped connection is restarted, a missing key is not', () async {
+    final c = await container();
+    final notifier = c.read(tailnetControllerProvider.notifier);
+    await notifier.join(invite);
+    expect(bridge.starts, hasLength(1));
+
+    bridge.reports = [const TailnetReport(TailnetStatus.stopped)];
+    await notifier.ensureConnected();
+    expect(bridge.stops, 1);
+    expect(bridge.starts, hasLength(2));
+    expect(bridge.starts.last['authKey'], '', reason: 'key never reused');
+
+    // Removed from the tailnet: reconnecting would not help.
+    bridge.reports = [const TailnetReport(TailnetStatus.needsLogin)];
+    await notifier.ensureConnected();
+    expect(bridge.starts, hasLength(2));
+  });
+
   group('TailnetRoutingConnector', () {
     test(
       'probes and signs in through the proxy, saves the real address',

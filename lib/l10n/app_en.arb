@@ -305,7 +305,7 @@
   "cacheLimit": "Song cache",
   "cacheOff": "Off",
   "mbValue": "{value} MB",
-  "gbValue": "{value} GB",
+  "gbValue": "{gb} GB",
   "cacheUsed": "In use: {size}",
   "cacheClear": "Clear cache",
   "cacheCleared": "Cache cleared",
@@ -351,7 +351,7 @@
   },
   "@gbValue": {
     "placeholders": {
-      "value": {
+      "gb": {
         "type": "int"
       }
     }
@@ -799,5 +799,11 @@
   "profilePhoto": "Profile picture",
   "profilePhotoHint": "Shown in the app and in the sign-in screen's user list",
   "profilePhotoRemove": "Remove picture",
-  "profilePhotoFailed": "Could not change the picture"
+  "profilePhotoFailed": "Could not change the picture",
+  "downloadSaveSpace": "Save space",
+  "downloadSaveSpaceBody": "Opus at 128 kbps: about a third of the size, still good quality",
+  "downloadSyncLibrary": "Download the whole library",
+  "downloadSyncLibraryBody": "Newest songs first; new songs on the server are downloaded too",
+  "downloadLibraryLimit": "Space for the library",
+  "downloadNoLimit": "No limit"
 }

@@ -211,7 +211,7 @@
   "cacheLimit": "Mahnı keşi",
   "cacheOff": "Söndürülüb",
   "mbValue": "{value} MB",
-  "gbValue": "{value} GB",
+  "gbValue": "{gb} GB",
   "cacheUsed": "İstifadə olunur: {size}",
   "cacheClear": "Keşi təmizlə",
   "cacheCleared": "Keş təmizləndi",
@@ -440,5 +440,11 @@
   "profilePhoto": "Profil şəkli",
   "profilePhotoHint": "Tətbiqdə və giriş ekranındakı istifadəçi siyahısında görünür",
   "profilePhotoRemove": "Şəkli sil",
-  "profilePhotoFailed": "Şəkli dəyişmək alınmadı"
+  "profilePhotoFailed": "Şəkli dəyişmək alınmadı",
+  "downloadSaveSpace": "Yer qənaəti",
+  "downloadSaveSpaceBody": "128 kbps Opus: təxminən üçdə bir ölçü, keyfiyyət yenə yaxşı",
+  "downloadSyncLibrary": "Bütün kitabxananı endir",
+  "downloadSyncLibraryBody": "Əvvəl ən yeni mahnılar; serverə gələn yeni mahnılar da endirilir",
+  "downloadLibraryLimit": "Kitabxana üçün yer",
+  "downloadNoLimit": "Limitsiz"
 }

@@ -290,6 +290,11 @@ class TailnetController extends _$TailnetController {
 
   Timer? _poll;
   Timer? _survived;
+  bool _joining = false;
+  DateTime? _lastHeal;
+
+  /// Shortest time between two automatic reconnects.
+  static Duration healEvery = const Duration(minutes: 1);
   TailnetSecrets? _secrets;
   Future<void>? _starting;
   final _random = Random.secure();
@@ -405,7 +410,7 @@ class TailnetController extends _$TailnetController {
   }
 
   /// Reads the node's state now.
-  Future<TailnetReport> refresh() async {
+  Future<TailnetReport> refresh({bool heal = true}) async {
     if (!state.configured) return state.report;
     try {
       final report = await _bridge.status();
@@ -413,11 +418,42 @@ class TailnetController extends _$TailnetController {
       _schedulePoll(
         report.status == TailnetStatus.running ? slowPoll : fastPoll,
       );
+      if (heal && _broken(report) && !_joining) {
+        final last = _lastHeal;
+        if (last == null || DateTime.now().difference(last) > healEvery) {
+          unawaited(_heal());
+        }
+      }
       return report;
     } on Object catch (error) {
       _schedulePoll(slowPoll);
       return TailnetReport(TailnetStatus.error, error: '$error');
     }
+  }
+
+  /// Whether the node is down for a reason a reconnect can fix (not a
+  /// missing key or a pending approval).
+  static bool _broken(TailnetReport report) =>
+      report.status == TailnetStatus.error ||
+      report.status == TailnetStatus.stopped;
+
+  Future<void> _heal() async {
+    final secrets =
+        _secrets ?? await ref.read(tailnetSecretStoreProvider).read();
+    if (secrets == null || !state.configured || state.crashed) return;
+    _lastHeal = DateTime.now();
+    try {
+      await _bridge.stop();
+    } on Object catch (_) {}
+    await _ensureStarted(secrets);
+  }
+
+  /// Checks the connection now and reconnects when it is down (pull to
+  /// refresh on the home screen, coming back to the app).
+  Future<void> ensureConnected() async {
+    if (!state.configured || state.crashed || _joining) return;
+    final report = await refresh(heal: false);
+    if (_broken(report)) await _heal();
   }
 
   /// Joins the tailnet of [invite]. Only one tailnet can be joined at a
@@ -430,6 +466,15 @@ class TailnetController extends _$TailnetController {
       return const TailnetReport(TailnetStatus.error, error: 'unavailable');
     }
     if (state.configured) await leave();
+    _joining = true;
+    try {
+      return await _join(invite);
+    } finally {
+      _joining = false;
+    }
+  }
+
+  Future<TailnetReport> _join(TailnetInvite invite) async {
     final secrets = TailnetSecrets(
       // 256-bit secrets.
       proxySecret: _hex(32),

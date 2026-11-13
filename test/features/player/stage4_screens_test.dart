@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/data/sources/lrclib/lrclib_client.dart';
 import 'package:melody/domain/lyrics/lrc_parser.dart';
+import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/lyrics/lyrics_providers.dart';
 import 'package:melody/features/playlist/playlist_screen.dart';
 import 'package:melody/player/playback_settings.dart';
@@ -106,6 +107,38 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Uzaktan'), findsOneWidget);
     expect(find.text('Lyrics from LRCLIB'), findsOneWidget);
+    await stop(tester, c);
+  });
+
+  testWidgets('plain server lyrics are replaced by synced LRCLIB lyrics', (
+    tester,
+  ) async {
+    final source = FakeMusicSource()
+      ..lyricsByTrack['t1'] = const Lyrics(
+        lines: [LyricLine(text: 'Düz mətn')],
+      );
+    final adapter = FakeHttpAdapter(
+      (_) => (status: 200, body: {'syncedLyrics': '[00:01.00]Uzaktan'}),
+    );
+    final c = await start(
+      tester,
+      source: source,
+      overrides: [
+        lrclibProvider.overrideWithValue(LrclibClient(adapter: adapter)),
+      ],
+    );
+    await playAndOpenPlayer(tester);
+    await tester.tap(find.byTooltip('Lyrics'));
+    await tester.pumpAndSettle();
+    // Without LRCLIB: the server's plain text.
+    expect(find.text('Düz mətn'), findsOneWidget);
+
+    await c
+        .read(lyricsSettingsControllerProvider.notifier)
+        .update((s) => s.copyWith(useLrclib: true));
+    await tester.pumpAndSettle();
+    expect(find.text('Uzaktan'), findsOneWidget);
+    expect(find.text('Düz mətn'), findsNothing);
     await stop(tester, c);
   });
 

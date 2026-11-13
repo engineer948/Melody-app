@@ -18,6 +18,8 @@ class DownloadSettings {
     this.format = StreamFormat.original,
     this.autoFavorites = false,
     this.syncedPlaylists = const {},
+    this.syncLibrary = false,
+    this.libraryLimitGb,
   });
 
   /// Restores settings saved with [toJson].
@@ -33,6 +35,8 @@ class DownloadSettings {
         syncedPlaylists: (json['syncedPlaylists'] as List<dynamic>? ?? const [])
             .cast<String>()
             .toSet(),
+        syncLibrary: json['syncLibrary'] as bool? ?? false,
+        libraryLimitGb: json['libraryLimitGb'] as int?,
       );
 
   /// Whether downloads wait for Wi-Fi.
@@ -53,6 +57,16 @@ class DownloadSettings {
   /// Playlists kept in sync, as `<account id>|<playlist id>`.
   final Set<String> syncedPlaylists;
 
+  /// Whether the whole library is downloaded (newest first) and new songs
+  /// follow automatically.
+  final bool syncLibrary;
+
+  /// Space the library download may use, in GB; `null` means no limit.
+  final int? libraryLimitGb;
+
+  /// Choices for [libraryLimitGb].
+  static const libraryLimitChoices = <int?>[null, 2, 5, 10, 20, 50];
+
   /// Quality the files are requested in.
   StreamOptions get options =>
       StreamOptions(maxBitrateKbps: bitrate, format: format);
@@ -71,6 +85,9 @@ class DownloadSettings {
     StreamFormat? format,
     bool? autoFavorites,
     Set<String>? syncedPlaylists,
+    bool? syncLibrary,
+    int? libraryLimitGb,
+    bool clearLibraryLimit = false,
   }) => DownloadSettings(
     wifiOnly: wifiOnly ?? this.wifiOnly,
     parallel: parallel ?? this.parallel,
@@ -78,6 +95,10 @@ class DownloadSettings {
     format: format ?? this.format,
     autoFavorites: autoFavorites ?? this.autoFavorites,
     syncedPlaylists: syncedPlaylists ?? this.syncedPlaylists,
+    syncLibrary: syncLibrary ?? this.syncLibrary,
+    libraryLimitGb: clearLibraryLimit
+        ? null
+        : libraryLimitGb ?? this.libraryLimitGb,
   );
 
   /// Serialises the settings.
@@ -88,6 +109,8 @@ class DownloadSettings {
     'format': format.name,
     'autoFavorites': autoFavorites,
     'syncedPlaylists': syncedPlaylists.toList(),
+    'syncLibrary': syncLibrary,
+    'libraryLimitGb': libraryLimitGb,
   };
 }
 

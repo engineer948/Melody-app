@@ -1,0 +1,4 @@
+Sync and lyrics.
+- Download the whole library, newest first; new songs follow automatically. Optional space limit and a one-tap "Save space" quality
+- Plain lyrics are replaced by time-synced ones from LRCLIB when allowed
+- Tailscale reconnects by itself when the connection drops

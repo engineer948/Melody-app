@@ -1,0 +1,4 @@
+Senkronizasyon ve şarkı sözleri.
+- Tüm kütüphaneyi indir, önce en yeniler; yeni şarkılar kendiliğinden gelir. İsteğe bağlı yer sınırı ve tek dokunuşla "Yer kazan" kalitesi
+- İzin verilince düz sözler LRCLIB'deki zamanlı sözlerle değiştirilir
+- Tailscale bağlantı koparsa kendiliğinden yeniden bağlanır

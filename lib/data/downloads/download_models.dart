@@ -27,6 +27,9 @@ abstract final class DownloadOrigin {
   /// Kept because favourites are downloaded automatically.
   static const favorites = 'favorites';
 
+  /// Kept because the whole library is downloaded.
+  static const library = 'library';
+
   /// Kept because the playlist [id] is kept in sync.
   static String playlist(String id) => 'playlist:$id';
 }

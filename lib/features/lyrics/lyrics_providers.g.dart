@@ -170,7 +170,7 @@ final class TrackLyricsProvider
   }
 }
 
-String _$trackLyricsHash() => r'4d742eb06b24dd0b0b47a776c729a6dedeab7d8a';
+String _$trackLyricsHash() => r'367b0034979f58fe2667d69963c8838c53213800';
 
 /// Lyrics of [track]: cache, then the server, then LRCLIB (when allowed).
 /// `null` means there are none.

@@ -10,12 +10,14 @@ import 'package:melody/core/widgets/large_title_page.dart';
 import 'package:melody/core/widgets/shelf_header.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
+import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/shell/app_shell.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_home.dart';
 import 'package:melody/features/stats/stats_providers.dart';
+import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -45,6 +47,16 @@ class HomeScreen extends ConsumerWidget {
       ..invalidate(trackListProvider(_mostPlayed))
       ..invalidate(suggestionsProvider);
     unawaited(ref.read(socialControllerProvider.notifier).refresh());
+    // Reconnects Tailscale if needed, then new songs are downloaded when
+    // the library is kept in sync.
+    unawaited(
+      ref
+          .read(tailnetControllerProvider.notifier)
+          .ensureConnected()
+          .whenComplete(
+            () => ref.read(downloadControllerProvider.notifier).sync(),
+          ),
+    );
   }
 
   @override

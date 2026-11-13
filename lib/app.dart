@@ -11,6 +11,7 @@ import 'package:melody/core/theme/app_theme.dart';
 import 'package:melody/core/theme/system_colors.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_home.dart';
+import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// Root widget: wires routing, theming and localization together.
@@ -43,6 +44,8 @@ class _MelodyAppState extends ConsumerState<MelodyApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
+    // Back in the app: reconnect Tailscale if it dropped meanwhile.
+    unawaited(ref.read(tailnetControllerProvider.notifier).ensureConnected());
     final canPop = ref.read(appRouterProvider).canPop();
     unawaited(SystemNavigator.setFrameworkHandlesBack(canPop));
   }

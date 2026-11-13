@@ -130,18 +130,25 @@ Future<Lyrics?> trackLyrics(Ref ref, Track track) async {
   );
   if (source == null || accountId == null) return null;
   final cache = ref.read(catalogCacheProvider);
+  Lyrics? found;
   try {
     final cached = await cache.readItem(accountId, CacheKind.lyrics, track.id);
-    if (cached != null) return cached.lyrics;
+    if (cached != null) {
+      // Plain lyrics may be upgraded to time-synced ones from LRCLIB.
+      if (cached.lyrics.synced || !useLrclib) return cached.lyrics;
+      found = cached.lyrics;
+    }
   } on Object {
     // A broken cache only costs a network request.
   }
-  Lyrics? found;
-  if (source.capabilities.lyrics) {
+  if (found == null && source.capabilities.lyrics) {
     found = (await source.lyrics(track)).valueOrNull;
   }
-  if (found == null && useLrclib) {
-    found = (await ref.read(lrclibProvider).lookup(track)).valueOrNull;
+  // Lyrics that follow the song: when the server has none, or only plain
+  // text, LRCLIB is asked for time-synced lyrics (if allowed).
+  if ((found == null || !found.synced) && useLrclib) {
+    final online = (await ref.read(lrclibProvider).lookup(track)).valueOrNull;
+    if (online != null && (found == null || online.synced)) found = online;
   }
   if (found != null) {
     try {

@@ -204,7 +204,7 @@ final class DownloadControllerProvider
 }
 
 String _$downloadControllerHash() =>
-    r'ee0a6f33ee4481141ce050e4f457672c403b4c00';
+    r'b83c2c0de704b77351adf0a4d60631417f282d8e';
 
 /// Downloads of the active account by track id, in the order requested.
 ///

@@ -55,7 +55,10 @@ class DownloadController extends _$DownloadController {
       ..listen(downloadSettingsControllerProvider, (previous, next) {
         _pump();
         if (previous?.autoFavorites != next.autoFavorites ||
-            previous?.syncedPlaylists != next.syncedPlaylists) {
+            previous?.syncedPlaylists != next.syncedPlaylists ||
+            previous?.syncLibrary != next.syncLibrary ||
+            previous?.libraryLimitGb != next.libraryLimitGb ||
+            (next.syncLibrary && previous?.bitrate != next.bitrate)) {
           unawaited(sync());
         }
       })
@@ -386,6 +389,41 @@ class DownloadController extends _$DownloadController {
     await enqueue(tracks, origin: origin);
   }
 
+  /// The whole library, newest first, cut at the space limit (estimated
+  /// from length and download quality); `null` when it cannot be read.
+  Future<List<Track>?> _libraryTracks(
+    MusicSource source,
+    DownloadSettings settings,
+  ) async {
+    const page = 500;
+    final all = <Track>[];
+    for (var offset = 0; ; offset += page) {
+      final result = await source.tracks(
+        TrackQuery(sort: TrackSort.dateAdded, offset: offset, limit: page),
+      );
+      final tracks = result.valueOrNull;
+      if (tracks == null) return null;
+      all.addAll(tracks);
+      if (tracks.length < page) break;
+    }
+    final limitGb = settings.libraryLimitGb;
+    if (limitGb == null) return all;
+    // Original files are guessed at 320 kbps.
+    final kbps = settings.bitrate ?? 320;
+    final budget = limitGb * 1000 * 1000 * 1000;
+    var used = 0;
+    final kept = <Track>[];
+    for (final track in all) {
+      final seconds = (track.duration ?? const Duration(minutes: 4)).inSeconds;
+      final known = state[track.id]?.totalBytes ?? 0;
+      final size = known > 0 ? known : seconds * kbps * 1000 ~/ 8;
+      if (used + size > budget) break;
+      used += size;
+      kept.add(track);
+    }
+    return kept;
+  }
+
   /// Brings automatic downloads (favourites, synced playlists) up to date.
   /// Does nothing when the source cannot be reached.
   Future<void> sync() async {
@@ -400,6 +438,12 @@ class DownloadController extends _$DownloadController {
       if (tracks != null) await reconcile(DownloadOrigin.favorites, tracks);
     } else {
       await reconcile(DownloadOrigin.favorites, const []);
+    }
+    if (settings.syncLibrary) {
+      final tracks = await _libraryTracks(source, settings);
+      if (tracks != null) await reconcile(DownloadOrigin.library, tracks);
+    } else {
+      await reconcile(DownloadOrigin.library, const []);
     }
     final prefix = DownloadSettings.playlistKey(accountId, '');
     final synced = {

@@ -191,6 +191,49 @@ void main() {
     expect(items(c).keys, ['t1']);
   });
 
+  test(
+    'the whole library follows the server, within the space limit',
+    () async {
+      final c = await setUpDownloads();
+      source.trackItems = [for (var i = 1; i <= 5; i++) makeTrack('t$i')];
+      await c
+          .read(downloadSettingsControllerProvider.notifier)
+          .update((s) => s.copyWith(syncLibrary: true));
+      await settle(c);
+      expect(items(c).keys, unorderedEquals(['t1', 't2', 't3', 't4', 't5']));
+
+      // A new song on the server is picked up by the next sync.
+      source.trackItems = [makeTrack('t6'), ...source.trackItems];
+      await controller(c).sync();
+      await settle(c);
+      expect(items(c), contains('t6'));
+
+      // Turning it off removes what was only kept for the library.
+      await c
+          .read(downloadSettingsControllerProvider.notifier)
+          .update((s) => s.copyWith(syncLibrary: false));
+      await settle(c);
+      expect(items(c), isEmpty);
+    },
+  );
+
+  test('the space limit keeps only the newest songs that fit', () async {
+    final c = await setUpDownloads();
+    // 3 min 5 s at 128 kbps is about 3 MB; 2 GB fits all of them, so make
+    // the songs long: 10 hours each at 128 kbps is about 576 MB.
+    source.trackItems = [
+      for (var i = 1; i <= 5; i++)
+        makeTrack('t$i').copyWith(duration: const Duration(hours: 10)),
+    ];
+    await c
+        .read(downloadSettingsControllerProvider.notifier)
+        .update(
+          (s) => s.copyWith(syncLibrary: true, libraryLimitGb: 2, bitrate: 128),
+        );
+    await settle(c);
+    expect(items(c).keys, unorderedEquals(['t1', 't2', 't3']));
+  });
+
   test('the player uses the downloaded file', () async {
     final c = await setUpDownloads();
     await controller(c).enqueue([makeTrack('t1')]);

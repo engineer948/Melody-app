@@ -43,8 +43,11 @@ class FakeTailnetBridge implements TailnetBridge {
   Future<TailnetReport> status() async =>
       reports.length > 1 ? reports.removeAt(0) : reports.single;
 
+  /// How many times [stop] ran.
+  int stops = 0;
+
   @override
-  Future<void> stop() async {}
+  Future<void> stop() async => stops++;
 
   @override
   Future<void> logout() async => logouts++;
