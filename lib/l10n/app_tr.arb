@@ -375,7 +375,7 @@
   "tailnetChecklistTitle": "Güvenlik kontrol listesi",
   "tailnetChecklist1": "Anahtarı tek kullanımlık (reusable değil) ve kısa süreli yap, ör. 1 gün.",
   "tailnetChecklist2": "Anahtara tag:melody-friend etiketini ver.",
-  "tailnetChecklist3": "Aşağıdaki erişim kuralını ekle ve her şeye izin veren varsayılan kuralı kaldır; böylece arkadaşların yalnızca müzik sunucusuna ulaşır.",
+  "tailnetChecklist3": "Her şeye izin veren varsayılan kuralı aşağıdaki iki kuralla değiştir: kendi cihazların eskisi gibi her şeye erişir (exit node dahil), arkadaşların yalnızca müzik sunucusuna ulaşır.",
   "tailnetChecklist4": "Cihaz onayını aç; senin onayın olmadan hiçbir cihaz katılamaz.",
   "tailnetChecklist5": "Her arkadaşa ayrı anahtar. Birinin erişimini kesmek için yönetim panelinde cihazını sil.",
   "tailnetAclCopy": "Erişim kuralını kopyala",

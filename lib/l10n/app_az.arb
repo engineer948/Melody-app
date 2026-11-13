@@ -375,7 +375,7 @@
   "tailnetChecklistTitle": "Təhlükəsizlik yoxlama siyahısı",
   "tailnetChecklist1": "Açarı birdəfəlik (reusable yox) və qısamüddətli et, məs. 1 gün.",
   "tailnetChecklist2": "Açara tag:melody-friend etiketini ver.",
-  "tailnetChecklist3": "Aşağıdakı giriş qaydasını əlavə et və hər şeyə icazə verən standart qaydanı sil; belə dostların yalnız musiqi serverinə çata bilər.",
+  "tailnetChecklist3": "Hər şeyə icazə verən standart qaydanı aşağıdakı iki qayda ilə əvəz et: öz cihazların əvvəlki kimi hər şeyə çatır (exit node da), dostların isə yalnız musiqi serverinə.",
   "tailnetChecklist4": "Cihaz təsdiqini aç; sənin təsdiqin olmadan heç bir cihaz qoşula bilməz.",
   "tailnetChecklist5": "Hər dosta ayrıca açar. Birinin girişini kəsmək üçün idarə panelində onun cihazını sil.",
   "tailnetAclCopy": "Giriş qaydasını kopyala",

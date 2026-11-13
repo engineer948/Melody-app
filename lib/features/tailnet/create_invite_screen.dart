@@ -24,6 +24,9 @@ String accessRuleFor(Uri? server) {
   "$friendTag": ["autogroup:admin"]
 },
 "acls": [
+  // Your own devices: everything, as before (also exit nodes).
+  {"action": "accept", "src": ["autogroup:member"], "dst": ["*:*"]},
+  // Invited friends: only the music server.
   {"action": "accept", "src": ["$friendTag"], "dst": ["$dst"]}
 ]''';
 }

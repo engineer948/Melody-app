@@ -12,19 +12,27 @@ The code lives in `native/tailscale` (Go, built with gomobile into
 
 Do this once in the [Tailscale admin console](https://login.tailscale.com/admin):
 
-1. **Access rules** (Access controls → edit policy file). Add the tag and
-   a rule that lets invited devices reach only Jellyfin, and **remove the
-   default "allow everything" rule** if it is still there:
+1. **Access rules** (Access controls → edit policy file). Replace the
+   default "allow everything" rule with these two: your own devices keep
+   full access (including exit nodes), invited devices reach only
+   Jellyfin:
 
    ```jsonc
    "tagOwners": {
      "tag:melody-friend": ["autogroup:admin"]
    },
    "acls": [
-     // your own rules ...
+     // your own devices: everything, as before (also exit nodes)
+     {"action": "accept", "src": ["autogroup:member"], "dst": ["*:*"]},
+     // invited friends: only the music server
      {"action": "accept", "src": ["tag:melody-friend"], "dst": ["100.x.y.z:8096"]}
    ]
    ```
+
+   Do not just delete the default rule without the first line: your own
+   devices would lose access to each other and to the internet through
+   an exit node. Tagged devices are not `autogroup:member`, so friends stay
+   limited.
 
    Melody shows this rule, filled in with your server, on the invite
    screen (Settings → Tailscale → Create an invite code).

@@ -26,11 +26,15 @@ void main() {
     TailnetController.fastPoll = const Duration(milliseconds: 1);
   });
 
-  Future<void> pump(WidgetTester tester, {bool signedIn = false}) => pumpApp(
+  Future<void> pump(
+    WidgetTester tester, {
+    bool signedIn = false,
+    Size size = const Size(420, 1400),
+  }) => pumpApp(
     tester,
     preferences: prefs,
     signedIn: signedIn,
-    size: const Size(420, 1400),
+    size: size,
     connector: FakeConnector(),
     overrides: [
       tailnetBootstrapProvider.overrideWithValue(
@@ -103,23 +107,40 @@ void main() {
   testWidgets('creating an invite shows code, QR and the access rule', (
     tester,
   ) async {
-    await pump(tester, signedIn: true);
+    // Tall enough to show the whole screen without scrolling.
+    await pump(tester, signedIn: true, size: const Size(420, 3000));
     final context = tester.element(find.byType(Scaffold).first);
     CreateInviteScreen.open(context).ignore();
     await tester.pumpAndSettle();
     expect(find.textContaining('"tag:melody-friend"'), findsOneWidget);
+    expect(find.textContaining('"autogroup:member"'), findsOneWidget);
 
     final fields = find.byType(TextField);
     await tester.enterText(fields.at(0), 'tskey-api-kAdmin123-zzzzzzzz');
     await tester.enterText(fields.at(1), '100.70.0.5:8096');
+    await tester.dragUntilVisible(
+      find.text('Create code'),
+      find.byType(ListView).last,
+      const Offset(0, -200),
+    );
     await tester.tap(find.text('Create code'));
     await tester.pumpAndSettle();
     expect(find.textContaining('API keys and OAuth secrets'), findsOneWidget);
     expect(find.byType(QrCodeView), findsNothing);
 
     await tester.enterText(fields.at(0), key);
+    await tester.dragUntilVisible(
+      find.text('Create code'),
+      find.byType(ListView).last,
+      const Offset(0, -200),
+    );
     await tester.tap(find.text('Create code'));
     await tester.pumpAndSettle();
+    await tester.dragUntilVisible(
+      find.byType(QrCodeView),
+      find.byType(ListView).last,
+      const Offset(0, -200),
+    );
     expect(find.byType(QrCodeView), findsOneWidget);
     final codeText = find.textContaining('MELODY1-');
     await tester.dragUntilVisible(

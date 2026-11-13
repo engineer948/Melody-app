@@ -643,7 +643,7 @@
   "tailnetChecklistTitle": "Security checklist",
   "tailnetChecklist1": "Make the key one-time (not reusable) with a short expiry, e.g. 1 day.",
   "tailnetChecklist2": "Give the key the tag tag:melody-friend.",
-  "tailnetChecklist3": "Add the access rule below and remove the default rule that allows everything, so friends can only reach the music server.",
+  "tailnetChecklist3": "Replace the default “allow everything” rule with the two rules below: your own devices keep full access (also exit nodes), friends reach only the music server.",
   "tailnetChecklist4": "Turn on device approval, so no device joins without you.",
   "tailnetChecklist5": "One key per friend. To cut a friend off, remove their device in the admin console.",
   "tailnetAclCopy": "Copy access rule",
