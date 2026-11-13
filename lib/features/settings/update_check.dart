@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +66,8 @@ final updateCheckSettingProvider = NotifierProvider<UpdateCheckSetting, bool>(
 final latestReleaseFetcherProvider =
     Provider<Future<(String, Uri)?> Function()>(
       (ref) => () async {
+        // Never reach the network from tests.
+        if (Platform.environment.containsKey('FLUTTER_TEST')) return null;
         final dio = Dio(
           BaseOptions(
             connectTimeout: const Duration(seconds: 10),
@@ -85,9 +88,14 @@ final latestReleaseFetcherProvider =
     );
 
 /// The installed version (e.g. `0.12.0`); overridden in tests.
-final installedVersionProvider = FutureProvider<String>(
-  (ref) async => (await PackageInfo.fromPlatform()).version,
-);
+final installedVersionProvider = FutureProvider<String?>((ref) async {
+  try {
+    return (await PackageInfo.fromPlatform()).version;
+  } on Object {
+    // Unknown (tests): never fail, so nothing is retried.
+    return null;
+  }
+});
 
 /// A newer release, checked once per app start; `null` when there is
 /// none, the check is off or GitHub cannot be reached. Only the public
@@ -96,6 +104,7 @@ final availableUpdateProvider = FutureProvider<AvailableUpdate?>((ref) async {
   if (!ref.watch(updateCheckSettingProvider)) return null;
   try {
     final current = await ref.watch(installedVersionProvider.future);
+    if (current == null) return null;
     final latest = await ref.read(latestReleaseFetcherProvider)();
     if (latest == null) return null;
     final (version, page) = latest;
