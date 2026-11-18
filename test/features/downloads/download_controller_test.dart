@@ -212,7 +212,11 @@ void main() {
       await c
           .read(downloadSettingsControllerProvider.notifier)
           .update((s) => s.copyWith(syncLibrary: false));
-      await settle(c);
+      // The removal runs in the background and deletes real files; wait
+      // for it instead of for the queue, which is already idle.
+      for (var i = 0; i < 500 && items(c).isNotEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 5));
+      }
       expect(items(c), isEmpty);
     },
   );
