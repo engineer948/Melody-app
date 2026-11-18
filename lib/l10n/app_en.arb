@@ -826,5 +826,105 @@
         "type": "String"
       }
     }
+  },
+  "selectedCount": "{count, plural, =1{1 song selected} other{{count} songs selected}}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "Select all",
+  "selectNone": "Select none",
+  "downloadStarted": "{count, plural, =1{Downloading 1 song} other{Downloading {count} songs}}",
+  "@downloadStarted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "favoritesAdded": "{count, plural, =1{Added to favorites} other{{count} songs added to favorites}}",
+  "@favoritesAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smartNew": "New smart playlist",
+  "smartEdit": "Edit rules",
+  "smartSort": "Songs",
+  "smartSortRecentlyAdded": "Recently added",
+  "smartSortMostPlayed": "Most played",
+  "smartSortRecentlyPlayed": "Recently played",
+  "smartSortRandom": "Random",
+  "smartSortTitle": "By title",
+  "smartGenre": "Genre",
+  "smartAnyGenre": "Any genre",
+  "smartYearFrom": "From year",
+  "smartYearTo": "To year",
+  "smartFavoritesOnly": "Only favorites",
+  "smartUnplayedOnly": "Only songs never played",
+  "smartUnplayed": "Never played",
+  "smartLimit": "Number of songs",
+  "smartLimitSongs": "{count} songs",
+  "@smartLimitSongs": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smartBody": "Smart playlists are saved on this phone and pick their songs again every time you open them.",
+  "smartEmpty": "No songs match these rules",
+  "smartSaveCopy": "Save as normal playlist",
+  "m3uExport": "Export as M3U",
+  "m3uImport": "Import M3U file",
+  "m3uImporting": "Looking for the songs…",
+  "m3uProgress": "{done} of {total}",
+  "@m3uProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "m3uEmpty": "No songs found in this file",
+  "m3uNoneFound": "None of the songs are in your library",
+  "m3uFound": "Found {found} of {total} songs",
+  "@m3uFound": {
+    "placeholders": {
+      "found": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "m3uImported": "Playlist created with {found} of {total} songs",
+  "@m3uImported": {
+    "placeholders": {
+      "found": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "m3uShowMissing": "Missing",
+  "m3uMissingTitle": "{count, plural, =1{1 song not found} other{{count} songs not found}}",
+  "@m3uMissingTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

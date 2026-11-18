@@ -7,7 +7,8 @@ then iOS). The display name is changed in one place: `AppConfig.appName`.
 
 Early development. Working today: Jellyfin sign-in, library, search,
 background playback (queue, notification, sleep timer, volume
-normalisation, equalizer), lyrics, playlists, Wi-Fi / mobile streaming
+normalisation, equalizer), lyrics, playlists (smart playlists, M3U import/export,
+selecting several songs at once), Wi-Fi / mobile streaming
 quality, offline downloads, Auto DJ, on-device recommendations, listening
 statistics (Year in Review), Android Auto, a home screen widget, playback
 on DLNA devices, sharing songs, albums, artists and playlists as story

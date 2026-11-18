@@ -115,6 +115,10 @@ abstract final class AppRoutes {
     queryParameters: {'name': name},
   ).toString();
 
+  /// Smart playlist page inside the current tab.
+  static String smartPlaylist(BuildContext context, String id) =>
+      '${_tab(context)}/smart/${Uri.encodeComponent(id)}';
+
   /// Playlist page inside the current tab.
   static String playlist(BuildContext context, String id, String name) => Uri(
     path: '${_tab(context)}/playlist/${Uri.encodeComponent(id)}',

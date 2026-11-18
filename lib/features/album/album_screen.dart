@@ -9,6 +9,7 @@ import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_widgets.dart';
 import 'package:melody/features/library/library_providers.dart';
+import 'package:melody/features/library/track_selection.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/player/track_actions.dart';
@@ -53,40 +54,43 @@ class AlbumScreen extends ConsumerWidget {
     final canFavorite =
         ref.watch(activeSourceProvider)?.capabilities.favorites ?? false;
     return Scaffold(
-      body: LargeTitlePage(
-        title: album?.title ?? '',
-        header: loaded == null
-            ? const SizedBox(height: 1)
-            : _AlbumHeader(detail: loaded.value),
-        actions: [
-          if (loaded != null && loaded.value.tracks.isNotEmpty)
-            DownloadButton(tracks: loaded.value.tracks),
-          if (album != null && canFavorite)
-            IconButton(
-              icon: Icon(
-                album.isFavorite ? Icons.favorite : Icons.favorite_border,
+      body: TrackSelectionScope(
+        tracks: loaded?.value.tracks ?? const [],
+        child: LargeTitlePage(
+          title: album?.title ?? '',
+          header: loaded == null
+              ? const SizedBox(height: 1)
+              : _AlbumHeader(detail: loaded.value),
+          actions: [
+            if (loaded != null && loaded.value.tracks.isNotEmpty)
+              DownloadButton(tracks: loaded.value.tracks),
+            if (album != null && canFavorite)
+              IconButton(
+                icon: Icon(
+                  album.isFavorite ? Icons.favorite : Icons.favorite_border,
+                ),
+                tooltip: album.isFavorite
+                    ? l10n.favoriteRemove
+                    : l10n.favoriteAdd,
+                onPressed: () => _toggleFavorite(context, ref, album),
               ),
-              tooltip: album.isFavorite
-                  ? l10n.favoriteRemove
-                  : l10n.favoriteAdd,
-              onPressed: () => _toggleFavorite(context, ref, album),
-            ),
-          if (album != null)
-            IconButton(
-              icon: const Icon(Icons.share_outlined),
-              tooltip: l10n.share,
-              onPressed: () =>
-                  showShareScreen(context, ShareSubject.album(album)),
-            ),
-        ],
-        slivers: loadedSlivers(
-          value: value,
-          onRetry: () => ref.invalidate(albumDetailProvider(id)),
-          builder: (loaded) => [
-            if (loaded.refreshFailure != null)
-              const SliverToBoxAdapter(child: OfflineBanner()),
-            ..._trackSlivers(context, loaded.value),
+            if (album != null)
+              IconButton(
+                icon: const Icon(Icons.share_outlined),
+                tooltip: l10n.share,
+                onPressed: () =>
+                    showShareScreen(context, ShareSubject.album(album)),
+              ),
           ],
+          slivers: loadedSlivers(
+            value: value,
+            onRetry: () => ref.invalidate(albumDetailProvider(id)),
+            builder: (loaded) => [
+              if (loaded.refreshFailure != null)
+                const SliverToBoxAdapter(child: OfflineBanner()),
+              ..._trackSlivers(context, loaded.value),
+            ],
+          ),
         ),
       ),
     );

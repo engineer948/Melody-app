@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/widgets/empty_state.dart';
@@ -9,9 +11,12 @@ import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/library/library_providers.dart';
+import 'package:melody/features/library/track_selection.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/player/track_actions.dart';
+import 'package:melody/features/playlist/m3u_actions.dart';
+import 'package:melody/features/playlist/smart_playlists.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// Locations of the library categories.
@@ -124,19 +129,24 @@ class SongsPage extends ConsumerWidget {
     );
     final state = ref.watch(provider);
     return Scaffold(
-      body: PagedScrollView<Track>(
-        title: favoritesOnly ? l10n.libraryFavorites : l10n.librarySongs,
-        state: state,
-        emptyIcon: favoritesOnly
-            ? Icons.favorite_border
-            : Icons.music_note_outlined,
-        onRefresh: () => ref.invalidate(provider),
-        onLoadMore: () => ref.read(provider.notifier).loadMore(),
-        headers: [
-          if (state.items.isNotEmpty)
-            SliverToBoxAdapter(child: PlayShuffleButtons(tracks: state.items)),
-        ],
-        sliverBuilder: (tracks) => TrackSliverList(tracks: tracks),
+      body: TrackSelectionScope(
+        tracks: state.items,
+        child: PagedScrollView<Track>(
+          title: favoritesOnly ? l10n.libraryFavorites : l10n.librarySongs,
+          state: state,
+          emptyIcon: favoritesOnly
+              ? Icons.favorite_border
+              : Icons.music_note_outlined,
+          onRefresh: () => ref.invalidate(provider),
+          onLoadMore: () => ref.read(provider.notifier).loadMore(),
+          headers: [
+            if (state.items.isNotEmpty)
+              SliverToBoxAdapter(
+                child: PlayShuffleButtons(tracks: state.items),
+              ),
+          ],
+          sliverBuilder: (tracks) => TrackSliverList(tracks: tracks),
+        ),
       ),
     );
   }
@@ -151,7 +161,11 @@ class _LoadedListPage<T> extends StatelessWidget {
     required this.itemBuilder,
     required this.emptyIcon,
     this.actions = const [],
+    this.headers = const [],
   });
+
+  /// Slivers shown above the list, also when it is empty.
+  final List<Widget> headers;
 
   final List<Widget> actions;
   final String title;
@@ -172,7 +186,10 @@ class _LoadedListPage<T> extends StatelessWidget {
         builder: (loaded) => [
           if (loaded.refreshFailure != null)
             const SliverToBoxAdapter(child: OfflineBanner()),
-          if (loaded.value.isEmpty)
+          ...headers,
+          if (loaded.value.isEmpty && headers.isNotEmpty)
+            const SliverToBoxAdapter()
+          else if (loaded.value.isEmpty)
             SliverFillRemaining(
               hasScrollBody: false,
               child: EmptyState(icon: emptyIcon, title: context.l10n.emptyList),
@@ -188,25 +205,66 @@ class _LoadedListPage<T> extends StatelessWidget {
   );
 }
 
-/// All playlists.
+enum _NewPlaylist { plain, smart, import }
+
+/// All playlists, smart playlists first.
 class PlaylistsPage extends ConsumerWidget {
   /// Creates the page.
   const PlaylistsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final editable =
         ref.watch(activeSourceProvider)?.capabilities.editablePlaylists ??
         false;
+    final smart = ref.watch(smartPlaylistsProvider);
     return _LoadedListPage<Playlist>(
-      title: context.l10n.libraryPlaylists,
+      title: l10n.libraryPlaylists,
       actions: [
-        if (editable)
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: context.l10n.newPlaylist,
-            onPressed: () => createPlaylist(context, ref),
+        PopupMenuButton<_NewPlaylist>(
+          icon: const Icon(Icons.add),
+          tooltip: l10n.newPlaylist,
+          onSelected: (choice) => unawaited(switch (choice) {
+            _NewPlaylist.plain => createPlaylist(context, ref),
+            _NewPlaylist.smart => createSmartPlaylist(context, ref),
+            _NewPlaylist.import => importM3u(context, ref),
+          }),
+          itemBuilder: (context) => [
+            if (editable)
+              PopupMenuItem(
+                value: _NewPlaylist.plain,
+                child: ListTile(
+                  leading: const Icon(Icons.queue_music_outlined),
+                  title: Text(l10n.newPlaylist),
+                ),
+              ),
+            PopupMenuItem(
+              value: _NewPlaylist.smart,
+              child: ListTile(
+                leading: const Icon(Icons.auto_awesome),
+                title: Text(l10n.smartNew),
+              ),
+            ),
+            if (editable)
+              PopupMenuItem(
+                value: _NewPlaylist.import,
+                child: ListTile(
+                  leading: const Icon(Icons.file_open_outlined),
+                  title: Text(l10n.m3uImport),
+                ),
+              ),
+          ],
+        ),
+      ],
+      headers: [
+        if (smart.isNotEmpty) ...[
+          SliverList.builder(
+            itemCount: smart.length,
+            itemBuilder: (context, i) => SmartPlaylistTile(playlist: smart[i]),
           ),
+          const SliverToBoxAdapter(child: Divider(indent: 16, endIndent: 16)),
+        ],
       ],
       value: ref.watch(playlistsProvider),
       onRefresh: () => ref.invalidate(playlistsProvider),

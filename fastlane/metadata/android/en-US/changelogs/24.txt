@@ -1,0 +1,4 @@
+Smart playlists, multi-select and M3U.
+- Smart playlists: pick songs by rules (recently added, most played, never played, random, genre, years); they refresh every time
+- Long press a song to select several and play, queue, download, favorite or add them to a playlist at once
+- Export playlists as M3U files and import M3U files from other players

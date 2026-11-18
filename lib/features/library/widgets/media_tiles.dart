@@ -6,6 +6,7 @@ import 'package:melody/core/utils/formatters.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/downloads/download_widgets.dart';
+import 'package:melody/features/library/track_selection.dart';
 import 'package:melody/features/player/track_actions.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
@@ -200,7 +201,19 @@ class TrackTile extends ConsumerWidget {
     );
     final duration = track.duration;
     final subtitle = track.artistLine;
-    final leading = showNumber
+    final selection = TrackSelectionScope.watch(context);
+    final selecting = selection?.active ?? false;
+    final picked = selection?.contains(track) ?? false;
+    final leading = selecting
+        ? SizedBox(
+            width: showNumber ? 32 : 48,
+            height: 48,
+            child: Icon(
+              picked ? Icons.check_circle : Icons.radio_button_unchecked,
+              color: picked ? scheme.primary : scheme.onSurfaceVariant,
+            ),
+          )
+        : showNumber
         ? SizedBox(
             width: 32,
             child: Center(
@@ -222,6 +235,7 @@ class TrackTile extends ConsumerWidget {
           );
     return ListTile(
       leading: leading,
+      selected: picked,
       title: Text(
         track.title,
         maxLines: 1,
@@ -249,14 +263,19 @@ class TrackTile extends ConsumerWidget {
           ),
         ],
       ),
-      onTap: () => ref
-          .read(playerControllerProvider.notifier)
-          .playTracks(
-            queue ?? [track],
-            start: queue == null ? 0 : index,
-            albumInOrder: albumInOrder,
-          ),
-      onLongPress: () => showTrackMenu(context, ref, track),
+      onTap: selecting
+          ? () => selection!.toggle(track)
+          : () => ref
+                .read(playerControllerProvider.notifier)
+                .playTracks(
+                  queue ?? [track],
+                  start: queue == null ? 0 : index,
+                  albumInOrder: albumInOrder,
+                ),
+      // Inside a selection scope, a long press starts picking songs.
+      onLongPress: selection != null
+          ? () => selection.toggle(track)
+          : () => showTrackMenu(context, ref, track),
     );
   }
 }

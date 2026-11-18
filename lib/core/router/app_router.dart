@@ -17,6 +17,7 @@ import 'package:melody/features/library/library_screen.dart';
 import 'package:melody/features/player/now_playing_screen.dart';
 import 'package:melody/features/player/queue_screen.dart';
 import 'package:melody/features/playlist/playlist_screen.dart';
+import 'package:melody/features/playlist/smart_playlists.dart';
 import 'package:melody/features/search/search_screen.dart';
 import 'package:melody/features/settings/debug_sources_screen.dart';
 import 'package:melody/features/settings/equalizer_screen.dart';
@@ -91,6 +92,11 @@ List<RouteBase> _detailRoutes() => [
       id: state.pathParameters['id']!,
       name: state.uri.queryParameters['name'] ?? '',
     ),
+  ),
+  GoRoute(
+    path: 'smart/:id',
+    builder: (context, state) =>
+        SmartPlaylistScreen(id: state.pathParameters['id']!),
   ),
   GoRoute(
     path: 'playlist/:id',

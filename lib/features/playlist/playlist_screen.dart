@@ -12,9 +12,11 @@ import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_widgets.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/library/library_providers.dart';
+import 'package:melody/features/library/track_selection.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/player/track_actions.dart';
+import 'package:melody/features/playlist/m3u_actions.dart';
 import 'package:melody/features/share/share_screen.dart';
 import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -34,7 +36,7 @@ class PlaylistScreen extends ConsumerStatefulWidget {
   ConsumerState<PlaylistScreen> createState() => _PlaylistScreenState();
 }
 
-enum _Action { rename, edit, delete }
+enum _Action { rename, edit, export, delete }
 
 class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
   late String _name = widget.name;
@@ -79,6 +81,9 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
         await _run((s) => s.renamePlaylist(widget.id, name));
       case _Action.edit:
         setState(() => _editing = true);
+      case _Action.export:
+        final tracks = ref.read(trackListProvider(_query)).items;
+        await exportM3u(context, _name, tracks);
       case _Action.delete:
         final confirmed = await showDialog<bool>(
           context: context,
@@ -124,57 +129,69 @@ class _PlaylistScreenState extends ConsumerState<PlaylistScreen> {
       );
     }
     return Scaffold(
-      body: PagedScrollView<Track>(
-        title: _name,
-        state: state,
-        emptyIcon: Icons.queue_music_outlined,
-        onRefresh: _reload,
-        onLoadMore: () =>
-            ref.read(trackListProvider(_query).notifier).loadMore(),
-        actions: [
-          if (state.items.isNotEmpty)
-            DownloadButton(tracks: state.items, playlistId: widget.id),
-          IconButton(
-            icon: const Icon(Icons.share_outlined),
-            tooltip: l10n.share,
-            onPressed: () => showShareScreen(
-              context,
-              ShareSubject.playlist(_name, tracks: state.items),
-            ),
-          ),
-          if (editable)
-            PopupMenuButton<_Action>(
-              tooltip: l10n.moreOptions,
-              onSelected: (a) => unawaited(_onAction(a)),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: _Action.rename,
-                  child: Text(l10n.playlistRename),
-                ),
-                if (state.items.isNotEmpty)
-                  PopupMenuItem(
-                    value: _Action.edit,
-                    child: Text(l10n.playlistEdit),
-                  ),
-                PopupMenuItem(
-                  value: _Action.delete,
-                  child: Text(l10n.playlistDelete),
-                ),
-              ],
-            ),
-        ],
-        headers: [
-          if (state.items.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Center(child: MosaicCover(tracks: state.items)),
+      body: TrackSelectionScope(
+        tracks: state.items,
+        child: PagedScrollView<Track>(
+          title: _name,
+          state: state,
+          emptyIcon: Icons.queue_music_outlined,
+          onRefresh: _reload,
+          onLoadMore: () =>
+              ref.read(trackListProvider(_query).notifier).loadMore(),
+          actions: [
+            if (state.items.isNotEmpty)
+              DownloadButton(tracks: state.items, playlistId: widget.id),
+            IconButton(
+              icon: const Icon(Icons.share_outlined),
+              tooltip: l10n.share,
+              onPressed: () => showShareScreen(
+                context,
+                ShareSubject.playlist(_name, tracks: state.items),
               ),
             ),
-            SliverToBoxAdapter(child: PlayShuffleButtons(tracks: state.items)),
+            if (editable || state.items.isNotEmpty)
+              PopupMenuButton<_Action>(
+                tooltip: l10n.moreOptions,
+                onSelected: (a) => unawaited(_onAction(a)),
+                itemBuilder: (context) => [
+                  if (editable)
+                    PopupMenuItem(
+                      value: _Action.rename,
+                      child: Text(l10n.playlistRename),
+                    ),
+                  if (editable && state.items.isNotEmpty)
+                    PopupMenuItem(
+                      value: _Action.edit,
+                      child: Text(l10n.playlistEdit),
+                    ),
+                  if (state.items.isNotEmpty)
+                    PopupMenuItem(
+                      value: _Action.export,
+                      child: Text(l10n.m3uExport),
+                    ),
+                  if (editable)
+                    PopupMenuItem(
+                      value: _Action.delete,
+                      child: Text(l10n.playlistDelete),
+                    ),
+                ],
+              ),
           ],
-        ],
-        sliverBuilder: (tracks) => TrackSliverList(tracks: tracks),
+          headers: [
+            if (state.items.isNotEmpty) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Center(child: MosaicCover(tracks: state.items)),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: PlayShuffleButtons(tracks: state.items),
+              ),
+            ],
+          ],
+          sliverBuilder: (tracks) => TrackSliverList(tracks: tracks),
+        ),
       ),
     );
   }

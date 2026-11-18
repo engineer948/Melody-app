@@ -8,6 +8,7 @@ import 'package:melody/core/widgets/large_title_page.dart';
 import 'package:melody/data/downloads/download_models.dart';
 import 'package:melody/data/downloads/download_settings.dart';
 import 'package:melody/features/downloads/download_controller.dart';
+import 'package:melody/features/library/track_selection.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/player/track_actions.dart';
 import 'package:melody/features/settings/widgets/media_sections.dart';
@@ -68,69 +69,75 @@ class DownloadsPage extends ConsumerWidget {
           d.status == DownloadStatus.running,
     );
     return Scaffold(
-      body: LargeTitlePage(
-        title: l10n.libraryDownloads,
-        actions: [
-          if (downloads.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.delete_sweep_outlined),
-              tooltip: l10n.downloadRemoveAll,
-              onPressed: () => unawaited(_removeAll(context, ref)),
-            ),
-        ],
-        slivers: [
-          if (downloads.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: EmptyState(
-                icon: Icons.download_for_offline_outlined,
-                title: l10n.downloadsEmptyTitle,
-                message: l10n.downloadsEmptyBody,
+      body: TrackSelectionScope(
+        tracks: tracks,
+        child: LargeTitlePage(
+          title: l10n.libraryDownloads,
+          actions: [
+            if (downloads.isNotEmpty)
+              IconButton(
+                icon: const Icon(Icons.delete_sweep_outlined),
+                tooltip: l10n.downloadRemoveAll,
+                onPressed: () => unawaited(_removeAll(context, ref)),
               ),
-            )
-          else ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Text(
-                  l10n.downloadsSummary(done.length, formatBytes(l10n, bytes)),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
+          ],
+          slivers: [
+            if (downloads.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: EmptyState(
+                  icon: Icons.download_for_offline_outlined,
+                  title: l10n.downloadsEmptyTitle,
+                  message: l10n.downloadsEmptyBody,
                 ),
-              ),
-            ),
-            if (pending.isNotEmpty) ...[
+              )
+            else ...[
               SliverToBoxAdapter(
-                child: ListTile(
-                  title: Text(
-                    l10n.downloadsPending(pending.length),
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  trailing: TextButton(
-                    onPressed: anyActive
-                        ? controller.pauseAll
-                        : () => unawaited(controller.resumeAll()),
-                    child: Text(
-                      anyActive
-                          ? l10n.downloadPauseAll
-                          : l10n.downloadResumeAll,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Text(
+                    l10n.downloadsSummary(
+                      done.length,
+                      formatBytes(l10n, bytes),
+                    ),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
               ),
-              SliverList.builder(
-                itemCount: pending.length,
-                itemBuilder: (context, index) =>
-                    _PendingTile(item: pending[index]),
-              ),
-              const SliverToBoxAdapter(child: Divider()),
+              if (pending.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: ListTile(
+                    title: Text(
+                      l10n.downloadsPending(pending.length),
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    trailing: TextButton(
+                      onPressed: anyActive
+                          ? controller.pauseAll
+                          : () => unawaited(controller.resumeAll()),
+                      child: Text(
+                        anyActive
+                            ? l10n.downloadPauseAll
+                            : l10n.downloadResumeAll,
+                      ),
+                    ),
+                  ),
+                ),
+                SliverList.builder(
+                  itemCount: pending.length,
+                  itemBuilder: (context, index) =>
+                      _PendingTile(item: pending[index]),
+                ),
+                const SliverToBoxAdapter(child: Divider()),
+              ],
+              if (tracks.isNotEmpty)
+                SliverToBoxAdapter(child: PlayShuffleButtons(tracks: tracks)),
+              TrackSliverList(tracks: tracks),
             ],
-            if (tracks.isNotEmpty)
-              SliverToBoxAdapter(child: PlayShuffleButtons(tracks: tracks)),
-            TrackSliverList(tracks: tracks),
           ],
-        ],
+        ),
       ),
     );
   }

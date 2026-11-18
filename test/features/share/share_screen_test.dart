@@ -139,7 +139,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(ListTile, 'Songs'));
       await tester.pumpAndSettle();
-      await tester.longPress(find.text('Firuze'));
+      await tester.tap(
+        find.descendant(
+          of: find.widgetWithText(ListTile, 'Firuze'),
+          matching: find.byTooltip('More options'),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Share'));
       await tester.pumpAndSettle();

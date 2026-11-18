@@ -1,0 +1,4 @@
+Ağıllı siyahılar, çoxlu seçim və M3U.
+- Ağıllı siyahılar: mahnıları qaydalarla seç (son əlavə olunanlar, ən çox dinlənənlər, heç dinlənməyənlər, təsadüfi, janr, illər); hər açılanda yenilənir
+- Mahnıya uzun bas, bir neçəsini seç; hamısını birdən çal, növbəyə əlavə et, yüklə, sevimlilərə ya da siyahıya əlavə et
+- Siyahıları M3U faylı kimi ixrac et, başqa pleyerlərin M3U fayllarını idxal et

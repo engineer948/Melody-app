@@ -1,0 +1,4 @@
+Akıllı listeler, çoklu seçim ve M3U.
+- Akıllı listeler: şarkıları kurallarla seç (son eklenenler, en çok dinlenenler, hiç dinlenmemişler, rastgele, tür, yıllar); her açılışta yenilenir
+- Bir şarkıya uzun bas, birkaçını seç; hepsini birden çal, sıraya ekle, indir, favorile ya da listeye ekle
+- Listeleri M3U dosyası olarak dışa aktar, başka oynatıcıların M3U dosyalarını içe aktar
