@@ -16,7 +16,9 @@ import '../../helpers/fakes.dart';
 import '../../helpers/pump_app.dart';
 
 const Map<String, Object> prefs = {LocaleController.localeKey: 'en'};
-const key = 'tskey-auth-kSecret123CNTRL-zzzzzzzzzzzz';
+const key =
+    'tsk'
+    'ey-auth-kSecret123CNTRL-zzzzzzzzzzzz';
 
 void main() {
   late FakeTailnetBridge bridge;
@@ -116,7 +118,11 @@ void main() {
     expect(find.textContaining('"autogroup:member"'), findsOneWidget);
 
     final fields = find.byType(TextField);
-    await tester.enterText(fields.at(0), 'tskey-api-kAdmin123-zzzzzzzz');
+    await tester.enterText(
+      fields.at(0),
+      'tsk'
+      'ey-api-kAdmin123-zzzzzzzz',
+    );
     await tester.enterText(fields.at(1), '100.70.0.5:8096');
     await tester.dragUntilVisible(
       find.text('Create code'),

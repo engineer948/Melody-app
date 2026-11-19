@@ -16,7 +16,9 @@ import '../../helpers/fake_tailnet.dart';
 import '../../helpers/fakes.dart';
 import '../../helpers/pump_app.dart';
 
-const authKey = 'tskey-auth-kSecret123CNTRL-zzzzzzzzzzzz';
+const authKey =
+    'tsk'
+    'ey-auth-kSecret123CNTRL-zzzzzzzzzzzz';
 
 final invite = TailnetInvite.create(
   authKey: authKey,

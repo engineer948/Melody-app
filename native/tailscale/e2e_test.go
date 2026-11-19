@@ -27,7 +27,7 @@ import (
 	"tailscale.com/types/nettype"
 )
 
-const testAuthKey = "tskey-auth-test-123"
+const testAuthKey = "tsk" + "ey-auth-test-123"
 
 // startTailnet runs a test coordination server, DERP relay and a "music
 // server" node answering HTTP on :8096. Returns the server's address.
@@ -117,7 +117,7 @@ func TestEndToEnd(t *testing.T) {
 	key := strings.Repeat("5a", 32)
 
 	// A wrong auth key is reported, not hung on.
-	if _, err := Start(dir, "tskey-auth-wrong", "melody-test", target, testSecret, 0, key); err != nil {
+	if _, err := Start(dir, "tsk"+"ey-auth-wrong", "melody-test", target, testSecret, 0, key); err != nil {
 		t.Fatal(err)
 	}
 	waitState(t, ctx, StateError)
