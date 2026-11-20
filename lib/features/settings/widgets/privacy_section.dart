@@ -62,10 +62,19 @@ class PrivacySection extends ConsumerWidget {
           value: s.history,
           onChanged: (v) => unawaited(c.update((s) => s.copyWith(history: v))),
         ),
+        SwitchListTile(
+          secondary: const Icon(Icons.auto_stories_outlined),
+          title: Text(l10n.lifeShelf),
+          subtitle: Text(l10n.lifeShelfBody),
+          value: s.lifeShelf,
+          onChanged: (v) => unawaited(
+            c.update((s) => s.copyWith(lifeShelf: v, lifeAsked: true)),
+          ),
+        ),
         if (ref.watch(placesBridgeProvider).supported)
           SwitchListTile(
-            secondary: const Icon(Icons.auto_stories_outlined),
-            title: Text(l10n.lifeTitle),
+            secondary: const Icon(Icons.place_outlined),
+            title: Text(l10n.lifePlaces),
             subtitle: Text(l10n.lifePlacesBody),
             value: s.places,
             onChanged: (on) =>

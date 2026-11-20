@@ -1137,5 +1137,11 @@
         "type": "int"
       }
     }
-  }
+  },
+  "lifeShelf": "Soundtrack of your life on Home",
+  "lifeShelfBody": "Cards of your days in music on the home screen",
+  "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
+  "lifeAskPlaces": "Also remember where you listen? Only a rough place (about 1 km), kept on this phone.",
+  "lifeTurnOn": "Turn on",
+  "lifeNoThanks": "No, thanks"
 }

@@ -1,0 +1,3 @@
+Həyatının musiqisi artıq sənin seçimindir.
+- Standart olaraq bağlı: bir neçə gün dinləyəndən sonra ana ekran bir dəfə açılsın mı deyə soruşur (yerlər də xatırlansın mı)
+- Ayarlar → Məxfilik: "Həyatının musiqisi ana ekranda" və "Yerləri xatırla" istədiyin vaxt açılıb bağlanır

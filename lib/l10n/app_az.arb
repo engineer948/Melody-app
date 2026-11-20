@@ -572,5 +572,11 @@
   "lifeMemoryLinePlace": "İlk dəfə {date} · {place}",
   "lifeAll": "Hamısı",
   "lifeYearsAgo": "{count} il əvvəl bu gün",
-  "lifeNewSongs": "✨ {count} yeni mahnı"
+  "lifeNewSongs": "✨ {count} yeni mahnı",
+  "lifeShelf": "Həyatının musiqisi ana ekranda",
+  "lifeShelfBody": "Musiqi ilə günlərinin kartları ana ekranda",
+  "lifeAsk": "Günlərini musiqi ilə xatırla: ana ekranda günlərinin mahnıları, yerləri, şəkilləri və \"1 il əvvəl bu gün\". Açaq? İstədiyin vaxt Ayarlar → Məxfilik bölməsindən dəyişə bilərsən.",
+  "lifeAskPlaces": "Harada dinlədiyini də xatırlayaq? Yalnız təxmini yer (təxminən 1 km), bu telefonda saxlanılır.",
+  "lifeTurnOn": "Aç",
+  "lifeNoThanks": "Xeyr, sağ ol"
 }

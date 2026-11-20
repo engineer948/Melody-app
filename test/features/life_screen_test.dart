@@ -32,7 +32,7 @@ void main() {
     );
     await tester.tap(find.byTooltip('Settings'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Soundtrack of your life').first);
+    await tester.tap(find.text('Remember places'));
     await tester.pumpAndSettle();
     expect(c.read(listeningSettingsControllerProvider).places, isTrue);
     expect(places.locationAllowed, isTrue);
@@ -112,7 +112,10 @@ void main() {
   ) async {
     final c = await pumpApp(
       tester,
-      preferences: _english,
+      preferences: {
+        ..._english,
+        ListeningSettingsController.key: '{"lifeShelf":true,"lifeAsked":true}',
+      },
       size: const Size(400, 2000),
       overrides: [placesBridgeProvider.overrideWithValue(FakePlacesBridge())],
     );
@@ -145,5 +148,93 @@ void main() {
     await tester.tap(find.text('All'));
     await tester.pumpAndSettle();
     expect(find.byType(Card), findsWidgets);
+  });
+
+  testWidgets('home asks once after a few days, then remembers the answer', (
+    tester,
+  ) async {
+    final places = FakePlacesBridge();
+    final c = await pumpApp(
+      tester,
+      preferences: _english,
+      size: const Size(400, 2000),
+      overrides: [placesBridgeProvider.overrideWithValue(places)],
+    );
+    final store = c.read(historyStoreProvider);
+    final now = DateTime.now();
+    Future<void> listenDaysAgo(int days) => store.add(
+      testAccount.id,
+      PlayEvent(
+        track: _song('t$days', 'Song $days'),
+        startedAt: now.subtract(Duration(days: days)),
+        listened: const Duration(minutes: 3),
+      ),
+    );
+    await listenDaysAgo(1);
+    await listenDaysAgo(2);
+    c.read(historyRevisionProvider.notifier).bump();
+    await tester.pumpAndSettle();
+    expect(find.text('Turn on'), findsNothing, reason: 'too early to ask');
+
+    await listenDaysAgo(3);
+    c.read(historyRevisionProvider.notifier).bump();
+    await tester.pumpAndSettle();
+    expect(find.text('Turn on'), findsOneWidget);
+    expect(find.text('♪ Song 1 · Sezen'), findsNothing, reason: 'not yet');
+
+    await tester.tap(find.text('Turn on'));
+    await tester.pumpAndSettle();
+    // Then asked about places.
+    expect(find.text('Remember places'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Turn on'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final settings = c.read(listeningSettingsControllerProvider);
+    expect(
+      (settings.lifeAsked, settings.lifeShelf, settings.places),
+      (true, true, true),
+    );
+    expect(find.text('♪ Song 1 · Sezen'), findsOneWidget);
+    expect(find.text('Turn on'), findsNothing);
+  });
+
+  testWidgets('"No, thanks" hides it for good; Settings can turn it on', (
+    tester,
+  ) async {
+    final c = await pumpApp(
+      tester,
+      preferences: _english,
+      size: const Size(400, 6000),
+      overrides: [placesBridgeProvider.overrideWithValue(FakePlacesBridge())],
+    );
+    final store = c.read(historyStoreProvider);
+    final now = DateTime.now();
+    for (var d = 1; d <= 3; d++) {
+      await store.add(
+        testAccount.id,
+        PlayEvent(
+          track: _song('t$d', 'Song $d'),
+          startedAt: now.subtract(Duration(days: d)),
+          listened: const Duration(minutes: 3),
+        ),
+      );
+    }
+    c.read(historyRevisionProvider.notifier).bump();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('No, thanks'));
+    await tester.pumpAndSettle();
+    expect(find.text('Turn on'), findsNothing);
+    expect(find.text('♪ Song 1 · Sezen'), findsNothing);
+    expect(c.read(listeningSettingsControllerProvider).places, isFalse);
+
+    await tester.tap(find.byTooltip('Settings'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soundtrack of your life on Home'));
+    await tester.pumpAndSettle();
+    expect(c.read(listeningSettingsControllerProvider).lifeShelf, isTrue);
   });
 }

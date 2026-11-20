@@ -486,7 +486,11 @@ class TrackMemoryLine extends ConsumerWidget {
   }
 }
 
-/// Home screen shelf: "on this day" years ago, then the latest days.
+/// Days of listening before the home screen asks about the shelf.
+const lifeAskAfterDays = 3;
+
+/// Home screen shelf: "on this day" years ago, then the latest days. Off
+/// until the user says yes to the one-time question (or in Settings).
 class LifeShelf extends ConsumerWidget {
   /// Creates the shelf.
   const LifeShelf({super.key});
@@ -494,6 +498,15 @@ class LifeShelf extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
+    final settings = ref.watch(listeningSettingsControllerProvider);
+    if (!settings.lifeAsked) {
+      final days = ref.watch(lifeTimelineProvider).value ?? const [];
+      if (!settings.history || days.length < lifeAskAfterDays) {
+        return const SizedBox.shrink();
+      }
+      return const _LifeInvite();
+    }
+    if (!settings.lifeShelf) return const SizedBox.shrink();
     final past = ref.watch(onThisDayProvider).value ?? const [];
     final today = DateTime.now();
     final days = [
@@ -672,6 +685,100 @@ class _LifeDayCard extends ConsumerWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The one-time question on the home screen.
+class _LifeInvite extends ConsumerWidget {
+  const _LifeInvite();
+
+  Future<void> _answer(BuildContext context, WidgetRef ref, bool yes) async {
+    // Every question is asked before the answer is saved: saving removes
+    // this card (and its context) from the screen.
+    final settings = ref.read(listeningSettingsControllerProvider.notifier);
+    var places = false;
+    if (yes &&
+        ref.read(placesBridgeProvider).supported &&
+        !ref.read(listeningSettingsControllerProvider).places) {
+      final l10n = context.l10n;
+      final wanted = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          icon: const Icon(Icons.place_outlined),
+          title: Text(l10n.lifePlaces),
+          content: Text(l10n.lifeAskPlaces),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.lifeNoThanks),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l10n.lifeTurnOn),
+            ),
+          ],
+        ),
+      );
+      if (wanted == true && context.mounted) {
+        await setLifeSoundtrack(context, ref, on: true);
+        places = true;
+      }
+    }
+    await settings.update(
+      (s) => s.copyWith(
+        lifeAsked: true,
+        lifeShelf: yes,
+        places: places ? null : s.places,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    return Card(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.auto_stories_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.lifeTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(l10n.lifeAsk),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => unawaited(_answer(context, ref, false)),
+                  child: Text(l10n.lifeNoThanks),
+                ),
+                FilledButton(
+                  onPressed: () => unawaited(_answer(context, ref, true)),
+                  child: Text(l10n.lifeTurnOn),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

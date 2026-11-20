@@ -1,0 +1,3 @@
+Hayatının müziği artık senin seçimin.
+- Varsayılan olarak kapalı: birkaç gün dinledikten sonra ana ekran bir kez açılsın mı diye sorar (yerler de hatırlansın mı diye)
+- Ayarlar → Gizlilik: "Hayatının müziği ana ekranda" ve "Yerleri hatırla" istediğin zaman açılıp kapanır

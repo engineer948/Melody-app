@@ -1,0 +1,3 @@
+Soundtrack of your life is now your choice.
+- Off by default: after a few days of listening, the home screen asks once whether to turn it on (and whether to remember places)
+- Settings → Privacy: "Soundtrack of your life on Home" and "Remember places" can be switched any time

@@ -35,6 +35,8 @@ class ListeningSettings {
     this.autoDjMode = AutoDjMode.similar,
     this.autoDjThreshold = 1,
     this.places = false,
+    this.lifeShelf = false,
+    this.lifeAsked = false,
   });
 
   /// Restores settings saved with [toJson].
@@ -48,6 +50,8 @@ class ListeningSettings {
             AutoDjMode.similar,
         autoDjThreshold: json['autoDjThreshold'] as int? ?? 1,
         places: json['places'] as bool? ?? false,
+        lifeShelf: json['lifeShelf'] as bool? ?? false,
+        lifeAsked: json['lifeAsked'] as bool? ?? false,
       );
 
   /// Whether plays are recorded on the device.
@@ -70,6 +74,12 @@ class ListeningSettings {
   /// life"); off until the user turns it on.
   final bool places;
 
+  /// Whether the home screen shows the "soundtrack of your life" shelf.
+  final bool lifeShelf;
+
+  /// Whether the user was asked once about the shelf.
+  final bool lifeAsked;
+
   /// Returns a copy with the given fields replaced.
   ListeningSettings copyWith({
     bool? history,
@@ -78,6 +88,8 @@ class ListeningSettings {
     AutoDjMode? autoDjMode,
     int? autoDjThreshold,
     bool? places,
+    bool? lifeShelf,
+    bool? lifeAsked,
   }) => ListeningSettings(
     history: history ?? this.history,
     suggestions: suggestions ?? this.suggestions,
@@ -85,6 +97,8 @@ class ListeningSettings {
     autoDjMode: autoDjMode ?? this.autoDjMode,
     autoDjThreshold: autoDjThreshold ?? this.autoDjThreshold,
     places: places ?? this.places,
+    lifeShelf: lifeShelf ?? this.lifeShelf,
+    lifeAsked: lifeAsked ?? this.lifeAsked,
   );
 
   /// Serialises the settings.
@@ -95,6 +109,8 @@ class ListeningSettings {
     'autoDjMode': autoDjMode.name,
     'autoDjThreshold': autoDjThreshold,
     'places': places,
+    'lifeShelf': lifeShelf,
+    'lifeAsked': lifeAsked,
   };
 
   @override
@@ -105,7 +121,9 @@ class ListeningSettings {
       other.autoDj == autoDj &&
       other.autoDjMode == autoDjMode &&
       other.autoDjThreshold == autoDjThreshold &&
-      other.places == places;
+      other.places == places &&
+      other.lifeShelf == lifeShelf &&
+      other.lifeAsked == lifeAsked;
 
   @override
   int get hashCode => Object.hash(
@@ -115,6 +133,8 @@ class ListeningSettings {
     autoDjMode,
     autoDjThreshold,
     places,
+    lifeShelf,
+    lifeAsked,
   );
 }
 
