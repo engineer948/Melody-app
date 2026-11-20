@@ -101,17 +101,55 @@ Future<File> writeClipFile(Track track, Uint8List mp3) async {
   return file;
 }
 
+/// Pictures of a story video: the card for each lyrics state and, for a
+/// turning record, the record alone and where it sits (0–1 of the card).
+typedef StoryPictures = ({
+  List<(File, Duration)> pictures,
+  File? disc,
+  Rect? discRect,
+});
+
+/// Frames per second of story videos; [storyPulse] gives one value each.
+const storyFps = 24;
+
+/// How much the record swells with the music, per video frame (0–1): the
+/// loudness of [song] between [start] and [end], smoothed.
+List<double> storyPulse(Mp3Song song, Duration start, Duration end) {
+  final frames = song.frames;
+  if (frames.isEmpty || end <= start) return const [];
+  final count = ((end - start).inMicroseconds * storyFps / 1000000).ceil();
+  final raw = <double>[];
+  var f = 0;
+  for (var i = 0; i < count; i++) {
+    final t = start.inMicroseconds + i * 1000000 ~/ storyFps;
+    while (f + 1 < frames.length && frames[f + 1].startUs <= t) {
+      f++;
+    }
+    raw.add(frames[f].loudness);
+  }
+  final low = raw.reduce(min);
+  final high = raw.reduce(max);
+  final range = max(1, high - low);
+  var level = 0.0;
+  return [for (final v in raw) level += ((v - low) / range - level) * 0.35];
+}
+
 /// Turns story pictures and a clip into an MP4; replaced in tests.
 abstract interface class StoryVideoMaker {
   /// Whether this device can make videos.
   bool get supported;
 
   /// Writes a video named after [name]: each picture is shown from its
-  /// time on (the first at 0), with [audio] under it.
+  /// time on (the first at 0), with [audio] under it. With [disc], that
+  /// picture turns like a record at [discRect], growing a little with
+  /// [pulse] (one value per frame at [storyFps]).
   Future<File> make({
     required List<(File, Duration)> pictures,
     required File audio,
     required String name,
+    File? disc,
+    Rect? discRect,
+    List<double> pulse = const [],
   });
 }
 
@@ -127,6 +165,9 @@ class ChannelStoryVideoMaker implements StoryVideoMaker {
     required List<(File, Duration)> pictures,
     required File audio,
     required String name,
+    File? disc,
+    Rect? discRect,
+    List<double> pulse = const [],
   }) async {
     final dir = Directory('${(await getTemporaryDirectory()).path}/video');
     // Only the latest video is kept.
@@ -138,6 +179,16 @@ class ChannelStoryVideoMaker implements StoryVideoMaker {
       'times': [for (final (_, at) in pictures) at.inMicroseconds],
       'audio': audio.path,
       'out': out,
+      if (disc != null && discRect != null) ...{
+        'disc': disc.path,
+        'discRect': [
+          discRect.left,
+          discRect.top,
+          discRect.width,
+          discRect.height,
+        ],
+        'pulse': pulse,
+      },
     });
     return File(out);
   }
@@ -226,15 +277,22 @@ class AudioClipPanel extends ConsumerStatefulWidget {
     required this.track,
     this.renderPictures,
     this.onCardLyrics,
+    this.onSpin,
     super.key,
   });
+
+  /// Tells the story card whether the cover turns like a record.
+  final ValueChanged<bool>? onSpin;
 
   /// Song to cut.
   final Track track;
 
   /// Renders the story picture once for each lyrics state; `null` while
   /// the picture is loading.
-  final Future<List<(File, Duration)>> Function(List<LyricFrame> frames)?
+  final Future<StoryPictures> Function(
+    List<LyricFrame> frames, {
+    required bool spin,
+  })?
   renderPictures;
 
   /// Tells the story card which lyrics to show (`null`: none).
@@ -252,6 +310,7 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
   Duration _end = defaultClip;
   bool _fade = true;
   bool _lyrics = false;
+  bool _spin = false;
   ({Duration start, Duration end, bool fade, File file})? _made;
   bool _busy = false;
   bool _makingVideo = false;
@@ -442,11 +501,17 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
     await ref.read(clipPreviewProvider).stop();
     setState(() => _busy = _makingVideo = true);
     try {
-      final pictures = await render(_lyricFrames());
+      final story = await render(_lyricFrames(), spin: _spin);
+      final song = _song!;
       final video = await ref
           .read(storyVideoMakerProvider)
           .make(
-            pictures: pictures,
+            pictures: story.pictures,
+            disc: story.disc,
+            discRect: story.discRect,
+            pulse: story.disc == null
+                ? const []
+                : storyPulse(song, _start, _end),
             audio: clip,
             name: clipFileName(widget.track)
                 .replaceFirst(RegExp(r'\.mp3$'), ''),
@@ -623,6 +688,16 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
           },
         ),
         if (widget.renderPictures != null) ...[
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.clipSpin),
+            subtitle: Text(l10n.clipSpinBody),
+            value: _spin,
+            onChanged: (v) {
+              setState(() => _spin = v);
+              widget.onSpin?.call(v);
+            },
+          ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(l10n.clipLyrics),

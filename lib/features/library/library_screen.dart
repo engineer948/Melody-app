@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +11,7 @@ import 'package:melody/features/library/library_pages.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
+import 'package:melody/features/share/mixtape_screens.dart';
 import 'package:melody/features/shell/app_shell.dart';
 import 'package:melody/l10n/l10n.dart';
 
@@ -76,6 +79,15 @@ class LibraryScreen extends ConsumerWidget {
                 ),
                 const Divider(indent: 56),
               ],
+              ListTile(
+                leading: Icon(Icons.mail_rounded, color: scheme.primary),
+                title: Text(
+                  l10n.mixtapeOpen,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => unawaited(showOpenMixtape(context)),
+              ),
             ],
           ),
           SliverToBoxAdapter(child: ShelfHeader(l10n.homeRecentlyAdded)),

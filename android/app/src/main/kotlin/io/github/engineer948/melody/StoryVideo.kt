@@ -2,6 +2,9 @@ package io.github.engineer948.melody
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
 import android.media.AudioFormat
 import android.media.Image
 import android.media.MediaCodec
@@ -33,7 +36,22 @@ object StoryVideo {
     private const val TIMEOUT_US = 10_000L
 
     /** A codec that stops answering must not hang the share screen. */
-    private const val DEADLINE_MS = 120_000L
+    private const val DEADLINE_MS = 300_000L
+
+    /** 33⅓ turns a minute. */
+    private const val DEGREES_PER_SECOND = 200.0
+
+    /** How much the record grows at the loudest moment. */
+    private const val PULSE = 0.05
+
+    /** A turning record drawn over the pictures. */
+    class Disc(
+        val path: String,
+        /** Left, top, width, height as parts (0–1) of the picture. */
+        val rect: List<Double>,
+        /** 0–1 per frame at [FPS]. */
+        val pulse: List<Double>,
+    )
 
     private fun deadline(): Long = System.currentTimeMillis() + DEADLINE_MS
 
@@ -54,6 +72,7 @@ object StoryVideo {
         timesUs: List<Long>,
         audioPath: String,
         outPath: String,
+        disc: Disc? = null,
     ) {
         require(imagePaths.isNotEmpty() && imagePaths.size == timesUs.size) {
             "one time per picture"
@@ -63,7 +82,7 @@ object StoryVideo {
         val durationUs = pcm.size.toLong() / bytesPerFrame * 1_000_000L / sampleRate
         require(durationUs > 0) { "empty audio" }
         val audio = encodeAudio(pcm, sampleRate, channels)
-        val video = encodeVideo(imagePaths, timesUs, durationUs)
+        val video = encodeVideo(imagePaths, timesUs, durationUs, disc)
 
         File(outPath).delete()
         val muxer = MediaMuxer(outPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
@@ -206,9 +225,12 @@ object StoryVideo {
         imagePaths: List<String>,
         timesUs: List<Long>,
         durationUs: Long,
+        disc: Disc?,
     ): Encoded {
-        // Each picture converted once (about 1.4 MB each).
-        val pictures = imagePaths.map { yuv(it) }
+        // Still pictures are converted once (about 1.4 MB each); with a
+        // record, every frame is drawn and converted.
+        val pictures = if (disc == null) imagePaths.map { yuv(it) } else emptyList()
+        val composer = disc?.let { Composer(imagePaths, it) }
         val format = MediaFormat.createVideoFormat(
             MediaFormat.MIMETYPE_VIDEO_AVC, WIDTH, HEIGHT,
         ).apply {
@@ -230,6 +252,7 @@ object StoryVideo {
             return drain(encoder) { index ->
                 val ptsUs = frame * 1_000_000L / FPS
                 if (frame >= frames) {
+                    composer?.release()
                     encoder.queueInputBuffer(
                         index, 0, 0, ptsUs, MediaCodec.BUFFER_FLAG_END_OF_STREAM,
                     )
@@ -237,7 +260,7 @@ object StoryVideo {
                 } else {
                     var shown = 0
                     while (shown + 1 < timesUs.size && timesUs[shown + 1] <= ptsUs) shown++
-                    val (y, u, v) = pictures[shown]
+                    val (y, u, v) = composer?.frame(shown, frame, ptsUs) ?: pictures[shown]
                     val image = encoder.getInputImage(index)
                     if (image != null) {
                         fill(image.planes[0], y, WIDTH, HEIGHT)
@@ -296,17 +319,76 @@ object StoryVideo {
         return Encoded(checkNotNull(format) { "no output format" }, samples)
     }
 
+    /** The picture at [path] scaled to the video size. */
+    private fun scaled(path: String, width: Int, height: Int): Bitmap {
+        val decoded = checkNotNull(BitmapFactory.decodeFile(path)) { "bad image" }
+        val bitmap = Bitmap.createScaledBitmap(decoded, width, height, true)
+        if (bitmap !== decoded) decoded.recycle()
+        return bitmap
+    }
+
     /** The picture scaled to the video size, as Y, U and V planes (BT.601). */
     private fun yuv(path: String): Triple<ByteArray, ByteArray, ByteArray> {
-        val decoded = checkNotNull(BitmapFactory.decodeFile(path)) { "bad image" }
-        val bitmap = Bitmap.createScaledBitmap(decoded, WIDTH, HEIGHT, true)
+        val bitmap = scaled(path, WIDTH, HEIGHT)
         val pixels = IntArray(WIDTH * HEIGHT)
         bitmap.getPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT)
-        if (bitmap !== decoded) bitmap.recycle()
-        decoded.recycle()
-        val y = ByteArray(WIDTH * HEIGHT)
-        val u = ByteArray(WIDTH * HEIGHT / 4)
-        val v = ByteArray(WIDTH * HEIGHT / 4)
+        bitmap.recycle()
+        val planes = Triple(
+            ByteArray(WIDTH * HEIGHT),
+            ByteArray(WIDTH * HEIGHT / 4),
+            ByteArray(WIDTH * HEIGHT / 4),
+        )
+        toYuv(pixels, planes)
+        return planes
+    }
+
+    /** Draws each frame: the picture shown at that time and the record. */
+    private class Composer(imagePaths: List<String>, private val disc: Disc) {
+        private val backgrounds = imagePaths.map { scaled(it, WIDTH, HEIGHT) }
+        private val record = scaled(
+            disc.path,
+            (disc.rect[2] * WIDTH).toInt().coerceAtLeast(2),
+            (disc.rect[3] * HEIGHT).toInt().coerceAtLeast(2),
+        )
+        private val centerX = ((disc.rect[0] + disc.rect[2] / 2) * WIDTH).toFloat()
+        private val centerY = ((disc.rect[1] + disc.rect[3] / 2) * HEIGHT).toFloat()
+        private val canvasBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888)
+        private val canvas = Canvas(canvasBitmap)
+        private val matrix = Matrix()
+        private val paint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG)
+        private val pixels = IntArray(WIDTH * HEIGHT)
+        private val planes = Triple(
+            ByteArray(WIDTH * HEIGHT),
+            ByteArray(WIDTH * HEIGHT / 4),
+            ByteArray(WIDTH * HEIGHT / 4),
+        )
+
+        fun frame(picture: Int, index: Int, ptsUs: Long): Triple<ByteArray, ByteArray, ByteArray> {
+            canvas.drawBitmap(backgrounds[picture], 0f, 0f, null)
+            val angle = (ptsUs / 1_000_000.0 * DEGREES_PER_SECOND % 360).toFloat()
+            val pulse = disc.pulse.getOrNull(index) ?: disc.pulse.lastOrNull() ?: 0.0
+            val scale = (1 + PULSE * pulse.coerceIn(0.0, 1.0)).toFloat()
+            matrix.reset()
+            matrix.postTranslate(-record.width / 2f, -record.height / 2f)
+            matrix.postRotate(angle)
+            matrix.postScale(scale, scale)
+            matrix.postTranslate(centerX, centerY)
+            canvas.drawBitmap(record, matrix, paint)
+            canvasBitmap.getPixels(pixels, 0, WIDTH, 0, 0, WIDTH, HEIGHT)
+            toYuv(pixels, planes)
+            return planes
+        }
+
+        fun release() {
+            backgrounds.forEach { it.recycle() }
+            record.recycle()
+            canvasBitmap.recycle()
+        }
+    }
+
+    /** ARGB pixels of the video size to Y, U and V planes (BT.601). */
+    private fun toYuv(pixels: IntArray, planes: Triple<ByteArray, ByteArray, ByteArray>) {
+        val (y, u, v) = planes
         for (row in 0 until HEIGHT) {
             for (col in 0 until WIDTH) {
                 val p = pixels[row * WIDTH + col]
@@ -321,7 +403,6 @@ object StoryVideo {
                 }
             }
         }
-        return Triple(y, u, v)
     }
 
     /** Copies a [width] x [height] plane into an image plane of any layout. */

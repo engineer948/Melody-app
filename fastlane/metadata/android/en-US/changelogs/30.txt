@@ -1,0 +1,3 @@
+Song letters and a turning record.
+- Song letter: pick a few songs (long press), add a title and a note and send a cassette picture with a code; your friend opens it in Library → Open a song letter, like an envelope
+- Story video: optional turning record cover that moves with the music

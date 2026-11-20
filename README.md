@@ -14,7 +14,9 @@ statistics (Year in Review), Android Auto, a home screen widget, playback
 on DLNA devices, sharing songs, albums, artists and playlists as story
 images (Instagram, WhatsApp, …) as a 5–60 second MP3 clip of the
 chosen part of a song (real waveform, "best part", fades), or as a story
-video (the picture with the clip and optional synced lyrics, Android),
+video (the picture with the clip, optional synced lyrics and a turning
+record, Android), song letters (a few songs with a note as a cassette
+picture and a code a friend opens in Melody),
 settings backup and restore, and a built-in Tailscale node: friends join
 your server with an invite code, without the Tailscale app
 ([docs/TAILSCALE.md](docs/TAILSCALE.md)), and sharing with one other

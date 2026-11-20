@@ -984,5 +984,86 @@
   "backupCloseApp": "Close Melody",
   "backupLater": "Later",
   "backupInvalid": "This is not a Melody settings backup.",
-  "backupFailed": "The backup could not be made."
+  "backupFailed": "The backup could not be made.",
+  "clipSpin": "Turning record",
+  "clipSpinBody": "In the video, the cover spins like a record and moves with the music",
+  "mixtapeMake": "Song letter",
+  "mixtapeKind": "Song letter",
+  "mixtapeTitle": "Title",
+  "mixtapeDefaultTitle": "A few songs for you",
+  "mixtapeNote": "Your note",
+  "mixtapeSend": "Send",
+  "mixtapeHint": "Sent as a cassette picture with a code. Your friend opens it in Melody (Library → Open a song letter); the songs are found in their library.",
+  "mixtapeShareText": "🎵 {title} — a song letter. Open it in {app}: Library → Open a song letter, then paste this message.",
+  "@mixtapeShareText": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "mixtapeMore": "+{count} more",
+  "@mixtapeMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mixtapeHowToOpen": "Open in {app}:\nLibrary → Open a song letter → read QR from picture",
+  "@mixtapeHowToOpen": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "mixtapeOpen": "Open a song letter",
+  "mixtapeOpenBody": "Paste the message you received, or pick the cassette picture to read its QR code.",
+  "mixtapeCode": "Message or code",
+  "mixtapeOpenButton": "Open",
+  "mixtapePaste": "Paste from clipboard",
+  "mixtapeFromPicture": "Read QR from picture",
+  "mixtapeInvalid": "No song letter found in this text.",
+  "mixtapeNoQr": "No QR code found in this picture.",
+  "mixtapeFinding": "Finding the songs: {done} / {total}",
+  "@mixtapeFinding": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mixtapeMissing": "{count, plural, =1{1 song is not in your library} other{{count} songs are not in your library}}",
+  "@mixtapeMissing": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mixtapeSave": "Save as playlist",
+  "mixtapeSealed": "You have a song letter",
+  "mixtapeSealedFrom": "{name} sent you a song letter",
+  "@mixtapeSealedFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mixtapeTooMany": "A song letter holds at most {max} songs",
+  "@mixtapeTooMany": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  }
 }

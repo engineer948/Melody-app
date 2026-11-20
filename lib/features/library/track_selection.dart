@@ -5,10 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/errors/result.dart';
 import 'package:melody/core/widgets/failure_view.dart';
 import 'package:melody/domain/models/media.dart';
+import 'package:melody/domain/share/mixtape.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/library/library_providers.dart';
+import 'package:melody/features/share/mixtape_screens.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -205,6 +207,21 @@ class _SelectionBar extends ConsumerWidget {
                 .enqueue(selection.inOrder(all)),
           );
           done(l10n.downloadStarted(selection.count));
+        },
+      ),
+      (
+        Icons.mail_outline_rounded,
+        l10n.mixtapeMake,
+        () {
+          final tracks = selection.inOrder(all);
+          if (tracks.length > Mixtape.maxSongs) {
+            messenger.showSnackBar(
+              SnackBar(content: Text(l10n.mixtapeTooMany(Mixtape.maxSongs))),
+            );
+            return;
+          }
+          selection.clear();
+          unawaited(showMixtapeComposer(context, tracks));
         },
       ),
       if (capabilities?.favorites ?? false)

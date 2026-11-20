@@ -55,9 +55,20 @@ class MainActivity : AudioServiceActivity() {
                     result.error("args", "images, times, audio and out are required", null)
                     return@setMethodCallHandler
                 }
+                val discPath = call.argument<String>("disc")
+                val discRect = call.argument<List<Number>>("discRect")?.map { it.toDouble() }
+                val disc = if (discPath != null && discRect?.size == 4) {
+                    StoryVideo.Disc(
+                        discPath,
+                        discRect,
+                        call.argument<List<Number>>("pulse")?.map { it.toDouble() } ?: emptyList(),
+                    )
+                } else {
+                    null
+                }
                 // Encoding takes seconds: off the main thread.
                 Thread {
-                    val made = runCatching { StoryVideo.make(images, times, audio, out) }
+                    val made = runCatching { StoryVideo.make(images, times, audio, out, disc) }
                     android.os.Handler(android.os.Looper.getMainLooper()).post {
                         made.fold(
                             { result.success(out) },
