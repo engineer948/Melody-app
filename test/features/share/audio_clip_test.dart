@@ -52,6 +52,26 @@ class FakeClipPreview implements ClipPreview {
   Future<void> dispose() async {}
 }
 
+class FakeVideoMaker implements StoryVideoMaker {
+  FakeVideoMaker(this.dir);
+
+  final Directory dir;
+  final calls = <(String, String, String)>[];
+
+  @override
+  bool get supported => true;
+
+  @override
+  Future<File> make({
+    required File image,
+    required File audio,
+    required String name,
+  }) async {
+    calls.add((image.path, audio.path, name));
+    return File('${dir.path}/$name.mp4')..writeAsBytesSync([0]);
+  }
+}
+
 void main() {
   const prefs = {LocaleController.localeKey: 'en'};
   const shareChannel = MethodChannel('dev.fluttercommunity.plus/share');
@@ -60,12 +80,14 @@ void main() {
   late Directory temp;
   late FakeClipMaker maker;
   late FakeClipPreview preview;
+  late FakeVideoMaker video;
 
   setUp(() {
     shared = [];
     temp = Directory.systemTemp.createTempSync('melody_clip');
     maker = FakeClipMaker(temp);
     preview = FakeClipPreview();
+    video = FakeVideoMaker(temp);
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       ..setMockMethodCallHandler(shareChannel, (call) async {
         shared.add(call);
@@ -88,6 +110,7 @@ void main() {
       overrides: [
         clipMakerProvider.overrideWithValue(maker),
         clipPreviewProvider.overrideWithValue(preview),
+        storyVideoMakerProvider.overrideWithValue(video),
       ],
     );
     final context = tester.element(find.byType(Scaffold).first);
@@ -157,5 +180,28 @@ void main() {
     await tester.tap(find.text('Share clip'));
     await tester.pumpAndSettle();
     expect(find.text('I understand'), findsOneWidget);
+  });
+
+  testWidgets('a story video joins the card picture and the clip', (
+    tester,
+  ) async {
+    await open(tester);
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Story video (picture + song)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('I understand'));
+      // Rendering the card happens outside the fake clock.
+      for (var i = 0; i < 50 && shared.isEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
+      }
+    });
+    final (image, audio, name) = video.calls.single;
+    expect(image, endsWith('.png'));
+    expect(audio, endsWith('Sezen - Firuze.mp3'));
+    expect(name, 'Sezen - Firuze');
+    final args = shared.single.arguments as Map;
+    expect((args['paths'] as List).single, endsWith('Sezen - Firuze.mp4'));
+    expect((args['mimeTypes'] as List).single, 'video/mp4');
   });
 }

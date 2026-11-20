@@ -112,7 +112,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
     if (mounted) setState(() => _ready = true);
   }
 
-  Future<File> _renderPng() async {
+  /// Renders the card to a PNG in the temporary folder [folder]; only the
+  /// latest file of each folder is kept.
+  Future<File> _renderPng({String folder = 'share'}) async {
     final boundary =
         _cardKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(
@@ -120,8 +122,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
     );
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
     image.dispose();
-    final dir = Directory('${(await getTemporaryDirectory()).path}/share');
-    // Only the latest image is kept.
+    final dir = Directory('${(await getTemporaryDirectory()).path}/$folder');
     if (dir.existsSync()) dir.deleteSync(recursive: true);
     dir.createSync(recursive: true);
     final stamp = DateTime.now().millisecondsSinceEpoch;
@@ -163,6 +164,45 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
     }
   }
 
+  /// The story card at whatever size its parent gives it.
+  Widget _cardPreview() {
+    return Center(
+      child: AspectRatio(
+        aspectRatio: shareCardSize.aspectRatio,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: const [
+              BoxShadow(blurRadius: 24, color: Color(0x40000000)),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: FittedBox(
+              child: RepaintBoundary(
+                key: _cardKey,
+                child: SizedBox.fromSize(
+                  size: shareCardSize,
+                  child: _ready
+                      ? ShareCard(
+                          subject: widget.subject,
+                          image: _image,
+                          palette: _palette,
+                          background: _background,
+                        )
+                      : const ColoredBox(
+                          color: Color(0xFF121212),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -200,49 +240,26 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                   onSelectionChanged: (s) => setState(() => _sound = s.first),
                 ),
               ),
-            if (track != null && _sound)
-              Expanded(child: AudioClipPanel(track: track))
-            else ...[
+            if (track != null && _sound) ...[
+              // Small card: the picture of a story video.
+              SizedBox(
+                height: 180,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: _cardPreview(),
+                ),
+              ),
+              Expanded(
+                child: AudioClipPanel(
+                  track: track,
+                  renderCard: _ready ? () => _renderPng(folder: 'story') : null,
+                ),
+              ),
+            ] else ...[
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-                  child: Center(
-                    child: AspectRatio(
-                      aspectRatio: shareCardSize.aspectRatio,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: const [
-                            BoxShadow(blurRadius: 24, color: Color(0x40000000)),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: FittedBox(
-                            child: RepaintBoundary(
-                              key: _cardKey,
-                              child: SizedBox.fromSize(
-                                size: shareCardSize,
-                                child: _ready
-                                    ? ShareCard(
-                                        subject: widget.subject,
-                                        image: _image,
-                                        palette: _palette,
-                                        background: _background,
-                                      )
-                                    : const ColoredBox(
-                                        color: Color(0xFF121212),
-                                        child: Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: _cardPreview(),
                 ),
               ),
               SegmentedButton<ShareBackground>(

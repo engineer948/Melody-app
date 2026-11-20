@@ -12,8 +12,9 @@ selecting several songs at once), Wi-Fi / mobile streaming
 quality, offline downloads, Auto DJ, on-device recommendations, listening
 statistics (Year in Review), Android Auto, a home screen widget, playback
 on DLNA devices, sharing songs, albums, artists and playlists as story
-images (Instagram, WhatsApp, …) or as a 15–60 second MP3 clip of the
-chosen part of a song, and a built-in Tailscale node: friends join
+images (Instagram, WhatsApp, …) as a 15–60 second MP3 clip of the
+chosen part of a song, or as a story video (the picture with the clip,
+Android), and a built-in Tailscale node: friends join
 your server with an invite code, without the Tailscale app
 ([docs/TAILSCALE.md](docs/TAILSCALE.md)), and sharing with one other
 user: songs with a note, a shared playlist, a greeting and listening

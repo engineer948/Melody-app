@@ -506,5 +506,8 @@
   "clipRightsTitle": "Paylaşdığın şeyə görə sən cavabdehsən",
   "clipRightsBody": "Mahnılar adətən müəllif hüququ ilə qorunur. Melody yalnız öz serverindən seçdiyin parçanı kəsir; onu başqalarına göndərə bilib-bilməyəcəyin və harada paylaşa biləcəyin sənin işindir. Yalnız paylaşmaq hüququn olan şeyi paylaş, məsələn qanunun icazə verdiyi yerdə şəxsi istifadə üçün qısa bir parça. Tətbiq və onun tərtibatçıları paylaşdığın parçalara görə heç bir məsuliyyət daşımır.",
   "clipRightsAccept": "Başa düşdüm",
-  "clipRightsNote": "Müəllif hüquqlarına hörmət et: paylaşdığın parçalara görə yalnız sən cavabdehsən."
+  "clipRightsNote": "Müəllif hüquqlarına hörmət et: paylaşdığın parçalara görə yalnız sən cavabdehsən.",
+  "clipVideo": "Hekayə videosu (şəkil + mahnı)",
+  "clipVideoMaking": "Video hazırlanır…",
+  "clipVideoFailed": "Video hazırlanmadı. Şəkli və parçanı ayrı-ayrı paylaşa bilərsən."
 }

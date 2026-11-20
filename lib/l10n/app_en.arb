@@ -951,5 +951,8 @@
   "clipRightsTitle": "You are responsible for what you share",
   "clipRightsBody": "Songs are usually protected by copyright. Melody only cuts the piece you choose from your own server; whether you may send it to others, and where, is up to you. Share only what you have the right to share, e.g. a short piece for personal use where the law allows it. The app and its developers take no responsibility for clips you share.",
   "clipRightsAccept": "I understand",
-  "clipRightsNote": "Respect copyright: you alone are responsible for the clips you share."
+  "clipRightsNote": "Respect copyright: you alone are responsible for the clips you share.",
+  "clipVideo": "Story video (picture + song)",
+  "clipVideoMaking": "Making the video…",
+  "clipVideoFailed": "The video could not be made. Share the picture and the clip separately instead."
 }

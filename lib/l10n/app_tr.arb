@@ -506,5 +506,8 @@
   "clipRightsTitle": "Paylaştığın şeyden sen sorumlusun",
   "clipRightsBody": "Şarkılar genellikle telif hakkıyla korunur. Melody yalnızca kendi sunucundan seçtiğin parçayı keser; bunu başkalarına gönderip gönderemeyeceğin ve nerede paylaşabileceğin sana kalmış. Sadece paylaşma hakkın olan şeyi paylaş, örneğin yasanın izin verdiği yerde kişisel kullanım için kısa bir parça. Uygulama ve geliştiricileri paylaştığın parçalardan hiçbir sorumluluk kabul etmez.",
   "clipRightsAccept": "Anladım",
-  "clipRightsNote": "Telif haklarına saygı göster: paylaştığın parçalardan yalnızca sen sorumlusun."
+  "clipRightsNote": "Telif haklarına saygı göster: paylaştığın parçalardan yalnızca sen sorumlusun.",
+  "clipVideo": "Hikâye videosu (görsel + şarkı)",
+  "clipVideoMaking": "Video hazırlanıyor…",
+  "clipVideoFailed": "Video hazırlanamadı. Görseli ve parçayı ayrı ayrı paylaşabilirsin."
 }

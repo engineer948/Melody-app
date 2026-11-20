@@ -41,6 +41,30 @@ class MainActivity : AudioServiceActivity() {
         // handlers only keep the application context.
         val app = applicationContext
         TailscaleChannel.register(flutterEngine.dartExecutor.binaryMessenger, app)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "melody/story_video")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "make") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                val image = call.argument<String>("image")
+                val audio = call.argument<String>("audio")
+                val out = call.argument<String>("out")
+                if (image == null || audio == null || out == null) {
+                    result.error("args", "image, audio and out are required", null)
+                    return@setMethodCallHandler
+                }
+                // Encoding takes seconds: off the main thread.
+                Thread {
+                    val made = runCatching { StoryVideo.make(image, audio, out) }
+                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                        made.fold(
+                            { result.success(out) },
+                            { result.error("video", it.message ?: it.toString(), null) },
+                        )
+                    }
+                }.start()
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "melody/widget")
             .setMethodCallHandler { call, result ->
                 if (call.method == "update") {

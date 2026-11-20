@@ -54,6 +54,53 @@ final class ClipMakerProvider
 
 String _$clipMakerHash() => r'0036a6e1df02624447f894d67932cd9c6f6ec3c9';
 
+/// The story video maker in use.
+
+@ProviderFor(storyVideoMaker)
+final storyVideoMakerProvider = StoryVideoMakerProvider._();
+
+/// The story video maker in use.
+
+final class StoryVideoMakerProvider
+    extends
+        $FunctionalProvider<StoryVideoMaker, StoryVideoMaker, StoryVideoMaker>
+    with $Provider<StoryVideoMaker> {
+  /// The story video maker in use.
+  StoryVideoMakerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'storyVideoMakerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$storyVideoMakerHash();
+
+  @$internal
+  @override
+  $ProviderElement<StoryVideoMaker> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  StoryVideoMaker create(Ref ref) {
+    return storyVideoMaker(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(StoryVideoMaker value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<StoryVideoMaker>(value),
+    );
+  }
+}
+
+String _$storyVideoMakerHash() => r'6bdb71666adaa302b787b903608c6045a9328174';
+
 /// A new preview player for one share screen.
 
 @ProviderFor(clipPreview)

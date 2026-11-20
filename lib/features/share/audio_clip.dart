@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:melody/core/errors/failure.dart';
@@ -118,6 +119,50 @@ String clipFileName(Track track) {
 @Riverpod(keepAlive: true)
 ClipMaker clipMaker(Ref ref) => HttpClipMaker();
 
+/// Turns the story picture and a clip into an MP4; replaced in tests.
+abstract interface class StoryVideoMaker {
+  /// Whether this device can make videos.
+  bool get supported;
+
+  /// Writes a video of [image] with [audio] under it, named after [name].
+  Future<File> make({
+    required File image,
+    required File audio,
+    required String name,
+  });
+}
+
+/// [StoryVideoMaker] using the platform codecs (Android only for now).
+class ChannelStoryVideoMaker implements StoryVideoMaker {
+  static const _channel = MethodChannel('melody/story_video');
+
+  @override
+  bool get supported => !kIsWeb && Platform.isAndroid;
+
+  @override
+  Future<File> make({
+    required File image,
+    required File audio,
+    required String name,
+  }) async {
+    final dir = Directory('${(await getTemporaryDirectory()).path}/video');
+    // Only the latest video is kept.
+    if (dir.existsSync()) dir.deleteSync(recursive: true);
+    dir.createSync(recursive: true);
+    final out = '${dir.path}/$name.mp4';
+    await _channel.invokeMethod<String>('make', {
+      'image': image.path,
+      'audio': audio.path,
+      'out': out,
+    });
+    return File(out);
+  }
+}
+
+/// The story video maker in use.
+@Riverpod(keepAlive: true)
+StoryVideoMaker storyVideoMaker(Ref ref) => ChannelStoryVideoMaker();
+
 /// Plays a made clip to check it before sharing; replaced in tests.
 abstract interface class ClipPreview {
   /// Plays [file] once; completes when playback has started.
@@ -184,10 +229,13 @@ const clipLengths = [
 /// Picks a piece of [track], plays it and shares it as an MP3 file.
 class AudioClipPanel extends ConsumerStatefulWidget {
   /// Creates the panel.
-  const AudioClipPanel({required this.track, super.key});
+  const AudioClipPanel({required this.track, this.renderCard, super.key});
 
   /// Song to cut.
   final Track track;
+
+  /// Renders the story picture for a video; `null` while it is loading.
+  final Future<File> Function()? renderCard;
 
   @override
   ConsumerState<AudioClipPanel> createState() => _AudioClipPanelState();
@@ -198,6 +246,7 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
   late Duration _start;
   ({Duration start, Duration length, File file})? _made;
   bool _busy = false;
+  bool _makingVideo = false;
 
   Duration get _duration => widget.track.duration ?? Duration.zero;
 
@@ -227,7 +276,10 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
 
   Future<File?> _file() async {
     final made = _made;
-    if (made != null && made.start == _start && made.length == _length) {
+    if (made != null &&
+        made.start == _start &&
+        made.length == _length &&
+        made.file.existsSync()) {
       return made.file;
     }
     final source = ref.read(activeSourceProvider);
@@ -287,6 +339,44 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
     } on Object catch (e) {
       _log.error('Share failed', e);
       messenger.showSnackBar(SnackBar(content: Text(l10n.shareFailed)));
+    }
+  }
+
+  Future<void> _shareVideo(BuildContext button) async {
+    final renderCard = widget.renderCard;
+    if (renderCard == null) return;
+    final box = button.findRenderObject() as RenderBox?;
+    final origin = box == null
+        ? null
+        : box.localToGlobal(Offset.zero) & box.size;
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+    if (!await _confirmRights()) return;
+    final clip = await _file();
+    if (clip == null || !mounted) return;
+    await ref.read(clipPreviewProvider).stop();
+    setState(() => _busy = _makingVideo = true);
+    try {
+      final video = await ref
+          .read(storyVideoMakerProvider)
+          .make(
+            image: await renderCard(),
+            audio: clip,
+            name: clipFileName(widget.track)
+                .replaceFirst(RegExp(r'\.mp3$'), ''),
+          );
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(video.path, mimeType: 'video/mp4')],
+          subject: widget.track.title,
+          sharePositionOrigin: origin,
+        ),
+      );
+    } on Object catch (e) {
+      _log.error('Story video failed', e);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.clipVideoFailed)));
+    } finally {
+      if (mounted) setState(() => _busy = _makingVideo = false);
     }
   }
 
@@ -457,6 +547,22 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
             ),
           ],
         ),
+        if (widget.renderCard != null &&
+            ref.watch(storyVideoMakerProvider).supported) ...[
+          const SizedBox(height: 12),
+          Builder(
+            builder: (button) => FilledButton.tonalIcon(
+              onPressed: _busy ? null : () => unawaited(_shareVideo(button)),
+              icon: _makingVideo
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.movie_creation_outlined),
+              label: Text(_makingVideo ? l10n.clipVideoMaking : l10n.clipVideo),
+            ),
+          ),
+        ],
         const SizedBox(height: 12),
         Text(
           l10n.clipHint,
