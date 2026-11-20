@@ -569,5 +569,8 @@
   "lifeNoPlace": "Yer bilinmiyor",
   "lifeTimesPlayed": "{count} kez dinlendi",
   "lifeMemoryLine": "İlk kez {date}",
-  "lifeMemoryLinePlace": "İlk kez {date} · {place}"
+  "lifeMemoryLinePlace": "İlk kez {date} · {place}",
+  "lifeAll": "Tümü",
+  "lifeYearsAgo": "{count} yıl önce bugün",
+  "lifeNewSongs": "✨ {count} yeni şarkı"
 }

@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:melody/core/router/app_routes.dart';
+import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/core/widgets/large_title_page.dart';
+import 'package:melody/core/widgets/shelf_header.dart';
 import 'package:melody/data/places/places_bridge.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/stats/life_days.dart';
@@ -38,6 +40,35 @@ Future<List<LifeDay>> lifeTimeline(Ref ref) async {
   final from = DateTime.now().subtract(lifeSpan);
   final events = await store.events(accountId, from: from);
   return lifeDays(events, await store.firstPlays(accountId));
+}
+
+/// The same calendar day 1 to 5 years ago, when music was played then,
+/// as (years ago, day), most recent first.
+@riverpod
+Future<List<(int, LifeDay)>> onThisDay(Ref ref) async {
+  ref.watch(historyRevisionProvider);
+  final accountId = ref.watch(
+    sessionControllerProvider.select((s) => s.activeId),
+  );
+  if (accountId == null) return const [];
+  final store = ref.watch(historyStoreProvider);
+  final now = DateTime.now();
+  Map<String, DateTime>? firsts;
+  final found = <(int, LifeDay)>[];
+  for (var years = 1; years <= 5; years++) {
+    final day = DateTime(now.year - years, now.month, now.day);
+    // 29 February does not exist every year.
+    if (day.month != now.month) continue;
+    final events = await store.events(
+      accountId,
+      from: day,
+      to: day.add(const Duration(days: 1)),
+    );
+    if (events.isEmpty) continue;
+    firsts ??= await store.firstPlays(accountId);
+    found.add((years, lifeDays(events, firsts).single));
+  }
+  return found;
 }
 
 /// First play of a song and how often it was played.
@@ -449,6 +480,198 @@ class TrackMemoryLine extends ConsumerWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Home screen shelf: "on this day" years ago, then the latest days.
+class LifeShelf extends ConsumerWidget {
+  /// Creates the shelf.
+  const LifeShelf({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final past = ref.watch(onThisDayProvider).value ?? const [];
+    final today = DateTime.now();
+    final days = [
+      for (final d in ref.watch(lifeTimelineProvider).value ?? <LifeDay>[])
+        // Today is still being written.
+        if (d.day.isBefore(DateTime(today.year, today.month, today.day))) d,
+    ].take(10).toList();
+    if (past.isEmpty && days.isEmpty) return const SizedBox.shrink();
+    final photos = ref.watch(photosAllowedProvider).value ?? false;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: Row(
+            children: [
+              Expanded(child: ShelfHeader(l10n.lifeTitle)),
+              Padding(
+                padding: const EdgeInsets.only(top: 14),
+                child: TextButton(
+                  onPressed: () => context.push(AppRoutes.lifeIn(context)),
+                  child: Text(l10n.lifeAll),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 190,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              for (final (years, day) in past)
+                _LifeDayCard(
+                  day: day,
+                  photos: photos,
+                  label: l10n.lifeYearsAgo(years),
+                  highlight: true,
+                ),
+              for (final day in days) _LifeDayCard(day: day, photos: photos),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// A day as a picture card: its first photo (or the cover of its song),
+/// the date, the place and the song of the day.
+class _LifeDayCard extends ConsumerWidget {
+  const _LifeDayCard({
+    required this.day,
+    required this.photos,
+    this.label,
+    this.highlight = false,
+  });
+
+  final LifeDay day;
+  final bool photos;
+  final String? label;
+  final bool highlight;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final top = day.songs.isEmpty ? null : day.songs.first.$1;
+    final photoList = photos
+        ? ref.watch(dayPhotosProvider(day.day)).value ?? const []
+        : const <GalleryPhoto>[];
+    final photo = photoList.isEmpty
+        ? null
+        : ref.watch(photoThumbProvider(photoList.first.id)).value;
+    final firsts = day.firsts.length;
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: GestureDetector(
+        onTap: () => context.push(AppRoutes.lifeIn(context)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: SizedBox(
+            width: 250,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (photo != null)
+                  Image.memory(photo, fit: BoxFit.cover)
+                else if (top?.artwork != null)
+                  ArtworkImage(artwork: top!.artwork, radius: 0)
+                else
+                  ColoredBox(color: scheme.primaryContainer),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0x33000000), Color(0xCC000000)],
+                    ),
+                  ),
+                ),
+                if (highlight)
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: scheme.primary, width: 3),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: DefaultTextStyle.merge(
+                    style: const TextStyle(color: Colors.white),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (label != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: scheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              label!,
+                              style: TextStyle(
+                                color: scheme.onPrimary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        const Spacer(),
+                        Text(
+                          DateFormat.MMMMEEEEd(locale).format(day.day),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if (day.places.isNotEmpty)
+                          Text(
+                            '📍 ${day.places.first}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        if (top != null) ...[
+                          const SizedBox(height: 6),
+                          Text(
+                            '♪ ${top.title} · ${top.artistLine}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ],
+                        if (firsts > 0)
+                          Text(
+                            l10n.lifeNewSongs(firsts),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white70,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

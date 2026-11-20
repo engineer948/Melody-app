@@ -17,6 +17,7 @@ import 'package:melody/features/settings/update_check.dart';
 import 'package:melody/features/shell/app_shell.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_home.dart';
+import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -107,6 +108,7 @@ class HomeScreen extends ConsumerWidget {
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
         const SliverToBoxAdapter(child: UpdateBanner()),
         ...socialHomeSlivers(context, social),
+        const SliverToBoxAdapter(child: LifeShelf()),
         // The year in review is put forward in December.
         if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))
           SliverToBoxAdapter(

@@ -106,4 +106,44 @@ void main() {
     expect(find.text('Bakı'), findsOneWidget);
     expect(find.text('Played once'), findsOneWidget);
   });
+
+  testWidgets('home shows the latest days and "on this day" years ago', (
+    tester,
+  ) async {
+    final c = await pumpApp(
+      tester,
+      preferences: _english,
+      size: const Size(400, 2000),
+      overrides: [placesBridgeProvider.overrideWithValue(FakePlacesBridge())],
+    );
+    final now = DateTime.now();
+    final store = c.read(historyStoreProvider);
+    Future<void> listen(String id, String title, DateTime at) => store.add(
+      testAccount.id,
+      PlayEvent(
+        track: _song(id, title),
+        startedAt: at,
+        listened: const Duration(minutes: 3),
+        place: PlayPlace(latitude: 40.4, longitude: 49.9, name: 'Bakı'),
+      ),
+    );
+    await listen(
+      't1',
+      'Firuze',
+      DateTime(now.year - 1, now.month, now.day, 12),
+    );
+    await listen('t2', 'Hadi', now.subtract(const Duration(days: 1)));
+    c.read(historyRevisionProvider.notifier).bump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Soundtrack of your life'), findsOneWidget);
+    expect(find.text('1 year ago today'), findsOneWidget);
+    expect(find.text('♪ Firuze · Sezen'), findsOneWidget);
+    expect(find.text('♪ Hadi · Sezen'), findsOneWidget);
+    expect(find.text('📍 Bakı'), findsNWidgets(2));
+
+    await tester.tap(find.text('All'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Card), findsWidgets);
+  });
 }

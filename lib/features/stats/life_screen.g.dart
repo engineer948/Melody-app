@@ -52,6 +52,55 @@ final class LifeTimelineProvider
 
 String _$lifeTimelineHash() => r'09c5aaf4d2d0e624613be78d5f51d242fde1d662';
 
+/// The same calendar day 1 to 5 years ago, when music was played then,
+/// as (years ago, day), most recent first.
+
+@ProviderFor(onThisDay)
+final onThisDayProvider = OnThisDayProvider._();
+
+/// The same calendar day 1 to 5 years ago, when music was played then,
+/// as (years ago, day), most recent first.
+
+final class OnThisDayProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<(int, LifeDay)>>,
+          List<(int, LifeDay)>,
+          FutureOr<List<(int, LifeDay)>>
+        >
+    with
+        $FutureModifier<List<(int, LifeDay)>>,
+        $FutureProvider<List<(int, LifeDay)>> {
+  /// The same calendar day 1 to 5 years ago, when music was played then,
+  /// as (years ago, day), most recent first.
+  OnThisDayProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'onThisDayProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$onThisDayHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<(int, LifeDay)>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<(int, LifeDay)>> create(Ref ref) {
+    return onThisDay(ref);
+  }
+}
+
+String _$onThisDayHash() => r'36377d16e66fb078f6740b92ac1e7447cf8a12eb';
+
 /// First play of a song and how often it was played.
 
 @ProviderFor(trackMemory)
