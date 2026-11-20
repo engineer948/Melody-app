@@ -2,3 +2,4 @@ Mahnının bir parçasını paylaş.
 - Paylaş → Səs parçası: mahnının 15, 30 və ya 60 saniyəsini seç, dinlə və MP3 faylı kimi göndər (WhatsApp, Telegram, …)
 - Qutunu mahnı üzərində sürüşdür və ya çalan yerdən başla
 - Jellyfin və Subsonic serverləri ilə işləyir
+- Paylaşdığın parçalara görə yalnız sən cavabdehsən: müəllif hüquqlarına hörmət et
