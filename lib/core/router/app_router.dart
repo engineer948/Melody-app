@@ -24,6 +24,7 @@ import 'package:melody/features/settings/equalizer_screen.dart';
 import 'package:melody/features/settings/font_picker_screen.dart';
 import 'package:melody/features/settings/settings_screen.dart';
 import 'package:melody/features/shell/app_shell.dart';
+import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/features/stats/stats_screen.dart';
 import 'package:melody/features/stats/wrap_screen.dart';
 import 'package:melody/features/tailnet/join_tailnet_screen.dart';
@@ -68,6 +69,7 @@ List<RouteBase> _detailRoutes() => [
     path: 'stats',
     builder: (context, state) => const StatsScreen(),
     routes: [
+      GoRoute(path: 'life', builder: (context, state) => const LifeScreen()),
       GoRoute(
         path: 'wrap/:year',
         builder: (context, state) => WrapScreen(

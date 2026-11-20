@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:melody/core/router/app_routes.dart';
+import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/history_recorder.dart';
@@ -61,6 +62,15 @@ class PrivacySection extends ConsumerWidget {
           value: s.history,
           onChanged: (v) => unawaited(c.update((s) => s.copyWith(history: v))),
         ),
+        if (ref.watch(placesBridgeProvider).supported)
+          SwitchListTile(
+            secondary: const Icon(Icons.auto_stories_outlined),
+            title: Text(l10n.lifeTitle),
+            subtitle: Text(l10n.lifePlacesBody),
+            value: s.places,
+            onChanged: (on) =>
+                unawaited(setLifeSoundtrack(context, ref, on: on)),
+          ),
         SwitchListTile(
           secondary: const Icon(Icons.recommend_outlined),
           title: Text(l10n.privacySuggestions),

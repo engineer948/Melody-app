@@ -552,5 +552,22 @@
   "mixtapeSave": "Liste olarak kaydet",
   "mixtapeSealed": "Sana bir şarkı mektubu var",
   "mixtapeSealedFrom": "{name} sana bir şarkı mektubu gönderdi",
-  "mixtapeTooMany": "Bir şarkı mektubuna en fazla {max} şarkı sığar"
+  "mixtapeTooMany": "Bir şarkı mektubuna en fazla {max} şarkı sığar",
+  "lifeTitle": "Hayatının müziği",
+  "lifeBody": "Müzikle günlerin: nerede olduğun, ne dinlediğin, keşfettiğin şarkılar ve o gün çektiğin fotoğraflar. Her şey bu telefonda kalır.",
+  "lifePlaces": "Yerleri hatırla",
+  "lifePlacesBody": "Çaldığın her şarkının yaklaşık yerini (yaklaşık 1 km) sadece bu telefonda saklar",
+  "lifePhotos": "Günün fotoğraflarını göster",
+  "lifePhotosBody": "Her günün şarkılarının yanında o gün çektiğin fotoğrafları gösterir",
+  "lifeNoLocation": "Konum izni olmadan yerler saklanamaz.",
+  "lifeEmpty": "Burada henüz bir şey yok. Biraz müzik çal!",
+  "lifeFirst": "✨ İlk kez",
+  "lifePlays": "{count}×",
+  "lifeMemory": "Bu şarkının hikâyesi",
+  "lifeNeverHeard": "Bu şarkıyı henüz dinlemedin.",
+  "lifeFirstHeard": "İlk kez {date} tarihinde dinledin",
+  "lifeNoPlace": "Yer bilinmiyor",
+  "lifeTimesPlayed": "{count} kez dinlendi",
+  "lifeMemoryLine": "İlk kez {date}",
+  "lifeMemoryLinePlace": "İlk kez {date} · {place}"
 }

@@ -85,6 +85,15 @@ class PlayHistory extends Table {
 
   /// Whether the track was left early.
   BoolColumn get skipped => boolean()();
+
+  /// Rough latitude (two decimals), only with "soundtrack of your life".
+  RealColumn get latitude => real().nullable()();
+
+  /// Rough longitude.
+  RealColumn get longitude => real().nullable()();
+
+  /// Name of the place, when the phone could tell.
+  TextColumn get place => text().nullable()();
 }
 
 /// Tracks saved for offline playback.
@@ -130,7 +139,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'melody'));
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -147,6 +156,11 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(playHistory);
         await m.createTable(downloads);
         await _createHistoryIndex();
+      }
+      if (from == 2) {
+        await m.addColumn(playHistory, playHistory.latitude);
+        await m.addColumn(playHistory, playHistory.longitude);
+        await m.addColumn(playHistory, playHistory.place);
       }
     },
   );

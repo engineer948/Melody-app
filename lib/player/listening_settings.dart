@@ -34,6 +34,7 @@ class ListeningSettings {
     this.autoDj = false,
     this.autoDjMode = AutoDjMode.similar,
     this.autoDjThreshold = 1,
+    this.places = false,
   });
 
   /// Restores settings saved with [toJson].
@@ -46,6 +47,7 @@ class ListeningSettings {
             AutoDjMode.values.asNameMap()[json['autoDjMode']] ??
             AutoDjMode.similar,
         autoDjThreshold: json['autoDjThreshold'] as int? ?? 1,
+        places: json['places'] as bool? ?? false,
       );
 
   /// Whether plays are recorded on the device.
@@ -64,6 +66,10 @@ class ListeningSettings {
   /// one.
   final int autoDjThreshold;
 
+  /// Whether the rough place of each play is kept ("soundtrack of your
+  /// life"); off until the user turns it on.
+  final bool places;
+
   /// Returns a copy with the given fields replaced.
   ListeningSettings copyWith({
     bool? history,
@@ -71,12 +77,14 @@ class ListeningSettings {
     bool? autoDj,
     AutoDjMode? autoDjMode,
     int? autoDjThreshold,
+    bool? places,
   }) => ListeningSettings(
     history: history ?? this.history,
     suggestions: suggestions ?? this.suggestions,
     autoDj: autoDj ?? this.autoDj,
     autoDjMode: autoDjMode ?? this.autoDjMode,
     autoDjThreshold: autoDjThreshold ?? this.autoDjThreshold,
+    places: places ?? this.places,
   );
 
   /// Serialises the settings.
@@ -86,6 +94,7 @@ class ListeningSettings {
     'autoDj': autoDj,
     'autoDjMode': autoDjMode.name,
     'autoDjThreshold': autoDjThreshold,
+    'places': places,
   };
 
   @override
@@ -95,11 +104,18 @@ class ListeningSettings {
       other.suggestions == suggestions &&
       other.autoDj == autoDj &&
       other.autoDjMode == autoDjMode &&
-      other.autoDjThreshold == autoDjThreshold;
+      other.autoDjThreshold == autoDjThreshold &&
+      other.places == places;
 
   @override
-  int get hashCode =>
-      Object.hash(history, suggestions, autoDj, autoDjMode, autoDjThreshold);
+  int get hashCode => Object.hash(
+    history,
+    suggestions,
+    autoDj,
+    autoDjMode,
+    autoDjThreshold,
+    places,
+  );
 }
 
 /// Holds and persists [ListeningSettings].

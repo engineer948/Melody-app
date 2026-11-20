@@ -14,6 +14,7 @@ import 'package:melody/features/share/share_screen.dart';
 import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_settings.dart';
+import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -167,6 +168,14 @@ Future<void> showTrackMenu(
                   unawaited(showDedicateSheet(outer, ref, track));
                 },
               ),
+            ListTile(
+              leading: const Icon(Icons.auto_stories_outlined),
+              title: Text(l10n.lifeMemory),
+              onTap: () {
+                Navigator.pop(context);
+                unawaited(showTrackMemory(outer, track));
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.share_outlined),
               title: Text(l10n.share),

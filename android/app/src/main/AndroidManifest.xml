@@ -10,6 +10,11 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"/>
+    <!-- "Soundtrack of your life" (off by default): rough place of each
+         play and the photos of a day, kept on the phone only. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
     <!-- Home servers are usually reached over plain HTTP on the local
          network. The app asks for confirmation before using such a server. -->
     <application

@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:ui';
 
+import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/data/history/history_store.dart';
+import 'package:melody/data/places/places_bridge.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/stats/play_event.dart';
 import 'package:melody/features/auth/session_controller.dart';
@@ -15,6 +18,15 @@ part 'history_recorder.g.dart';
 @Riverpod(keepAlive: true)
 HistoryStore historyStore(Ref ref) =>
     HistoryStore(ref.watch(appDatabaseProvider));
+
+/// The phone's places and photos (Android).
+@Riverpod(keepAlive: true)
+PlacesBridge placesBridge(Ref ref) => const ChannelPlacesBridge();
+
+/// Rough place of the phone, for "soundtrack of your life".
+@Riverpod(keepAlive: true)
+PlaceLocator placeLocator(Ref ref) =>
+    PlaceLocator(ref.watch(placesBridgeProvider));
 
 /// Bumped whenever the history changes, so statistics and suggestions
 /// refresh.
@@ -110,7 +122,23 @@ HistoryRecorder historyRecorder(Ref ref) {
         return;
       }
       try {
-        await ref.read(historyStoreProvider).add(accountId, event);
+        var saved = event;
+        if (ref.read(listeningSettingsControllerProvider).places) {
+          final language =
+              ref.read(localeControllerProvider)?.languageCode ??
+              PlatformDispatcher.instance.locale.languageCode;
+          try {
+            saved = event.withPlace(
+              await ref
+                  .read(placeLocatorProvider)
+                  .current(language)
+                  .timeout(const Duration(seconds: 10)),
+            );
+          } on Object {
+            // Saved without a place.
+          }
+        }
+        await ref.read(historyStoreProvider).add(accountId, saved);
         if (ref.mounted) ref.read(historyRevisionProvider.notifier).bump();
       } on Object {
         // Statistics are optional; playback must never suffer.

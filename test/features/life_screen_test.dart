@@ -1,0 +1,109 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:melody/core/settings/locale_controller.dart';
+import 'package:melody/domain/models/media.dart';
+import 'package:melody/domain/stats/play_event.dart';
+import 'package:melody/player/history_recorder.dart';
+import 'package:melody/player/listening_settings.dart';
+
+import '../helpers/fake_places.dart';
+import '../helpers/fakes.dart';
+import '../helpers/pump_app.dart';
+
+const Map<String, Object> _english = {LocaleController.localeKey: 'en'};
+
+Track _song(String id, String title) => Track(
+  id: id,
+  title: title,
+  artists: const [NamedRef(id: 'ar1', name: 'Sezen')],
+  duration: const Duration(minutes: 3),
+);
+
+void main() {
+  testWidgets('turning it on asks for location; days show places and firsts', (
+    tester,
+  ) async {
+    final places = FakePlacesBridge();
+    final c = await pumpApp(
+      tester,
+      preferences: _english,
+      size: const Size(400, 6000),
+      overrides: [placesBridgeProvider.overrideWithValue(places)],
+    );
+    await tester.tap(find.byTooltip('Settings'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soundtrack of your life').first);
+    await tester.pumpAndSettle();
+    expect(c.read(listeningSettingsControllerProvider).places, isTrue);
+    expect(places.locationAllowed, isTrue);
+
+    // A play now records the place.
+    final store = c.read(historyStoreProvider);
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final here = await c.read(placeLocatorProvider).current('en');
+    expect(here?.name, 'Sahil, Bakı');
+    await store.add(
+      testAccount.id,
+      PlayEvent(
+        track: _song('t1', 'Firuze'),
+        startedAt: yesterday,
+        listened: const Duration(minutes: 3),
+        place: here,
+      ),
+    );
+    c.read(historyRevisionProvider.notifier).bump();
+
+    await tester.tap(find.text('Listening statistics'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Soundtrack of your life'));
+    await tester.pumpAndSettle();
+    expect(find.text('Sahil, Bakı'), findsOneWidget);
+    expect(find.text('Firuze'), findsOneWidget);
+    expect(find.text('✨ First time'), findsOneWidget);
+  });
+
+  testWidgets('a song played long ago shows when and where on the player', (
+    tester,
+  ) async {
+    final places = FakePlacesBridge()..locationAllowed = true;
+    final c = await pumpApp(
+      tester,
+      preferences: {
+        ..._english,
+        ListeningSettingsController.key: '{"places":true}',
+      },
+      overrides: [placesBridgeProvider.overrideWithValue(places)],
+    );
+    await c
+        .read(historyStoreProvider)
+        .add(
+          testAccount.id,
+          PlayEvent(
+            track: makeTrack('t1', title: 'Firuze'),
+            startedAt: DateTime(2024, 3, 12),
+            listened: const Duration(minutes: 3),
+            place: PlayPlace(latitude: 40.4, longitude: 49.9, name: 'Bakı'),
+          ),
+        );
+    final song = c.read(placeLocatorProvider);
+    expect(song, isNotNull);
+
+    await tester.tap(find.text('Library').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, 'Songs'));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(ListTile, 'Firuze'),
+        matching: find.byTooltip('More options'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text("This song's story"));
+    await tester.tap(find.text("This song's story"));
+    await tester.pumpAndSettle();
+    expect(find.text('First heard on March 12, 2024'), findsOneWidget);
+    expect(find.text('Bakı'), findsOneWidget);
+    expect(find.text('Played once'), findsOneWidget);
+  });
+}

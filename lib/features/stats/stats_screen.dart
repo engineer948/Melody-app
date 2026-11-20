@@ -67,6 +67,14 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
               label: Text(l10n.wrapOpen(year)),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: OutlinedButton.icon(
+              onPressed: () => context.push(AppRoutes.lifeIn(context)),
+              icon: const Icon(Icons.auto_stories_outlined),
+              label: Text(l10n.lifeTitle),
+            ),
+          ),
           switch (stats) {
             AsyncData(:final value) when value.isEmpty => Padding(
               padding: const EdgeInsets.only(top: 48),

@@ -1065,5 +1065,60 @@
         "type": "int"
       }
     }
+  },
+  "lifeTitle": "Soundtrack of your life",
+  "lifeBody": "Your days in music: where you were, what you heard, the songs you discovered and the photos you took that day. Everything stays on this phone.",
+  "lifePlaces": "Remember places",
+  "lifePlacesBody": "Keeps the rough place (about 1 km) of every song you play, on this phone only",
+  "lifePhotos": "Show the day's photos",
+  "lifePhotosBody": "Shows the photos you took on each day next to its songs",
+  "lifeNoLocation": "Without location permission, places cannot be kept.",
+  "lifeEmpty": "Nothing here yet. Play some music!",
+  "lifeFirst": "✨ First time",
+  "lifePlays": "{count}×",
+  "@lifePlays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeMemory": "This song's story",
+  "lifeNeverHeard": "You have not listened to this song yet.",
+  "lifeFirstHeard": "First heard on {date}",
+  "@lifeFirstHeard": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lifeNoPlace": "Place not known",
+  "lifeTimesPlayed": "{count, plural, =1{Played once} other{Played {count} times}}",
+  "@lifeTimesPlayed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeMemoryLine": "First heard {date}",
+  "@lifeMemoryLine": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lifeMemoryLinePlace": "First heard {date} · {place}",
+  "@lifeMemoryLinePlace": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "place": {
+        "type": "String"
+      }
+    }
   }
 }

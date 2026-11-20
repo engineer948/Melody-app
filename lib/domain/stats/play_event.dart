@@ -10,6 +10,7 @@ class PlayEvent {
     required this.startedAt,
     required this.listened,
     this.skipped = false,
+    this.place,
   });
 
   /// Shortest listen that is recorded at all.
@@ -36,4 +37,48 @@ class PlayEvent {
 
   /// Whether the track was left early.
   final bool skipped;
+
+  /// Rough place where it was played, when the user allowed it.
+  final PlayPlace? place;
+
+  /// Copy with [place].
+  PlayEvent withPlace(PlayPlace? place) => PlayEvent(
+    track: track,
+    startedAt: startedAt,
+    listened: listened,
+    skipped: skipped,
+    place: place,
+  );
+}
+
+/// Rough place of a play: about a kilometre, and its name when known.
+@immutable
+class PlayPlace {
+  /// Creates a place; coordinates are rounded to two decimals (~1 km).
+  PlayPlace({required double latitude, required double longitude, this.name})
+    : latitude = (latitude * 100).roundToDouble() / 100,
+      longitude = (longitude * 100).roundToDouble() / 100;
+
+  /// Latitude, two decimals.
+  final double latitude;
+
+  /// Longitude, two decimals.
+  final double longitude;
+
+  /// Neighbourhood or town and country, e.g. "Sahil, Bakı".
+  final String? name;
+
+  /// Name for display, or the coordinates.
+  String get label =>
+      name ?? '${latitude.toStringAsFixed(2)}, ${longitude.toStringAsFixed(2)}';
+
+  @override
+  bool operator ==(Object other) =>
+      other is PlayPlace &&
+      other.latitude == latitude &&
+      other.longitude == longitude &&
+      other.name == name;
+
+  @override
+  int get hashCode => Object.hash(latitude, longitude, name);
 }

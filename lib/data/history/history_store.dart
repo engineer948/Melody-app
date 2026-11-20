@@ -24,6 +24,9 @@ class HistoryStore {
           listenedMs: event.listened.inMilliseconds,
           durationMs: event.track.duration?.inMilliseconds ?? 0,
           skipped: event.skipped,
+          latitude: Value(event.place?.latitude),
+          longitude: Value(event.place?.longitude),
+          place: Value(event.place?.name),
         ),
       );
 
@@ -55,6 +58,13 @@ class HistoryStore {
             startedAt: row.startedAt,
             listened: Duration(milliseconds: row.listenedMs),
             skipped: row.skipped,
+            place: row.latitude == null || row.longitude == null
+                ? null
+                : PlayPlace(
+                    latitude: row.latitude!,
+                    longitude: row.longitude!,
+                    name: row.place,
+                  ),
           ),
         );
       } on Object {
@@ -62,6 +72,60 @@ class HistoryStore {
       }
     }
     return events;
+  }
+
+  /// The first play of [trackId] and how often it was played (not
+  /// skipped), or `null` when it never was.
+  Future<({PlayEvent first, int plays})?> memoryOf(
+    String accountId,
+    String trackId,
+  ) async {
+    final rows =
+        await (_db.select(_db.playHistory)
+              ..where(
+                (t) =>
+                    t.accountId.equals(accountId) & t.trackId.equals(trackId),
+              )
+              ..orderBy([(t) => OrderingTerm(expression: t.startedAt)]))
+            .get();
+    if (rows.isEmpty) return null;
+    final first = rows.first;
+    final Track track;
+    try {
+      track = Track.fromJson(jsonDecode(first.payload) as Map<String, dynamic>);
+    } on Object {
+      return null;
+    }
+    return (
+      first: PlayEvent(
+        track: track,
+        startedAt: first.startedAt,
+        listened: Duration(milliseconds: first.listenedMs),
+        skipped: first.skipped,
+        place: first.latitude == null || first.longitude == null
+            ? null
+            : PlayPlace(
+                latitude: first.latitude!,
+                longitude: first.longitude!,
+                name: first.place,
+              ),
+      ),
+      plays: rows.where((r) => !r.skipped).length,
+    );
+  }
+
+  /// When each song of [accountId] was first played, by track id.
+  Future<Map<String, DateTime>> firstPlays(String accountId) async {
+    final first = _db.playHistory.startedAt.min();
+    final query = _db.selectOnly(_db.playHistory)
+      ..addColumns([_db.playHistory.trackId, first])
+      ..where(_db.playHistory.accountId.equals(accountId))
+      ..groupBy([_db.playHistory.trackId]);
+    return {
+      for (final row in await query.get())
+        if (row.read(first) case final DateTime at)
+          row.read(_db.playHistory.trackId)!: at,
+    };
   }
 
   /// Number of plays recorded for [accountId].

@@ -552,5 +552,22 @@
   "mixtapeSave": "Siyahı kimi saxla",
   "mixtapeSealed": "Sənə mahnı məktubu var",
   "mixtapeSealedFrom": "{name} sənə mahnı məktubu göndərdi",
-  "mixtapeTooMany": "Mahnı məktubuna ən çox {max} mahnı sığır"
+  "mixtapeTooMany": "Mahnı məktubuna ən çox {max} mahnı sığır",
+  "lifeTitle": "Həyatının musiqisi",
+  "lifeBody": "Musiqi ilə günlərin: harada olduğun, nə dinlədiyin, kəşf etdiyin mahnılar və o gün çəkdiyin şəkillər. Hər şey bu telefonda qalır.",
+  "lifePlaces": "Yerləri xatırla",
+  "lifePlacesBody": "Çaldığın hər mahnının təxmini yerini (təxminən 1 km) yalnız bu telefonda saxlayır",
+  "lifePhotos": "Günün şəkillərini göstər",
+  "lifePhotosBody": "Hər günün mahnılarının yanında o gün çəkdiyin şəkilləri göstərir",
+  "lifeNoLocation": "Məkan icazəsi olmadan yerlər saxlanıla bilməz.",
+  "lifeEmpty": "Burada hələ heç nə yoxdur. Bir az musiqi çal!",
+  "lifeFirst": "✨ İlk dəfə",
+  "lifePlays": "{count}×",
+  "lifeMemory": "Bu mahnının hekayəsi",
+  "lifeNeverHeard": "Bu mahnını hələ dinləməmisən.",
+  "lifeFirstHeard": "İlk dəfə {date} tarixində dinlədin",
+  "lifeNoPlace": "Yer məlum deyil",
+  "lifeTimesPlayed": "{count} dəfə dinlənilib",
+  "lifeMemoryLine": "İlk dəfə {date}",
+  "lifeMemoryLinePlace": "İlk dəfə {date} · {place}"
 }

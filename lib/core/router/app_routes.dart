@@ -97,6 +97,9 @@ abstract final class AppRoutes {
   /// Listening statistics inside the current tab.
   static String statsIn(BuildContext context) => '${_tab(context)}/stats';
 
+  /// "Soundtrack of your life" inside the current tab.
+  static String lifeIn(BuildContext context) => '${statsIn(context)}/life';
+
   /// Year in review inside the current tab.
   static String wrapIn(BuildContext context, int year) =>
       '${statsIn(context)}/wrap/$year';

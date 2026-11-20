@@ -1114,6 +1114,37 @@ class $PlayHistoryTable extends PlayHistory
       'CHECK ("skipped" IN (0, 1))',
     ),
   );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _placeMeta = const VerificationMeta('place');
+  @override
+  late final GeneratedColumn<String> place = GeneratedColumn<String>(
+    'place',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1124,6 +1155,9 @@ class $PlayHistoryTable extends PlayHistory
     listenedMs,
     durationMs,
     skipped,
+    latitude,
+    longitude,
+    place,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1196,6 +1230,24 @@ class $PlayHistoryTable extends PlayHistory
     } else if (isInserting) {
       context.missing(_skippedMeta);
     }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    }
+    if (data.containsKey('place')) {
+      context.handle(
+        _placeMeta,
+        place.isAcceptableOrUnknown(data['place']!, _placeMeta),
+      );
+    }
     return context;
   }
 
@@ -1237,6 +1289,18 @@ class $PlayHistoryTable extends PlayHistory
         DriftSqlType.bool,
         data['${effectivePrefix}skipped'],
       )!,
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      ),
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
+      ),
+      place: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}place'],
+      ),
     );
   }
 
@@ -1270,6 +1334,15 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
 
   /// Whether the track was left early.
   final bool skipped;
+
+  /// Rough latitude (two decimals), only with "soundtrack of your life".
+  final double? latitude;
+
+  /// Rough longitude.
+  final double? longitude;
+
+  /// Name of the place, when the phone could tell.
+  final String? place;
   const PlayHistoryData({
     required this.id,
     required this.accountId,
@@ -1279,6 +1352,9 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
     required this.listenedMs,
     required this.durationMs,
     required this.skipped,
+    this.latitude,
+    this.longitude,
+    this.place,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1291,6 +1367,15 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
     map['listened_ms'] = Variable<int>(listenedMs);
     map['duration_ms'] = Variable<int>(durationMs);
     map['skipped'] = Variable<bool>(skipped);
+    if (!nullToAbsent || latitude != null) {
+      map['latitude'] = Variable<double>(latitude);
+    }
+    if (!nullToAbsent || longitude != null) {
+      map['longitude'] = Variable<double>(longitude);
+    }
+    if (!nullToAbsent || place != null) {
+      map['place'] = Variable<String>(place);
+    }
     return map;
   }
 
@@ -1304,6 +1389,15 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
       listenedMs: Value(listenedMs),
       durationMs: Value(durationMs),
       skipped: Value(skipped),
+      latitude: latitude == null && nullToAbsent
+          ? const Value.absent()
+          : Value(latitude),
+      longitude: longitude == null && nullToAbsent
+          ? const Value.absent()
+          : Value(longitude),
+      place: place == null && nullToAbsent
+          ? const Value.absent()
+          : Value(place),
     );
   }
 
@@ -1321,6 +1415,9 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
       listenedMs: serializer.fromJson<int>(json['listenedMs']),
       durationMs: serializer.fromJson<int>(json['durationMs']),
       skipped: serializer.fromJson<bool>(json['skipped']),
+      latitude: serializer.fromJson<double?>(json['latitude']),
+      longitude: serializer.fromJson<double?>(json['longitude']),
+      place: serializer.fromJson<String?>(json['place']),
     );
   }
   @override
@@ -1335,6 +1432,9 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
       'listenedMs': serializer.toJson<int>(listenedMs),
       'durationMs': serializer.toJson<int>(durationMs),
       'skipped': serializer.toJson<bool>(skipped),
+      'latitude': serializer.toJson<double?>(latitude),
+      'longitude': serializer.toJson<double?>(longitude),
+      'place': serializer.toJson<String?>(place),
     };
   }
 
@@ -1347,6 +1447,9 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
     int? listenedMs,
     int? durationMs,
     bool? skipped,
+    Value<double?> latitude = const Value.absent(),
+    Value<double?> longitude = const Value.absent(),
+    Value<String?> place = const Value.absent(),
   }) => PlayHistoryData(
     id: id ?? this.id,
     accountId: accountId ?? this.accountId,
@@ -1356,6 +1459,9 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
     listenedMs: listenedMs ?? this.listenedMs,
     durationMs: durationMs ?? this.durationMs,
     skipped: skipped ?? this.skipped,
+    latitude: latitude.present ? latitude.value : this.latitude,
+    longitude: longitude.present ? longitude.value : this.longitude,
+    place: place.present ? place.value : this.place,
   );
   PlayHistoryData copyWithCompanion(PlayHistoryCompanion data) {
     return PlayHistoryData(
@@ -1371,6 +1477,9 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
           ? data.durationMs.value
           : this.durationMs,
       skipped: data.skipped.present ? data.skipped.value : this.skipped,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
+      place: data.place.present ? data.place.value : this.place,
     );
   }
 
@@ -1384,7 +1493,10 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
           ..write('startedAt: $startedAt, ')
           ..write('listenedMs: $listenedMs, ')
           ..write('durationMs: $durationMs, ')
-          ..write('skipped: $skipped')
+          ..write('skipped: $skipped, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('place: $place')
           ..write(')'))
         .toString();
   }
@@ -1399,6 +1511,9 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
     listenedMs,
     durationMs,
     skipped,
+    latitude,
+    longitude,
+    place,
   );
   @override
   bool operator ==(Object other) =>
@@ -1411,7 +1526,10 @@ class PlayHistoryData extends DataClass implements Insertable<PlayHistoryData> {
           other.startedAt == this.startedAt &&
           other.listenedMs == this.listenedMs &&
           other.durationMs == this.durationMs &&
-          other.skipped == this.skipped);
+          other.skipped == this.skipped &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
+          other.place == this.place);
 }
 
 class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
@@ -1423,6 +1541,9 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
   final Value<int> listenedMs;
   final Value<int> durationMs;
   final Value<bool> skipped;
+  final Value<double?> latitude;
+  final Value<double?> longitude;
+  final Value<String?> place;
   const PlayHistoryCompanion({
     this.id = const Value.absent(),
     this.accountId = const Value.absent(),
@@ -1432,6 +1553,9 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
     this.listenedMs = const Value.absent(),
     this.durationMs = const Value.absent(),
     this.skipped = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.place = const Value.absent(),
   });
   PlayHistoryCompanion.insert({
     this.id = const Value.absent(),
@@ -1442,6 +1566,9 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
     required int listenedMs,
     required int durationMs,
     required bool skipped,
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
+    this.place = const Value.absent(),
   }) : accountId = Value(accountId),
        trackId = Value(trackId),
        payload = Value(payload),
@@ -1458,6 +1585,9 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
     Expression<int>? listenedMs,
     Expression<int>? durationMs,
     Expression<bool>? skipped,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
+    Expression<String>? place,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1468,6 +1598,9 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
       if (listenedMs != null) 'listened_ms': listenedMs,
       if (durationMs != null) 'duration_ms': durationMs,
       if (skipped != null) 'skipped': skipped,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (place != null) 'place': place,
     });
   }
 
@@ -1480,6 +1613,9 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
     Value<int>? listenedMs,
     Value<int>? durationMs,
     Value<bool>? skipped,
+    Value<double?>? latitude,
+    Value<double?>? longitude,
+    Value<String?>? place,
   }) {
     return PlayHistoryCompanion(
       id: id ?? this.id,
@@ -1490,6 +1626,9 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
       listenedMs: listenedMs ?? this.listenedMs,
       durationMs: durationMs ?? this.durationMs,
       skipped: skipped ?? this.skipped,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      place: place ?? this.place,
     );
   }
 
@@ -1520,6 +1659,15 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
     if (skipped.present) {
       map['skipped'] = Variable<bool>(skipped.value);
     }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
+    }
+    if (place.present) {
+      map['place'] = Variable<String>(place.value);
+    }
     return map;
   }
 
@@ -1533,7 +1681,10 @@ class PlayHistoryCompanion extends UpdateCompanion<PlayHistoryData> {
           ..write('startedAt: $startedAt, ')
           ..write('listenedMs: $listenedMs, ')
           ..write('durationMs: $durationMs, ')
-          ..write('skipped: $skipped')
+          ..write('skipped: $skipped, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
+          ..write('place: $place')
           ..write(')'))
         .toString();
   }
@@ -2727,6 +2878,9 @@ typedef $$PlayHistoryTableCreateCompanionBuilder =
       required int listenedMs,
       required int durationMs,
       required bool skipped,
+      Value<double?> latitude,
+      Value<double?> longitude,
+      Value<String?> place,
     });
 typedef $$PlayHistoryTableUpdateCompanionBuilder =
     PlayHistoryCompanion Function({
@@ -2738,6 +2892,9 @@ typedef $$PlayHistoryTableUpdateCompanionBuilder =
       Value<int> listenedMs,
       Value<int> durationMs,
       Value<bool> skipped,
+      Value<double?> latitude,
+      Value<double?> longitude,
+      Value<String?> place,
     });
 
 class $$PlayHistoryTableFilterComposer
@@ -2786,6 +2943,21 @@ class $$PlayHistoryTableFilterComposer
 
   ColumnFilters<bool> get skipped => $composableBuilder(
     column: $table.skipped,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get place => $composableBuilder(
+    column: $table.place,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2838,6 +3010,21 @@ class $$PlayHistoryTableOrderingComposer
     column: $table.skipped,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get place => $composableBuilder(
+    column: $table.place,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$PlayHistoryTableAnnotationComposer
@@ -2876,6 +3063,15 @@ class $$PlayHistoryTableAnnotationComposer
 
   GeneratedColumn<bool> get skipped =>
       $composableBuilder(column: $table.skipped, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
+
+  GeneratedColumn<String> get place =>
+      $composableBuilder(column: $table.place, builder: (column) => column);
 }
 
 class $$PlayHistoryTableTableManager
@@ -2917,6 +3113,9 @@ class $$PlayHistoryTableTableManager
                 Value<int> listenedMs = const Value.absent(),
                 Value<int> durationMs = const Value.absent(),
                 Value<bool> skipped = const Value.absent(),
+                Value<double?> latitude = const Value.absent(),
+                Value<double?> longitude = const Value.absent(),
+                Value<String?> place = const Value.absent(),
               }) => PlayHistoryCompanion(
                 id: id,
                 accountId: accountId,
@@ -2926,6 +3125,9 @@ class $$PlayHistoryTableTableManager
                 listenedMs: listenedMs,
                 durationMs: durationMs,
                 skipped: skipped,
+                latitude: latitude,
+                longitude: longitude,
+                place: place,
               ),
           createCompanionCallback:
               ({
@@ -2937,6 +3139,9 @@ class $$PlayHistoryTableTableManager
                 required int listenedMs,
                 required int durationMs,
                 required bool skipped,
+                Value<double?> latitude = const Value.absent(),
+                Value<double?> longitude = const Value.absent(),
+                Value<String?> place = const Value.absent(),
               }) => PlayHistoryCompanion.insert(
                 id: id,
                 accountId: accountId,
@@ -2946,6 +3151,9 @@ class $$PlayHistoryTableTableManager
                 listenedMs: listenedMs,
                 durationMs: durationMs,
                 skipped: skipped,
+                latitude: latitude,
+                longitude: longitude,
+                place: place,
               ),
           withReferenceMapper: (p0) => p0
               .map(

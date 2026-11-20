@@ -18,6 +18,7 @@ import 'package:melody/features/player/widgets/seek_bar.dart';
 import 'package:melody/features/share/share_screen.dart';
 import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/features/social/listen_together_screen.dart';
+import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/play_queue.dart';
 import 'package:melody/player/player_controller.dart';
@@ -255,6 +256,7 @@ class _TitleRow extends ConsumerWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
+                TrackMemoryLine(track: track),
               ],
             ),
           ),

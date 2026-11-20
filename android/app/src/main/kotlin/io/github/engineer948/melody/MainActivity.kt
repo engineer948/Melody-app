@@ -7,13 +7,16 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : AudioServiceActivity() {
     private val localMedia = LocalMedia(this)
+    private val places = Places(this)
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray,
     ) {
-        if (!localMedia.onPermissionResult(requestCode, grantResults)) {
+        if (!localMedia.onPermissionResult(requestCode, grantResults) &&
+            !places.onPermissionResult(requestCode, grantResults)
+        ) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
@@ -34,6 +37,48 @@ class MainActivity : AudioServiceActivity() {
                             )
                         }
                     }.start()
+                    else -> result.notImplemented()
+                }
+            }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "melody/places")
+            .setMethodCallHandler { call, result ->
+                // Work that may wait (location fix, geocoder, thumbnails)
+                // runs off the main thread.
+                fun background(work: () -> Any?) = Thread {
+                    val value = runCatching(work)
+                    runOnUiThread {
+                        value.fold(
+                            { result.success(it) },
+                            { result.error("places", it.message, null) },
+                        )
+                    }
+                }.start()
+                when (call.method) {
+                    "hasLocation" -> result.success(places.hasLocation())
+                    "requestLocation" -> places.requestLocation(result)
+                    "hasPhotos" -> result.success(places.hasPhotos())
+                    "requestPhotos" -> places.requestPhotos(result)
+                    "location" -> background { places.location() }
+                    "placeName" -> background {
+                        places.placeName(
+                            call.argument<Double>("latitude") ?: 0.0,
+                            call.argument<Double>("longitude") ?: 0.0,
+                            call.argument<String>("language") ?: "en",
+                        )
+                    }
+                    "photos" -> background {
+                        places.photos(
+                            call.argument<Number>("from")?.toLong() ?: 0L,
+                            call.argument<Number>("to")?.toLong() ?: 0L,
+                            call.argument<Int>("limit") ?: 12,
+                        )
+                    }
+                    "thumbnail" -> background {
+                        places.thumbnail(
+                            call.argument<Number>("id")?.toLong() ?: 0L,
+                            call.argument<Int>("size") ?: 256,
+                        )
+                    }
                     else -> result.notImplemented()
                 }
             }

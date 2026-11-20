@@ -1,0 +1,456 @@
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:melody/core/router/app_routes.dart';
+import 'package:melody/core/widgets/empty_state.dart';
+import 'package:melody/core/widgets/large_title_page.dart';
+import 'package:melody/data/places/places_bridge.dart';
+import 'package:melody/domain/models/media.dart';
+import 'package:melody/domain/stats/life_days.dart';
+import 'package:melody/domain/stats/play_event.dart';
+import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/library/widgets/media_tiles.dart';
+import 'package:melody/features/library/widgets/paged_scroll_view.dart';
+import 'package:melody/features/stats/stats_providers.dart';
+import 'package:melody/l10n/l10n.dart';
+import 'package:melody/player/history_recorder.dart';
+import 'package:melody/player/listening_settings.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'life_screen.g.dart';
+
+/// Days shown on the "soundtrack of your life" screen.
+const lifeSpan = Duration(days: 180);
+
+/// The last [lifeSpan] of the active account, day by day.
+@riverpod
+Future<List<LifeDay>> lifeTimeline(Ref ref) async {
+  ref.watch(historyRevisionProvider);
+  final accountId = ref.watch(
+    sessionControllerProvider.select((s) => s.activeId),
+  );
+  if (accountId == null) return const [];
+  final store = ref.watch(historyStoreProvider);
+  final from = DateTime.now().subtract(lifeSpan);
+  final events = await store.events(accountId, from: from);
+  return lifeDays(events, await store.firstPlays(accountId));
+}
+
+/// First play of a song and how often it was played.
+@riverpod
+Future<({PlayEvent first, int plays})?> trackMemory(
+  Ref ref,
+  String trackId,
+) async {
+  ref.watch(historyRevisionProvider);
+  final accountId = ref.watch(
+    sessionControllerProvider.select((s) => s.activeId),
+  );
+  if (accountId == null) return null;
+  return await ref.watch(historyStoreProvider).memoryOf(accountId, trackId);
+}
+
+/// Photos taken on [day] (only when allowed).
+@riverpod
+Future<List<GalleryPhoto>> dayPhotos(Ref ref, DateTime day) async {
+  final bridge = ref.watch(placesBridgeProvider);
+  if (!bridge.supported || !await bridge.hasPhotos()) return const [];
+  return await bridge.photos(day, day.add(const Duration(days: 1)), limit: 10);
+}
+
+/// A small picture of photo [id].
+@riverpod
+Future<Uint8List?> photoThumb(Ref ref, int id) =>
+    ref.watch(placesBridgeProvider).thumbnail(id, size: 240);
+
+/// Whether photos may be shown.
+@riverpod
+Future<bool> photosAllowed(Ref ref) async {
+  final bridge = ref.watch(placesBridgeProvider);
+  return bridge.supported && await bridge.hasPhotos();
+}
+
+/// Turns "soundtrack of your life" on (asking for rough location) or off.
+Future<void> setLifeSoundtrack(
+  BuildContext context,
+  WidgetRef ref, {
+  required bool on,
+}) async {
+  final settings = ref.read(listeningSettingsControllerProvider.notifier);
+  if (!on) {
+    await settings.update((s) => s.copyWith(places: false));
+    return;
+  }
+  final messenger = ScaffoldMessenger.of(context);
+  final l10n = context.l10n;
+  final allowed = await ref.read(placesBridgeProvider).requestLocation();
+  if (!allowed) {
+    messenger.showSnackBar(SnackBar(content: Text(l10n.lifeNoLocation)));
+    return;
+  }
+  await settings.update((s) => s.copyWith(places: true, history: true));
+}
+
+/// "Soundtrack of your life": every day with its places, songs, first
+/// listens and the photos taken that day.
+class LifeScreen extends ConsumerWidget {
+  /// Creates the screen.
+  const LifeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final enabled = ref.watch(
+      listeningSettingsControllerProvider.select((s) => s.places),
+    );
+    final supported = ref.watch(placesBridgeProvider).supported;
+    final photos = ref.watch(photosAllowedProvider).value ?? false;
+    final days = ref.watch(lifeTimelineProvider);
+    return Scaffold(
+      body: LargeTitlePage(
+        title: l10n.lifeTitle,
+        onRefresh: () async => ref
+          ..invalidate(lifeTimelineProvider)
+          ..invalidate(dayPhotosProvider),
+        slivers: [
+          SliverToBoxAdapter(
+            child: _Intro(
+              enabled: enabled,
+              supported: supported,
+              photos: photos,
+            ),
+          ),
+          ...loadedSlivers(
+            value: days,
+            onRetry: () => ref.invalidate(lifeTimelineProvider),
+            builder: (days) => [
+              if (days.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: EmptyState(
+                    icon: Icons.auto_stories_outlined,
+                    title: l10n.lifeEmpty,
+                  ),
+                )
+              else
+                SliverList.builder(
+                  itemCount: days.length,
+                  itemBuilder: (context, i) =>
+                      _DayCard(day: days[i], photos: photos),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Intro extends ConsumerWidget {
+  const _Intro({
+    required this.enabled,
+    required this.supported,
+    required this.photos,
+  });
+
+  final bool enabled;
+  final bool supported;
+  final bool photos;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.lifeBody,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          if (supported) ...[
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              secondary: const Icon(Icons.place_outlined),
+              title: Text(l10n.lifePlaces),
+              subtitle: Text(l10n.lifePlacesBody),
+              value: enabled,
+              onChanged: (on) =>
+                  unawaited(setLifeSoundtrack(context, ref, on: on)),
+            ),
+            if (!photos)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text(l10n.lifePhotos),
+                subtitle: Text(l10n.lifePhotosBody),
+                onTap: () async {
+                  await ref.read(placesBridgeProvider).requestPhotos();
+                  ref
+                    ..invalidate(photosAllowedProvider)
+                    ..invalidate(dayPhotosProvider);
+                },
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DayCard extends ConsumerWidget {
+  const _DayCard({required this.day, required this.photos});
+
+  final LifeDay day;
+  final bool photos;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final shown = day.songs.take(5).toList();
+    final queue = [for (final (t, _) in day.songs) t];
+    return Card(
+      margin: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                DateFormat.yMMMMEEEEd(locale).format(day.day),
+                style: theme.textTheme.titleMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
+              child: Text(
+                formatListened(l10n, day.listened),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            if (day.places.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final place in day.places.take(4))
+                      Chip(
+                        avatar: const Icon(Icons.place_rounded, size: 16),
+                        label: Text(place),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                  ],
+                ),
+              ),
+            if (photos) _DayPhotos(day: day.day),
+            const SizedBox(height: 4),
+            for (final (track, plays) in shown)
+              TrackTile(
+                track: track,
+                queue: queue,
+                index: queue.indexOf(track),
+                badge: day.firsts.contains(track.id)
+                    ? l10n.lifeFirst
+                    : (plays > 1 ? l10n.lifePlays(plays) : null),
+              ),
+            if (day.songs.length > shown.length)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  l10n.mixtapeMore(day.songs.length - shown.length),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DayPhotos extends ConsumerWidget {
+  const _DayPhotos({required this.day});
+
+  final DateTime day;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final photos = ref.watch(dayPhotosProvider(day)).value ?? const [];
+    if (photos.isEmpty) return const SizedBox.shrink();
+    return SizedBox(
+      height: 96,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+        itemCount: photos.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 6),
+        itemBuilder: (context, i) => _Thumb(id: photos[i].id),
+      ),
+    );
+  }
+}
+
+class _Thumb extends ConsumerWidget {
+  const _Thumb({required this.id});
+
+  final int id;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bytes = ref.watch(photoThumbProvider(id)).value;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: SizedBox.square(
+        dimension: 86,
+        child: bytes == null
+            ? ColoredBox(
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+              )
+            : Image.memory(bytes, fit: BoxFit.cover, gaplessPlayback: true),
+      ),
+    );
+  }
+}
+
+/// When and where [track] was first heard, with the photos of that day.
+Future<void> showTrackMemory(BuildContext context, Track track) =>
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      isScrollControlled: true,
+      builder: (context) => _TrackMemorySheet(track: track),
+    );
+
+class _TrackMemorySheet extends ConsumerWidget {
+  const _TrackMemorySheet({required this.track});
+
+  final Track track;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final memory = ref.watch(trackMemoryProvider(track.id));
+    final photos = ref.watch(photosAllowedProvider).value ?? false;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: switch (memory) {
+          AsyncData(value: null) => Text(l10n.lifeNeverHeard),
+          AsyncData(:final value?) => Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(track.title, style: theme.textTheme.titleLarge),
+              const SizedBox(height: 12),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.auto_awesome_rounded),
+                title: Text(
+                  l10n.lifeFirstHeard(
+                    DateFormat.yMMMMd(locale).format(value.first.startedAt),
+                  ),
+                ),
+                subtitle: Text(value.first.place?.label ?? l10n.lifeNoPlace),
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.repeat_rounded),
+                title: Text(l10n.lifeTimesPlayed(value.plays)),
+              ),
+              if (photos)
+                _DayPhotos(
+                  day: DateTime(
+                    value.first.startedAt.year,
+                    value.first.startedAt.month,
+                    value.first.startedAt.day,
+                  ),
+                ),
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  unawaited(context.push(AppRoutes.lifeIn(context)));
+                },
+                icon: const Icon(Icons.auto_stories_outlined),
+                label: Text(l10n.lifeTitle),
+              ),
+            ],
+          ),
+          AsyncError() => Text(l10n.lifeNeverHeard),
+          _ => const Center(child: CircularProgressIndicator()),
+        },
+      ),
+    );
+  }
+}
+
+/// A small "first heard 2 years ago in Baku" line for the full player,
+/// shown for songs first heard at least a month ago when places are kept.
+class TrackMemoryLine extends ConsumerWidget {
+  /// Creates the line for [track].
+  const TrackMemoryLine({required this.track, super.key});
+
+  /// Song playing.
+  final Track track;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final enabled = ref.watch(
+      listeningSettingsControllerProvider.select((s) => s.places),
+    );
+    if (!enabled) return const SizedBox.shrink();
+    final memory = ref.watch(trackMemoryProvider(track.id)).value;
+    final first = memory?.first;
+    if (first == null ||
+        DateTime.now().difference(first.startedAt) < const Duration(days: 30)) {
+      return const SizedBox.shrink();
+    }
+    final l10n = context.l10n;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final when = DateFormat.yMMMd(locale).format(first.startedAt);
+    final place = first.place?.name;
+    return GestureDetector(
+      onTap: () => unawaited(showTrackMemory(context, track)),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Row(
+          children: [
+            const Icon(Icons.history_rounded, size: 14, color: Colors.white60),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                place == null
+                    ? l10n.lifeMemoryLine(when)
+                    : l10n.lifeMemoryLinePlace(when, place),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.white60, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

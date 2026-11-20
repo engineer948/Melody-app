@@ -174,8 +174,12 @@ class TrackTile extends ConsumerWidget {
     this.index = 0,
     this.showNumber = false,
     this.albumInOrder = false,
+    this.badge,
     super.key,
   });
+
+  /// Short note before the length, e.g. "✨ First time".
+  final String? badge;
 
   /// Track to show.
   final Track track;
@@ -249,6 +253,16 @@ class TrackTile extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           DownloadedBadge(trackId: track.id),
+          if (badge case final badge?)
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: Text(
+                badge,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: scheme.primary,
+                ),
+              ),
+            ),
           if (duration != null)
             Text(
               formatDuration(duration),

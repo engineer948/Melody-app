@@ -54,6 +54,98 @@ final class HistoryStoreProvider
 
 String _$historyStoreHash() => r'67d39711edc0b95236acd7dd3ec07cb185967fde';
 
+/// The phone's places and photos (Android).
+
+@ProviderFor(placesBridge)
+final placesBridgeProvider = PlacesBridgeProvider._();
+
+/// The phone's places and photos (Android).
+
+final class PlacesBridgeProvider
+    extends $FunctionalProvider<PlacesBridge, PlacesBridge, PlacesBridge>
+    with $Provider<PlacesBridge> {
+  /// The phone's places and photos (Android).
+  PlacesBridgeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'placesBridgeProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$placesBridgeHash();
+
+  @$internal
+  @override
+  $ProviderElement<PlacesBridge> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  PlacesBridge create(Ref ref) {
+    return placesBridge(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PlacesBridge value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PlacesBridge>(value),
+    );
+  }
+}
+
+String _$placesBridgeHash() => r'33a40374a8b57ecc158ad20a0e3bdbde6692d96c';
+
+/// Rough place of the phone, for "soundtrack of your life".
+
+@ProviderFor(placeLocator)
+final placeLocatorProvider = PlaceLocatorProvider._();
+
+/// Rough place of the phone, for "soundtrack of your life".
+
+final class PlaceLocatorProvider
+    extends $FunctionalProvider<PlaceLocator, PlaceLocator, PlaceLocator>
+    with $Provider<PlaceLocator> {
+  /// Rough place of the phone, for "soundtrack of your life".
+  PlaceLocatorProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'placeLocatorProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$placeLocatorHash();
+
+  @$internal
+  @override
+  $ProviderElement<PlaceLocator> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  PlaceLocator create(Ref ref) {
+    return placeLocator(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PlaceLocator value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PlaceLocator>(value),
+    );
+  }
+}
+
+String _$placeLocatorHash() => r'71559fa90a248569be0a00ab823a4441a39727b4';
+
 /// Bumped whenever the history changes, so statistics and suggestions
 /// refresh.
 
@@ -161,4 +253,4 @@ final class HistoryRecorderProvider
   }
 }
 
-String _$historyRecorderHash() => r'c66b09defa932ff270de1cfa1a98dfc3b4425a0c';
+String _$historyRecorderHash() => r'0dbcd90d268e74428fc7eb414f4a70d4aa0bb907';

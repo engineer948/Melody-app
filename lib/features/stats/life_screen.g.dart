@@ -1,0 +1,350 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'life_screen.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+/// The last [lifeSpan] of the active account, day by day.
+
+@ProviderFor(lifeTimeline)
+final lifeTimelineProvider = LifeTimelineProvider._();
+
+/// The last [lifeSpan] of the active account, day by day.
+
+final class LifeTimelineProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<LifeDay>>,
+          List<LifeDay>,
+          FutureOr<List<LifeDay>>
+        >
+    with $FutureModifier<List<LifeDay>>, $FutureProvider<List<LifeDay>> {
+  /// The last [lifeSpan] of the active account, day by day.
+  LifeTimelineProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'lifeTimelineProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$lifeTimelineHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<LifeDay>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<LifeDay>> create(Ref ref) {
+    return lifeTimeline(ref);
+  }
+}
+
+String _$lifeTimelineHash() => r'09c5aaf4d2d0e624613be78d5f51d242fde1d662';
+
+/// First play of a song and how often it was played.
+
+@ProviderFor(trackMemory)
+final trackMemoryProvider = TrackMemoryFamily._();
+
+/// First play of a song and how often it was played.
+
+final class TrackMemoryProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<({PlayEvent first, int plays})?>,
+          ({PlayEvent first, int plays})?,
+          FutureOr<({PlayEvent first, int plays})?>
+        >
+    with
+        $FutureModifier<({PlayEvent first, int plays})?>,
+        $FutureProvider<({PlayEvent first, int plays})?> {
+  /// First play of a song and how often it was played.
+  TrackMemoryProvider._({
+    required TrackMemoryFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'trackMemoryProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$trackMemoryHash();
+
+  @override
+  String toString() {
+    return r'trackMemoryProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<({PlayEvent first, int plays})?> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<({PlayEvent first, int plays})?> create(Ref ref) {
+    final argument = this.argument as String;
+    return trackMemory(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TrackMemoryProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$trackMemoryHash() => r'9c2d073339cb1cc750fc12e80b697f42c6938714';
+
+/// First play of a song and how often it was played.
+
+final class TrackMemoryFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<({PlayEvent first, int plays})?>,
+          String
+        > {
+  TrackMemoryFamily._()
+    : super(
+        retry: null,
+        name: r'trackMemoryProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// First play of a song and how often it was played.
+
+  TrackMemoryProvider call(String trackId) =>
+      TrackMemoryProvider._(argument: trackId, from: this);
+
+  @override
+  String toString() => r'trackMemoryProvider';
+}
+
+/// Photos taken on [day] (only when allowed).
+
+@ProviderFor(dayPhotos)
+final dayPhotosProvider = DayPhotosFamily._();
+
+/// Photos taken on [day] (only when allowed).
+
+final class DayPhotosProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<GalleryPhoto>>,
+          List<GalleryPhoto>,
+          FutureOr<List<GalleryPhoto>>
+        >
+    with
+        $FutureModifier<List<GalleryPhoto>>,
+        $FutureProvider<List<GalleryPhoto>> {
+  /// Photos taken on [day] (only when allowed).
+  DayPhotosProvider._({
+    required DayPhotosFamily super.from,
+    required DateTime super.argument,
+  }) : super(
+         retry: null,
+         name: r'dayPhotosProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$dayPhotosHash();
+
+  @override
+  String toString() {
+    return r'dayPhotosProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<List<GalleryPhoto>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<GalleryPhoto>> create(Ref ref) {
+    final argument = this.argument as DateTime;
+    return dayPhotos(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DayPhotosProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$dayPhotosHash() => r'0362c921ea5336d1b467d8b9d639cbc0fda14fe3';
+
+/// Photos taken on [day] (only when allowed).
+
+final class DayPhotosFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<GalleryPhoto>>, DateTime> {
+  DayPhotosFamily._()
+    : super(
+        retry: null,
+        name: r'dayPhotosProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Photos taken on [day] (only when allowed).
+
+  DayPhotosProvider call(DateTime day) =>
+      DayPhotosProvider._(argument: day, from: this);
+
+  @override
+  String toString() => r'dayPhotosProvider';
+}
+
+/// A small picture of photo [id].
+
+@ProviderFor(photoThumb)
+final photoThumbProvider = PhotoThumbFamily._();
+
+/// A small picture of photo [id].
+
+final class PhotoThumbProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Uint8List?>,
+          Uint8List?,
+          FutureOr<Uint8List?>
+        >
+    with $FutureModifier<Uint8List?>, $FutureProvider<Uint8List?> {
+  /// A small picture of photo [id].
+  PhotoThumbProvider._({
+    required PhotoThumbFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'photoThumbProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$photoThumbHash();
+
+  @override
+  String toString() {
+    return r'photoThumbProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Uint8List?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Uint8List?> create(Ref ref) {
+    final argument = this.argument as int;
+    return photoThumb(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is PhotoThumbProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$photoThumbHash() => r'bf6cb0531b8e720c02da1d0f844dcb07a6e8cbc0';
+
+/// A small picture of photo [id].
+
+final class PhotoThumbFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Uint8List?>, int> {
+  PhotoThumbFamily._()
+    : super(
+        retry: null,
+        name: r'photoThumbProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// A small picture of photo [id].
+
+  PhotoThumbProvider call(int id) =>
+      PhotoThumbProvider._(argument: id, from: this);
+
+  @override
+  String toString() => r'photoThumbProvider';
+}
+
+/// Whether photos may be shown.
+
+@ProviderFor(photosAllowed)
+final photosAllowedProvider = PhotosAllowedProvider._();
+
+/// Whether photos may be shown.
+
+final class PhotosAllowedProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  /// Whether photos may be shown.
+  PhotosAllowedProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'photosAllowedProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$photosAllowedHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    return photosAllowed(ref);
+  }
+}
+
+String _$photosAllowedHash() => r'd6f7cc1b5c9fd75f1ec8fb7828a04a12bbb8d536';

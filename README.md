@@ -17,7 +17,8 @@ chosen part of a song (real waveform, "best part", fades), or as a story
 video (the picture with the clip, optional synced lyrics and a turning
 record, Android), song letters (a few songs with a note as a cassette
 picture and a code a friend opens in Melody),
-settings backup and restore, and a built-in Tailscale node: friends join
+settings backup and restore, "soundtrack of your life" (opt-in: the
+rough place of each play and the day's photos, kept on the phone only), and a built-in Tailscale node: friends join
 your server with an invite code, without the Tailscale app
 ([docs/TAILSCALE.md](docs/TAILSCALE.md)), and sharing with one other
 user: songs with a note, a shared playlist, a greeting and listening
