@@ -1,0 +1,1 @@
+Fix: a sound clip now starts at the second you chose (it started at the beginning of the song on Jellyfin servers).

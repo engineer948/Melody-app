@@ -1,0 +1,1 @@
+Düzəliş: səs parçası artıq seçdiyin saniyədən başlayır (Jellyfin serverlərində mahnının əvvəlindən başlayırdı).

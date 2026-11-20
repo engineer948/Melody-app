@@ -509,19 +509,20 @@ class JellyfinMusicSource implements MusicSource {
     });
   }
 
-  /// The server converts to MP3 and starts at [start] itself.
+  /// The server converts to MP3 from the beginning; the part before
+  /// [start] is dropped on the device (the progressive stream ignores
+  /// `startTimeTicks`, so clips started at 0:00 on real servers).
   @override
   ClipRequest? clipRequest(Track track, Duration start) => (
     uri: _api.resolve('Audio/${track.id}/stream.mp3', {
       'audioCodec': 'mp3',
       'audioBitRate': '192000',
-      'startTimeTicks': '${start.inMicroseconds * 10}',
       // Its own device id, so the server does not stop the transcode of
       // the song that is playing.
       'deviceId': '${_api.identity.deviceId}-clip',
       'api_key': ?_api.token,
     }),
-    skip: Duration.zero,
+    skip: start,
   );
 
   @override

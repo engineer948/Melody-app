@@ -1,0 +1,1 @@
+Düzeltme: ses parçası artık seçtiğin saniyeden başlıyor (Jellyfin sunucularında şarkının başından başlıyordu).
