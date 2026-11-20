@@ -120,8 +120,12 @@ void main() {
     expect(preview.played.single, endsWith('Sezen - Firuze.mp3'));
     expect(find.text('Stop'), findsOneWidget);
 
-    // The same piece is not made twice.
+    // The same piece is not made twice. The first share asks once about
+    // copyright.
     await tester.tap(find.text('Share clip'));
+    await tester.pumpAndSettle();
+    expect(find.text('You are responsible for what you share'), findsOneWidget);
+    await tester.tap(find.text('I understand'));
     await tester.pumpAndSettle();
     expect(maker.calls, hasLength(1));
     expect(preview.playing.value, isFalse);
@@ -137,5 +141,21 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(find.text('2:35 – 3:05'), findsOneWidget);
+  });
+
+  testWidgets('nothing is shared when copyright is not accepted', (
+    tester,
+  ) async {
+    await open(tester);
+    await tester.tap(find.text('Share clip'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(shared, isEmpty);
+    expect(maker.calls, isEmpty);
+    // Asked again next time.
+    await tester.tap(find.text('Share clip'));
+    await tester.pumpAndSettle();
+    expect(find.text('I understand'), findsOneWidget);
   });
 }

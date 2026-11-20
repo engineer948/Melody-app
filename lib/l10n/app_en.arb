@@ -947,5 +947,9 @@
   "clipShare": "Share clip",
   "clipHint": "Shared as an MP3 file: send it in WhatsApp, Telegram or any app that takes audio. Drag the box to choose the part.",
   "clipFailed": "The clip could not be made. Check the connection to the server.",
-  "clipUnsupported": "Sound clips can only be made from songs on a Jellyfin or Subsonic server."
+  "clipUnsupported": "Sound clips can only be made from songs on a Jellyfin or Subsonic server.",
+  "clipRightsTitle": "You are responsible for what you share",
+  "clipRightsBody": "Songs are usually protected by copyright. Melody only cuts the piece you choose from your own server; whether you may send it to others, and where, is up to you. Share only what you have the right to share, e.g. a short piece for personal use where the law allows it. The app and its developers take no responsibility for clips you share.",
+  "clipRightsAccept": "I understand",
+  "clipRightsNote": "Respect copyright: you alone are responsible for the clips you share."
 }

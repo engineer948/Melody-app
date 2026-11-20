@@ -20,6 +20,12 @@ user: songs with a note, a shared playlist, a greeting and listening
 together, each only after they allow it ([docs/SHARING.md](docs/SHARING.md)).
 For the F-Droid release, see [docs/FDROID.md](docs/FDROID.md).
 
+**Copyright.** Melody plays and shares music from the user's own server.
+Users alone are responsible for what they share (story images, song
+clips) and must respect copyright; the app asks for this once before the
+first song clip is shared. The app and its developers take no
+responsibility for content shared by users.
+
 ## Running
 
 Requires Flutter 3.47.9 (stable).

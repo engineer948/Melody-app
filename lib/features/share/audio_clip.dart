@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:melody/core/errors/failure.dart';
 import 'package:melody/core/logging/app_logger.dart';
+import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/core/utils/formatters.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
@@ -271,6 +272,7 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
         : box.localToGlobal(Offset.zero) & box.size;
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
+    if (!await _confirmRights()) return;
     final file = await _file();
     if (file == null) return;
     await ref.read(clipPreviewProvider).stop();
@@ -286,6 +288,38 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
       _log.error('Share failed', e);
       messenger.showSnackBar(SnackBar(content: Text(l10n.shareFailed)));
     }
+  }
+
+  /// Preference set once the user accepted that sharing is their own
+  /// responsibility.
+  static const rightsKey = 'share.clipRightsAccepted';
+
+  /// Asks once whether the user takes responsibility for what they share.
+  Future<bool> _confirmRights() async {
+    final prefs = ref.read(preferencesProvider);
+    if (prefs.getBool(rightsKey) ?? false) return true;
+    final l10n = context.l10n;
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.copyright_rounded),
+        title: Text(l10n.clipRightsTitle),
+        content: Text(l10n.clipRightsBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.clipRightsAccept),
+          ),
+        ],
+      ),
+    );
+    if (accepted != true) return false;
+    await prefs.setBool(rightsKey, true);
+    return true;
   }
 
   void _setStart(Duration start) {
@@ -429,6 +463,15 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.clipRightsNote,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontStyle: FontStyle.italic,
           ),
         ),
       ],

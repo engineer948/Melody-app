@@ -502,5 +502,9 @@
   "clipShare": "Parçanı paylaş",
   "clipHint": "MP3 faylı kimi paylaşılır: WhatsApp, Telegram və ya səs qəbul edən istənilən tətbiqə göndər. Hissəni seçmək üçün qutunu sürüşdür.",
   "clipFailed": "Səs parçası hazırlanmadı. Serverlə əlaqəni yoxla.",
-  "clipUnsupported": "Səs parçası yalnız Jellyfin və ya Subsonic serverindəki mahnılardan hazırlana bilər."
+  "clipUnsupported": "Səs parçası yalnız Jellyfin və ya Subsonic serverindəki mahnılardan hazırlana bilər.",
+  "clipRightsTitle": "Paylaşdığın şeyə görə sən cavabdehsən",
+  "clipRightsBody": "Mahnılar adətən müəllif hüququ ilə qorunur. Melody yalnız öz serverindən seçdiyin parçanı kəsir; onu başqalarına göndərə bilib-bilməyəcəyin və harada paylaşa biləcəyin sənin işindir. Yalnız paylaşmaq hüququn olan şeyi paylaş, məsələn qanunun icazə verdiyi yerdə şəxsi istifadə üçün qısa bir parça. Tətbiq və onun tərtibatçıları paylaşdığın parçalara görə heç bir məsuliyyət daşımır.",
+  "clipRightsAccept": "Başa düşdüm",
+  "clipRightsNote": "Müəllif hüquqlarına hörmət et: paylaşdığın parçalara görə yalnız sən cavabdehsən."
 }
