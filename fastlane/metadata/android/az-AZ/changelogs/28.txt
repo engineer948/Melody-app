@@ -1,0 +1,3 @@
+Tailscale yenə özü qoşulur.
+- Tətbiqi açandan az sonra bağlamaq artıq çökmə sayılmır (bu, Ayarlarda "Yenidən cəhd et" basılana qədər Tailscale-i bağlı saxlayırdı)
+- Açılışda bağlantı yoxlanılır, server cavab verməsə yenidən başladılır; ekranlar özü yüklənir

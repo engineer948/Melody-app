@@ -38,6 +38,7 @@ void main() {
     TailnetController.fastPoll = const Duration(milliseconds: 1);
     TailnetController.joinTimeout = const Duration(seconds: 2);
     TailnetController.crashWindow = const Duration(milliseconds: 1);
+    TailnetController.connectWait = const Duration(milliseconds: 200);
   });
 
   Future<ProviderContainer> container({bool signedIn = false}) =>
@@ -190,10 +191,10 @@ void main() {
     final prefs = first.read(preferencesProvider);
     // Survived the start: the guard is cleared.
     await Future<void>.delayed(const Duration(milliseconds: 100));
-    expect(prefs.getBool(TailnetController.startingKey), isNull);
+    expect(prefs.get(TailnetController.startingKey), isNull);
 
-    // Simulate being killed during the next start.
-    await prefs.setBool(TailnetController.startingKey, true);
+    // Simulate being killed during the next two starts.
+    await prefs.setInt(TailnetController.startingKey, 2);
     bridge
       ..starts.clear()
       ..crash = 'panic: boom';
@@ -220,6 +221,65 @@ void main() {
     await restarted.read(tailnetControllerProvider.notifier).retry();
     expect(bridge.starts, hasLength(1));
     expect(restarted.read(tailnetControllerProvider).crashed, isFalse);
+  });
+
+  test('one start the app did not survive is retried by itself', () async {
+    final first = await container();
+    await first.read(tailnetControllerProvider.notifier).join(invite);
+    final prefs = first.read(preferencesProvider);
+    // E.g. the app was closed right after opening; older versions wrote
+    // a bool here.
+    await prefs.setBool(TailnetController.startingKey, true);
+    bridge.starts.clear();
+    final restarted = ProviderContainer(
+      overrides: [
+        preferencesProvider.overrideWithValue(prefs),
+        tailnetBootstrapProvider.overrideWithValue(
+          TailnetBootstrap(available: true, secrets: secrets.secrets),
+        ),
+        tailnetBridgeProvider.overrideWithValue(bridge),
+        tailnetSecretStoreProvider.overrideWithValue(secrets),
+        tailnetProbeProvider.overrideWithValue((_) async => probeAnswer),
+      ],
+    );
+    addTearDown(restarted.dispose);
+    expect(restarted.read(tailnetControllerProvider).crashed, isFalse);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(bridge.starts, hasLength(1));
+    // Running again: the guard is cleared.
+    expect(prefs.get(TailnetController.startingKey), isNull);
+  });
+
+  test('on launch, a node that says "running" but cannot reach the server '
+      'is restarted and the screens reload', () async {
+    final first = await container();
+    await first.read(tailnetControllerProvider.notifier).join(invite);
+    final prefs = first.read(preferencesProvider);
+    bridge.starts.clear();
+    probeAnswer = false;
+    final restarted = ProviderContainer(
+      overrides: [
+        preferencesProvider.overrideWithValue(prefs),
+        tailnetBootstrapProvider.overrideWithValue(
+          TailnetBootstrap(available: true, secrets: secrets.secrets),
+        ),
+        tailnetBridgeProvider.overrideWithValue(bridge),
+        tailnetSecretStoreProvider.overrideWithValue(secrets),
+        tailnetProbeProvider.overrideWithValue((_) async {
+          final answer = probeAnswer;
+          probeAnswer = true; // Works after the restart.
+          return answer;
+        }),
+      ],
+    );
+    addTearDown(restarted.dispose);
+    final router = restarted.read(tailnetRouterProvider);
+    expect(restarted.read(tailnetControllerProvider).epoch, 0);
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    expect(bridge.stops, 1);
+    expect(bridge.starts, hasLength(2));
+    expect(restarted.read(tailnetControllerProvider).epoch, 1);
+    expect(restarted.read(tailnetRouterProvider), isNot(same(router)));
   });
 
   test('a dropped connection is restarted, a missing key is not', () async {

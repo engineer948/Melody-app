@@ -43,6 +43,10 @@ class _MelodyAppState extends ConsumerState<MelodyApp>
   /// Telling it again on resume fixes that.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Left normally: a Tailscale start did not crash the app.
+      unawaited(ref.read(tailnetControllerProvider.notifier).appLeft());
+    }
     if (state != AppLifecycleState.resumed) return;
     // Back in the app: reconnect Tailscale if it dropped meanwhile.
     unawaited(ref.read(tailnetControllerProvider.notifier).ensureConnected());

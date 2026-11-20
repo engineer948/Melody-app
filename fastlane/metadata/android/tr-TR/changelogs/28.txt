@@ -1,0 +1,3 @@
+Tailscale yine kendiliğinden bağlanıyor.
+- Uygulamayı açtıktan kısa süre sonra kapatmak artık çökme sayılmıyor (bu, Ayarlar'da "Tekrar dene" denene kadar Tailscale'i kapalı tutuyordu)
+- Açılışta bağlantı kontrol edilir, sunucu cevap vermezse yeniden başlatılır; ekranlar kendiliğinden yüklenir

@@ -66,6 +66,19 @@ console and/or delete their Jellyfin user.
 Settings → Tailscale → **Leave this network** removes the device from the
 tailnet, deletes its keys and signs out of that server.
 
+### Reconnecting
+
+The node starts by itself when the app opens. Once it says "running", the
+music server is asked through the proxy; no answer means a full restart,
+after which the screens load again. The same check runs when the app comes
+back to the foreground, on pull to refresh and after a network change.
+
+If the app is killed during a start twice in a row, the node is no longer
+started by itself (crash-loop guard) and Settings offers **Try again** and
+a crash report. One unsurvived start is not enough: closing the app right
+after opening it must not keep Tailscale off. Leaving the app normally or
+reaching "running" clears the count.
+
 ## Security model
 
 | Threat | Protection |

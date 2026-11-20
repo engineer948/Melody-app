@@ -1,0 +1,3 @@
+Tailscale connects by itself again.
+- Closing the app soon after opening it no longer counts as a crash, which kept Tailscale off until "Try again" in Settings
+- On launch, the connection is checked and restarted when the server does not answer; the screens then load by themselves

@@ -12,6 +12,7 @@ import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/player/streaming_settings.dart';
 import 'package:meta/meta.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'tailnet_controller.g.dart';
 
@@ -223,7 +224,12 @@ class TailnetState {
     this.report = const TailnetReport(TailnetStatus.stopped),
     this.crashed = false,
     this.crashReport,
+    this.epoch = 0,
   });
+
+  /// Grows every time the connection was repaired, so everything that
+  /// talks to the server through the proxy starts afresh.
+  final int epoch;
 
   /// Whether the previous start ended with the app being killed; the node
   /// is then not started again until the user asks ([TailnetController.retry]).
@@ -264,6 +270,7 @@ class TailnetState {
     TailnetReport? report,
     bool? crashed,
     String? crashReport,
+    int? epoch,
   }) => TailnetState(
     available: available,
     target: target,
@@ -273,6 +280,7 @@ class TailnetState {
     report: report ?? this.report,
     crashed: crashed ?? this.crashed,
     crashReport: crashReport ?? this.crashReport,
+    epoch: epoch ?? this.epoch,
   );
 }
 
@@ -291,9 +299,18 @@ class TailnetController extends _$TailnetController {
   /// Last proxy port.
   static const portKey = 'tailnet.port';
 
-  /// Set while the node starts; still set on the next launch means the app
-  /// was killed during the start (crash-loop guard).
+  /// Number of starts the app did not survive, cleared once the node runs
+  /// or the user leaves the app normally (crash-loop guard).
   static const startingKey = 'tailnet.starting';
+
+  /// Unsurvived starts in a row before the node is no longer started by
+  /// itself. One is not enough: the app may simply have been closed (or
+  /// killed by the system) right after opening, which used to keep
+  /// Tailscale off until "Try again" in Settings.
+  static const crashLimit = 2;
+
+  /// How long a (re)start may take to reach "running".
+  static Duration connectWait = const Duration(seconds: 30);
 
   /// How long the app must survive a start before it counts as good.
   static Duration crashWindow = const Duration(seconds: 20);
@@ -346,7 +363,7 @@ class TailnetController extends _$TailnetController {
     final configured =
         boot.available && target != null && target.hasScheme && secrets != null;
     _secrets = secrets;
-    final crashed = configured && (prefs.getBool(startingKey) ?? false);
+    final crashed = configured && _unclean(prefs) >= crashLimit;
     final state = TailnetState(
       available: boot.available,
       target: configured ? target : null,
@@ -362,10 +379,51 @@ class TailnetController extends _$TailnetController {
       // The last start killed the app: do not try again by ourselves.
       unawaited(Future.microtask(_loadCrashReport));
     } else if (configured) {
-      // After the first frame: the node reconnects in the background.
-      unawaited(Future.microtask(() => _ensureStarted(secrets)));
+      // After the first frame: the node reconnects in the background, then
+      // the server is asked through it (the node may say "running" on a
+      // dead connection, e.g. when the process survived in the background).
+      unawaited(Future.microtask(() => _boot(secrets)));
     }
     return state;
+  }
+
+  static int _unclean(SharedPreferences prefs) =>
+      switch (prefs.get(startingKey)) {
+        final int n => n,
+        true => 1, // Written by older versions.
+        _ => 0,
+      };
+
+  Future<void> _boot(TailnetSecrets secrets) async {
+    await _ensureStarted(secrets);
+    if (!ref.mounted || !state.configured) return;
+    if (await _waitRunning()) await ensureConnected();
+  }
+
+  /// Polls until the node runs; `false` when it needs the user or the
+  /// time is up.
+  Future<bool> _waitRunning() async {
+    final until = DateTime.now().add(connectWait);
+    while (ref.mounted && DateTime.now().isBefore(until)) {
+      final report = await refresh(heal: false);
+      switch (report.status) {
+        case TailnetStatus.running:
+          return true;
+        case TailnetStatus.needsLogin || TailnetStatus.needsApproval:
+          return false;
+        case TailnetStatus.stopped ||
+            TailnetStatus.starting ||
+            TailnetStatus.error:
+          await Future<void>.delayed(fastPoll);
+      }
+    }
+    return false;
+  }
+
+  /// The user left the app: it did not crash during the start.
+  Future<void> appLeft() async {
+    final prefs = ref.read(preferencesProvider);
+    if (prefs.containsKey(startingKey)) await prefs.remove(startingKey);
   }
 
   String _hex(int bytes) => [
@@ -408,7 +466,7 @@ class TailnetController extends _$TailnetController {
       await prefs.setString(hostnameKey, hostname);
     }
     // Cleared once the app has survived the start for a while.
-    await prefs.setBool(startingKey, true);
+    await prefs.setInt(startingKey, _unclean(prefs) + 1);
     _survived?.cancel();
     try {
       final port = await _bridge.start(
@@ -447,6 +505,7 @@ class TailnetController extends _$TailnetController {
     try {
       final report = await _bridge.status();
       state = state.copyWith(report: report);
+      if (report.status == TailnetStatus.running) unawaited(appLeft());
       _schedulePoll(
         report.status == TailnetStatus.running ? slowPoll : fastPoll,
       );
@@ -490,13 +549,22 @@ class TailnetController extends _$TailnetController {
     if (!state.configured || state.crashed || _joining) return;
     final report = await refresh(heal: false);
     if (_broken(report)) {
-      await _heal();
+      await _reconnect();
       return;
     }
     final local = state.local;
     if (report.status == TailnetStatus.running && local != null) {
       final reachable = await ref.read(tailnetProbeProvider)(local);
-      if (!reachable && state.configured && !_joining) await _heal();
+      if (!reachable && state.configured && !_joining) await _reconnect();
+    }
+  }
+
+  /// Restarts the node and, once it runs again, lets the screens load
+  /// again instead of showing the errors of the dead connection.
+  Future<void> _reconnect() async {
+    await _heal();
+    if (await _waitRunning() && ref.mounted) {
+      state = state.copyWith(epoch: state.epoch + 1);
     }
   }
 
@@ -601,8 +669,10 @@ class TailnetController extends _$TailnetController {
 /// Routes requests for the tailnet server through the proxy.
 @Riverpod(keepAlive: true)
 TailnetRouter tailnetRouter(Ref ref) {
-  final (target, local) = ref.watch(
-    tailnetControllerProvider.select((s) => (s.target, s.local)),
+  // The epoch makes a new router after a repair, so the music source and
+  // everything loaded through it start afresh.
+  final (target, local, _) = ref.watch(
+    tailnetControllerProvider.select((s) => (s.target, s.local, s.epoch)),
   );
   return TailnetRouter(target: target, local: local);
 }
