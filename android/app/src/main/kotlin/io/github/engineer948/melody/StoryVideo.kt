@@ -44,14 +44,26 @@ object StoryVideo {
 
     private class Encoded(val format: MediaFormat, val samples: List<Sample>)
 
-    /** Writes the video to [outPath]; throws when a codec fails. */
-    fun make(imagePath: String, audioPath: String, outPath: String) {
+    /**
+     * Writes the video to [outPath]: picture `i` of [imagePaths] is shown
+     * from [timesUs]`[i]` on (the first from the start). Throws when a codec
+     * fails.
+     */
+    fun make(
+        imagePaths: List<String>,
+        timesUs: List<Long>,
+        audioPath: String,
+        outPath: String,
+    ) {
+        require(imagePaths.isNotEmpty() && imagePaths.size == timesUs.size) {
+            "one time per picture"
+        }
         val (pcm, sampleRate, channels) = decodeAudio(audioPath)
         val bytesPerFrame = 2 * channels
         val durationUs = pcm.size.toLong() / bytesPerFrame * 1_000_000L / sampleRate
         require(durationUs > 0) { "empty audio" }
         val audio = encodeAudio(pcm, sampleRate, channels)
-        val video = encodeVideo(imagePath, durationUs)
+        val video = encodeVideo(imagePaths, timesUs, durationUs)
 
         File(outPath).delete()
         val muxer = MediaMuxer(outPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
@@ -190,8 +202,13 @@ object StoryVideo {
         }
     }
 
-    private fun encodeVideo(imagePath: String, durationUs: Long): Encoded {
-        val (y, u, v) = yuv(imagePath)
+    private fun encodeVideo(
+        imagePaths: List<String>,
+        timesUs: List<Long>,
+        durationUs: Long,
+    ): Encoded {
+        // Each picture converted once (about 1.4 MB each).
+        val pictures = imagePaths.map { yuv(it) }
         val format = MediaFormat.createVideoFormat(
             MediaFormat.MIMETYPE_VIDEO_AVC, WIDTH, HEIGHT,
         ).apply {
@@ -218,6 +235,9 @@ object StoryVideo {
                     )
                     false
                 } else {
+                    var shown = 0
+                    while (shown + 1 < timesUs.size && timesUs[shown + 1] <= ptsUs) shown++
+                    val (y, u, v) = pictures[shown]
                     val image = encoder.getInputImage(index)
                     if (image != null) {
                         fill(image.planes[0], y, WIDTH, HEIGHT)

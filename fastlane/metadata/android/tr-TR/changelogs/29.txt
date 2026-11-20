@@ -1,0 +1,6 @@
+Daha iyi ses parçaları ve ayar yedeği.
+- Gerçek ses dalgası; "En iyi kısım" en yüksek sesli bölüme (genelde nakarat) atlar
+- 5–60 saniye arası istediğin uzunluk: uçları sürükle
+- Yumuşak giriş ve çıkış
+- Hikâye videosunda isteğe bağlı zamanlı sözler, zamanlama ayarıyla
+- Ayarlar → Yedekleme: ayarları, akıllı listeleri ve sunucuları dosyaya kaydet, yeni telefonda geri yükle

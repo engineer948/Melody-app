@@ -6,30 +6,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
+import 'package:melody/features/lyrics/lyrics_providers.dart';
 import 'package:melody/features/share/audio_clip.dart';
 import 'package:melody/features/share/share_screen.dart';
 import 'package:melody/features/share/share_subject.dart';
 
+import '../../helpers/fake_mp3.dart';
 import '../../helpers/fakes.dart';
 import '../../helpers/pump_app.dart';
 
-class FakeClipMaker implements ClipMaker {
-  FakeClipMaker(this.dir);
-
-  final Directory dir;
-  final calls = <(Duration, Duration)>[];
+class FakeSongLoader implements SongAudioLoader {
+  int calls = 0;
 
   @override
-  Future<File> make(
-    MusicSource source,
-    Track track,
-    Duration start,
-    Duration length,
-  ) async {
-    calls.add((start, length));
-    final file = File('${dir.path}/${clipFileName(track)}')
-      ..writeAsBytesSync([0xFF, 0xFB, 0x90, 0x00]);
-    return file;
+  Future<Uint8List> load(MusicSource source, Track track) async {
+    calls++;
+    // 3:05, loud from 1:40 to 2:10.
+    return fakeSongWithChorus();
   }
 }
 
@@ -56,18 +49,18 @@ class FakeVideoMaker implements StoryVideoMaker {
   FakeVideoMaker(this.dir);
 
   final Directory dir;
-  final calls = <(String, String, String)>[];
+  final calls = <(List<(File, Duration)>, String, String)>[];
 
   @override
   bool get supported => true;
 
   @override
   Future<File> make({
-    required File image,
+    required List<(File, Duration)> pictures,
     required File audio,
     required String name,
   }) async {
-    calls.add((image.path, audio.path, name));
+    calls.add((pictures, audio.path, name));
     return File('${dir.path}/$name.mp4')..writeAsBytesSync([0]);
   }
 }
@@ -76,16 +69,25 @@ void main() {
   const prefs = {LocaleController.localeKey: 'en'};
   const shareChannel = MethodChannel('dev.fluttercommunity.plus/share');
   const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
+  final track = makeTrack('t1', title: 'Firuze');
+  const lyrics = Lyrics(
+    synced: true,
+    lines: [
+      LyricLine(text: 'Gül yüzlüm', start: Duration(seconds: 95)),
+      LyricLine(text: 'Firuze', start: Duration(seconds: 105)),
+      LyricLine(text: 'Ah firuze', start: Duration(seconds: 115)),
+    ],
+  );
   late List<MethodCall> shared;
   late Directory temp;
-  late FakeClipMaker maker;
+  late FakeSongLoader loader;
   late FakeClipPreview preview;
   late FakeVideoMaker video;
 
   setUp(() {
     shared = [];
     temp = Directory.systemTemp.createTempSync('melody_clip');
-    maker = FakeClipMaker(temp);
+    loader = FakeSongLoader();
     preview = FakeClipPreview();
     video = FakeVideoMaker(temp);
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -103,67 +105,71 @@ void main() {
     if (temp.existsSync()) temp.deleteSync(recursive: true);
   });
 
-  Future<void> open(WidgetTester tester) async {
+  Future<void> open(WidgetTester tester, {Lyrics? songLyrics}) async {
     await pumpApp(
       tester,
       preferences: prefs,
+      size: const Size(400, 1400),
       overrides: [
-        clipMakerProvider.overrideWithValue(maker),
+        songAudioLoaderProvider.overrideWithValue(loader),
         clipPreviewProvider.overrideWithValue(preview),
         storyVideoMakerProvider.overrideWithValue(video),
+        trackLyricsProvider(track).overrideWith((ref) async => songLyrics),
       ],
     );
     final context = tester.element(find.byType(Scaffold).first);
-    // 3:05 long.
-    showShareScreen(
-      context,
-      ShareSubject.track(makeTrack('t1', title: 'Firuze')),
-    ).ignore();
+    showShareScreen(context, ShareSubject.track(track)).ignore();
     await tester.pumpAndSettle();
     await tester.tap(find.text('Sound clip'));
     await tester.pumpAndSettle();
   }
 
-  testWidgets('picks a part, plays it and shares it as MP3', (tester) async {
+  /// Taps [text] and waits for real file writing to finish.
+  Future<void> tapAndWait(
+    WidgetTester tester,
+    String text,
+    bool Function() done,
+  ) => tester.runAsync(() async {
+    await tester.tap(find.text(text));
+    for (var i = 0; i < 80 && !done(); i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 25));
+      await tester.pump();
+    }
+  });
+
+  testWidgets('starts on the loudest part, plays it and shares an MP3', (
+    tester,
+  ) async {
     await open(tester);
-    // Starts about a third in, 30 seconds long.
-    expect(find.text('0:55 – 1:25'), findsOneWidget);
+    expect(loader.calls, 1);
+    expect(find.text('1:40 – 2:10 · 30 s'), findsOneWidget);
 
     await tester.tap(find.byTooltip('5 seconds later'));
-    await tester.tap(find.text('15 s'));
     await tester.pumpAndSettle();
-    expect(find.text('1:00 – 1:15'), findsOneWidget);
+    expect(find.text('1:45 – 2:15 · 30 s'), findsOneWidget);
+    await tester.tap(find.text('Best part'));
+    await tester.pumpAndSettle();
+    expect(find.text('1:40 – 2:10 · 30 s'), findsOneWidget);
 
-    await tester.tap(find.text('Listen'));
+    await tapAndWait(tester, 'Listen', () => preview.played.isNotEmpty);
     await tester.pumpAndSettle();
-    expect(maker.calls.single, (
-      const Duration(seconds: 60),
-      const Duration(seconds: 15),
-    ));
-    expect(preview.played.single, endsWith('Sezen - Firuze.mp3'));
+    final path = preview.played.single;
+    expect(path, endsWith('Sezen - Firuze.mp3'));
+    // Faded in: the first frame is quieter than the song there.
+    final bytes = File(path).readAsBytesSync();
+    final firstFrame = bytes.indexOf(0xFF, 10);
+    expect(readBits(bytes, firstFrame * 8 + fakeGainBit(0), 8), lessThan(200));
     expect(find.text('Stop'), findsOneWidget);
 
-    // The same piece is not made twice. The first share asks once about
-    // copyright.
     await tester.tap(find.text('Share clip'));
     await tester.pumpAndSettle();
-    expect(find.text('You are responsible for what you share'), findsOneWidget);
-    await tester.tap(find.text('I understand'));
+    await tapAndWait(tester, 'I understand', () => shared.isNotEmpty);
     await tester.pumpAndSettle();
-    expect(maker.calls, hasLength(1));
     expect(preview.playing.value, isFalse);
     final args = shared.single.arguments as Map;
     expect((args['paths'] as List).single, endsWith('.mp3'));
     expect((args['mimeTypes'] as List).single, 'audio/mpeg');
-  });
-
-  testWidgets('the piece cannot go past the end of the song', (tester) async {
-    await open(tester);
-    for (var i = 0; i < 40; i++) {
-      await tester.tap(find.byTooltip('5 seconds later'));
-    }
-    await tester.pumpAndSettle();
-    expect(find.text('2:35 – 3:05'), findsOneWidget);
+    expect(loader.calls, 1, reason: 'the song is downloaded once');
   });
 
   testWidgets('nothing is shared when copyright is not accepted', (
@@ -175,33 +181,81 @@ void main() {
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
     expect(shared, isEmpty);
-    expect(maker.calls, isEmpty);
-    // Asked again next time.
     await tester.tap(find.text('Share clip'));
     await tester.pumpAndSettle();
     expect(find.text('I understand'), findsOneWidget);
   });
 
-  testWidgets('a story video joins the card picture and the clip', (
-    tester,
-  ) async {
+  testWidgets('the piece cannot go past the end of the song', (tester) async {
     await open(tester);
+    for (var i = 0; i < 20; i++) {
+      await tester.tap(find.byTooltip('5 seconds later'));
+    }
+    await tester.pumpAndSettle();
+    // The fake song is a few milliseconds shorter than 3:05.
+    expect(find.text('2:35 – 3:04 · 29 s'), findsOneWidget);
+  });
+
+  testWidgets('a story video without lyrics is one picture', (tester) async {
+    await open(tester);
+    expect(
+      tester
+          .widget<SwitchListTile>(
+            find.widgetWithText(SwitchListTile, 'Show the lyrics on the story'),
+          )
+          .onChanged,
+      isNull,
+      reason: 'no synced lyrics',
+    );
     await tester.runAsync(() async {
       await tester.tap(find.text('Story video (picture + song)'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('I understand'));
-      // Rendering the card happens outside the fake clock.
       for (var i = 0; i < 50 && shared.isEmpty; i++) {
         await Future<void>.delayed(const Duration(milliseconds: 50));
         await tester.pump();
       }
     });
-    final (image, audio, name) = video.calls.single;
-    expect(image, endsWith('.png'));
+    final (pictures, audio, name) = video.calls.single;
+    expect(pictures.single.$2, Duration.zero);
+    expect(pictures.single.$1.path, endsWith('.png'));
     expect(audio, endsWith('Sezen - Firuze.mp3'));
     expect(name, 'Sezen - Firuze');
     final args = shared.single.arguments as Map;
-    expect((args['paths'] as List).single, endsWith('Sezen - Firuze.mp4'));
     expect((args['mimeTypes'] as List).single, 'video/mp4');
+  });
+
+  testWidgets('lyrics are optional, can be retimed and change in the video', (
+    tester,
+  ) async {
+    await open(tester, songLyrics: lyrics);
+    expect(find.text('Firuze', skipOffstage: false), findsWidgets);
+    expect(find.text('Gül yüzlüm'), findsNothing, reason: 'off by default');
+
+    await tester.tap(find.text('Show the lyrics on the story'));
+    await tester.pumpAndSettle();
+    // The piece starts at 1:40, during the first line.
+    expect(find.text('Gül yüzlüm'), findsOneWidget);
+    expect(find.text('Timing: 0.00 s'), findsOneWidget);
+    await tester.tap(find.byTooltip('Show later'));
+    await tester.pumpAndSettle();
+    expect(find.text('Timing: +0.25 s'), findsOneWidget);
+
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Story video (picture + song)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('I understand'));
+      for (var i = 0; i < 80 && shared.isEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
+      }
+    });
+    final (pictures, _, _) = video.calls.single;
+    expect(pictures.map((p) => p.$2), const [
+      Duration.zero,
+      Duration(milliseconds: 5250),
+      Duration(milliseconds: 15250),
+    ]);
+    expect(pictures.map((p) => p.$1.path).toSet(), hasLength(3));
   });
 }

@@ -47,16 +47,17 @@ class MainActivity : AudioServiceActivity() {
                     result.notImplemented()
                     return@setMethodCallHandler
                 }
-                val image = call.argument<String>("image")
+                val images = call.argument<List<String>>("images")
+                val times = call.argument<List<Number>>("times")?.map { it.toLong() }
                 val audio = call.argument<String>("audio")
                 val out = call.argument<String>("out")
-                if (image == null || audio == null || out == null) {
-                    result.error("args", "image, audio and out are required", null)
+                if (images == null || times == null || audio == null || out == null) {
+                    result.error("args", "images, times, audio and out are required", null)
                     return@setMethodCallHandler
                 }
                 // Encoding takes seconds: off the main thread.
                 Thread {
-                    val made = runCatching { StoryVideo.make(image, audio, out) }
+                    val made = runCatching { StoryVideo.make(images, times, audio, out) }
                     android.os.Handler(android.os.Looper.getMainLooper()).post {
                         made.fold(
                             { result.success(out) },

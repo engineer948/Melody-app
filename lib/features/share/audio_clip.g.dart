@@ -8,51 +8,52 @@ part of 'audio_clip.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The clip maker in use.
+/// The song loader in use.
 
-@ProviderFor(clipMaker)
-final clipMakerProvider = ClipMakerProvider._();
+@ProviderFor(songAudioLoader)
+final songAudioLoaderProvider = SongAudioLoaderProvider._();
 
-/// The clip maker in use.
+/// The song loader in use.
 
-final class ClipMakerProvider
-    extends $FunctionalProvider<ClipMaker, ClipMaker, ClipMaker>
-    with $Provider<ClipMaker> {
-  /// The clip maker in use.
-  ClipMakerProvider._()
+final class SongAudioLoaderProvider
+    extends
+        $FunctionalProvider<SongAudioLoader, SongAudioLoader, SongAudioLoader>
+    with $Provider<SongAudioLoader> {
+  /// The song loader in use.
+  SongAudioLoaderProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'clipMakerProvider',
+        name: r'songAudioLoaderProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$clipMakerHash();
+  String debugGetCreateSourceHash() => _$songAudioLoaderHash();
 
   @$internal
   @override
-  $ProviderElement<ClipMaker> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<SongAudioLoader> $createElement($ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  ClipMaker create(Ref ref) {
-    return clipMaker(ref);
+  SongAudioLoader create(Ref ref) {
+    return songAudioLoader(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ClipMaker value) {
+  Override overrideWithValue(SongAudioLoader value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<ClipMaker>(value),
+      providerOverride: $SyncValueProvider<SongAudioLoader>(value),
     );
   }
 }
 
-String _$clipMakerHash() => r'0036a6e1df02624447f894d67932cd9c6f6ec3c9';
+String _$songAudioLoaderHash() => r'19a6e4f2c2819d87df7395be0feb64bbe3a18d40';
 
 /// The story video maker in use.
 

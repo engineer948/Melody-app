@@ -18,7 +18,7 @@ Future<ProviderContainer> _openSettings(
     tester,
     preferences: preferences,
     systemSeed: systemSeed,
-    size: const Size(400, 5000),
+    size: const Size(400, 6000),
   );
   await tester.tap(
     find.byTooltip(preferences.containsValue('tr') ? 'Ayarlar' : 'Settings'),

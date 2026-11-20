@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +15,9 @@ import 'package:melody/core/utils/formatters.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/domain/share/mp3_clip.dart';
+import 'package:melody/domain/share/story_lyrics.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/lyrics/lyrics_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:path_provider/path_provider.dart';
@@ -25,81 +28,50 @@ part 'audio_clip.g.dart';
 
 const _log = AppLogger('clip');
 
-/// Makes MP3 files of a piece of a song; replaced by a fake in tests.
-abstract interface class ClipMaker {
-  /// Cuts [length] of [track] from [start] and saves it as an MP3 file.
-  ///
-  /// Throws [UnsupportedFailure] when [source] cannot provide MP3.
-  Future<File> make(
-    MusicSource source,
-    Track track,
-    Duration start,
-    Duration length,
-  );
+/// Downloads a whole song as MP3; replaced by a fake in tests.
+abstract interface class SongAudioLoader {
+  /// The MP3 of [track]. Throws [UnsupportedFailure] when [source] cannot
+  /// provide MP3.
+  Future<Uint8List> load(MusicSource source, Track track);
 }
 
-/// [ClipMaker] that streams the MP3 from the server and stops downloading
-/// as soon as the piece is complete.
-class HttpClipMaker implements ClipMaker {
-  /// Creates the maker.
-  HttpClipMaker([Dio? dio])
+/// [SongAudioLoader] over HTTP.
+class HttpSongAudioLoader implements SongAudioLoader {
+  /// Creates the loader.
+  HttpSongAudioLoader([Dio? dio])
     : _dio =
           dio ??
           Dio(
             BaseOptions(
               connectTimeout: const Duration(seconds: 15),
-              receiveTimeout: const Duration(seconds: 30),
+              receiveTimeout: const Duration(seconds: 60),
             ),
           );
 
   final Dio _dio;
 
   @override
-  Future<File> make(
-    MusicSource source,
-    Track track,
-    Duration start,
-    Duration length,
-  ) async {
-    final request = source.clipRequest(track, start);
+  Future<Uint8List> load(MusicSource source, Track track) async {
+    // From the start: the waveform and the loudest part need the whole
+    // song, and every piece is then cut on the phone without waiting.
+    final request = source.clipRequest(track, Duration.zero);
     if (request == null) throw const UnsupportedFailure();
-    final clipper = Mp3Clipper(length: length, skip: request.skip);
-    final cancel = CancelToken();
-    try {
-      final response = await _dio.getUri<ResponseBody>(
-        request.uri,
-        cancelToken: cancel,
-        options: Options(
-          responseType: ResponseType.stream,
-          headers: source.requestHeaders,
-        ),
-      );
-      await for (final chunk in response.data!.stream) {
-        if (clipper.add(chunk)) break;
-      }
-    } on DioException catch (e) {
-      if (!CancelToken.isCancel(e)) rethrow;
-    } finally {
-      if (!cancel.isCancelled) cancel.cancel();
-    }
-    // A song that ends early still makes a (shorter) clip.
-    if (clipper.kept < const Duration(seconds: 1)) {
-      throw const ParsingFailure();
-    }
-    final dir = Directory('${(await getTemporaryDirectory()).path}/share');
-    await dir.create(recursive: true);
-    // Only the latest clip is kept.
-    for (final old in dir.listSync().whereType<File>()) {
-      if (old.path.endsWith('.mp3')) old.deleteSync();
-    }
-    final file = File('${dir.path}/${clipFileName(track)}');
-    final sink = file.openWrite()
-      ..add(id3Tag(title: track.title, artist: track.artistLine))
-      ..add(clipper.takeBytes());
-    await sink.close();
-    return file;
+    final response = await _dio.getUri<List<int>>(
+      request.uri,
+      options: Options(
+        responseType: ResponseType.bytes,
+        headers: source.requestHeaders,
+      ),
+    );
+    final data = response.data;
+    if (data == null || data.isEmpty) throw const ParsingFailure();
+    return data is Uint8List ? data : Uint8List.fromList(data);
   }
 }
+
+/// The song loader in use.
+@Riverpod(keepAlive: true)
+SongAudioLoader songAudioLoader(Ref ref) => HttpSongAudioLoader();
 
 /// File name of a shared clip: "Artist - Title.mp3".
 String clipFileName(Track track) {
@@ -115,18 +87,29 @@ String clipFileName(Track track) {
   return '${short.isEmpty ? 'clip' : short}.mp3';
 }
 
-/// The clip maker in use.
-@Riverpod(keepAlive: true)
-ClipMaker clipMaker(Ref ref) => HttpClipMaker();
+/// Saves [mp3] with an ID3 title and artist as the shared clip file; only
+/// the latest clip is kept.
+Future<File> writeClipFile(Track track, Uint8List mp3) async {
+  final dir = Directory('${(await getTemporaryDirectory()).path}/clip');
+  if (dir.existsSync()) dir.deleteSync(recursive: true);
+  dir.createSync(recursive: true);
+  final file = File('${dir.path}/${clipFileName(track)}');
+  final sink = file.openWrite()
+    ..add(id3Tag(title: track.title, artist: track.artistLine))
+    ..add(mp3);
+  await sink.close();
+  return file;
+}
 
-/// Turns the story picture and a clip into an MP4; replaced in tests.
+/// Turns story pictures and a clip into an MP4; replaced in tests.
 abstract interface class StoryVideoMaker {
   /// Whether this device can make videos.
   bool get supported;
 
-  /// Writes a video of [image] with [audio] under it, named after [name].
+  /// Writes a video named after [name]: each picture is shown from its
+  /// time on (the first at 0), with [audio] under it.
   Future<File> make({
-    required File image,
+    required List<(File, Duration)> pictures,
     required File audio,
     required String name,
   });
@@ -141,7 +124,7 @@ class ChannelStoryVideoMaker implements StoryVideoMaker {
 
   @override
   Future<File> make({
-    required File image,
+    required List<(File, Duration)> pictures,
     required File audio,
     required String name,
   }) async {
@@ -151,7 +134,8 @@ class ChannelStoryVideoMaker implements StoryVideoMaker {
     dir.createSync(recursive: true);
     final out = '${dir.path}/$name.mp4';
     await _channel.invokeMethod<String>('make', {
-      'image': image.path,
+      'images': [for (final (file, _) in pictures) file.path],
+      'times': [for (final (_, at) in pictures) at.inMicroseconds],
       'audio': audio.path,
       'out': out,
     });
@@ -219,41 +203,62 @@ ClipPreview clipPreview(Ref ref) {
   return preview;
 }
 
-/// Lengths a clip can have.
-const clipLengths = [
-  Duration(seconds: 15),
-  Duration(seconds: 30),
-  Duration(seconds: 60),
-];
+/// Shortest and longest clip.
+const minClip = Duration(seconds: 5);
 
-/// Picks a piece of [track], plays it and shares it as an MP3 file.
+/// See [minClip].
+const maxClip = Duration(seconds: 60);
+
+/// Length chosen at first.
+const defaultClip = Duration(seconds: 30);
+
+/// Fade lengths when "smooth start and end" is on.
+const clipFadeIn = Duration(seconds: 1);
+
+/// See [clipFadeIn].
+const clipFadeOut = Duration(milliseconds: 1500);
+
+/// Picks a piece of [track], plays it and shares it as an MP3 file or, with
+/// [renderPictures], as a story video.
 class AudioClipPanel extends ConsumerStatefulWidget {
   /// Creates the panel.
-  const AudioClipPanel({required this.track, this.renderCard, super.key});
+  const AudioClipPanel({
+    required this.track,
+    this.renderPictures,
+    this.onCardLyrics,
+    super.key,
+  });
 
   /// Song to cut.
   final Track track;
 
-  /// Renders the story picture for a video; `null` while it is loading.
-  final Future<File> Function()? renderCard;
+  /// Renders the story picture once for each lyrics state; `null` while
+  /// the picture is loading.
+  final Future<List<(File, Duration)>> Function(List<LyricFrame> frames)?
+  renderPictures;
+
+  /// Tells the story card which lyrics to show (`null`: none).
+  final ValueChanged<LyricFrame?>? onCardLyrics;
 
   @override
   ConsumerState<AudioClipPanel> createState() => _AudioClipPanelState();
 }
 
 class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
-  late Duration _length;
-  late Duration _start;
-  ({Duration start, Duration length, File file})? _made;
+  Mp3Song? _song;
+  List<double> _wave = const [];
+  Object? _loadError;
+  Duration _start = Duration.zero;
+  Duration _end = defaultClip;
+  bool _fade = true;
+  bool _lyrics = false;
+  ({Duration start, Duration end, bool fade, File file})? _made;
   bool _busy = false;
   bool _makingVideo = false;
+  LyricFrame? _sentLyrics;
 
-  Duration get _duration => widget.track.duration ?? Duration.zero;
-
-  Duration get _maxStart {
-    final max = _duration - _length;
-    return max.isNegative ? Duration.zero : max;
-  }
+  Duration get _duration => _song?.duration ?? Duration.zero;
+  Duration get _length => _end - _start;
 
   /// Where the song is now, when it is the one playing.
   Duration? get _playingAt {
@@ -265,40 +270,107 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
   @override
   void initState() {
     super.initState();
-    _length = clipLengths[1];
-    if (_duration < _length) _length = _duration;
-    // From where it is playing, or about a third in (often the chorus).
-    _start = _clamp(_playingAt ?? _duration * 0.3);
+    unawaited(_load());
   }
 
-  Duration _clamp(Duration d) =>
-      Duration(seconds: d.inSeconds.clamp(0, _maxStart.inSeconds));
+  Future<void> _load() async {
+    final source = ref.read(activeSourceProvider);
+    setState(() => _loadError = null);
+    try {
+      if (source == null) throw const UnauthorizedFailure();
+      final bytes = await ref
+          .read(songAudioLoaderProvider)
+          .load(source, widget.track);
+      final song = Mp3Song.parse(bytes);
+      if (song.frames.isEmpty) throw const ParsingFailure();
+      if (!mounted) return;
+      setState(() {
+        _song = song;
+        _wave = song.waveform(96);
+        final at = _playingAt;
+        _place(at ?? song.loudestPart(defaultClip), defaultClip);
+      });
+    } on Object catch (e) {
+      _log.error('Song could not be loaded', e);
+      if (mounted) setState(() => _loadError = e);
+    }
+  }
+
+  /// Puts a piece of [length] at [start], kept inside the song.
+  void _place(Duration start, Duration length) {
+    final total = _duration;
+    final len = length > total ? total : length;
+    var from = start;
+    if (from + len > total) from = total - len;
+    if (from.isNegative) from = Duration.zero;
+    _start = Duration(milliseconds: (from.inMilliseconds / 100).round() * 100);
+    _end = _start + len;
+    if (_end > total) _end = total;
+  }
+
+  void _changed() {
+    unawaited(ref.read(clipPreviewProvider).stop());
+  }
+
+  void _move(Duration start) {
+    setState(() => _place(start, _length));
+    _changed();
+  }
+
+  void _setRange(RangeValues v) {
+    var start = Duration(milliseconds: (v.start * 1000).round());
+    var end = Duration(milliseconds: (v.end * 1000).round());
+    // Keep the length between the limits, moving the handle that moved.
+    final movedStart = start != _start;
+    if (end - start < minClip) {
+      if (movedStart) {
+        start = end - minClip;
+      } else {
+        end = start + minClip;
+      }
+    }
+    if (end - start > maxClip) {
+      if (movedStart) {
+        end = start + maxClip;
+      } else {
+        start = end - maxClip;
+      }
+    }
+    setState(() {
+      _start = start.isNegative ? Duration.zero : start;
+      _end = end > _duration ? _duration : end;
+    });
+    _changed();
+  }
 
   Future<File?> _file() async {
     final made = _made;
     if (made != null &&
         made.start == _start &&
-        made.length == _length &&
+        made.end == _end &&
+        made.fade == _fade &&
         made.file.existsSync()) {
       return made.file;
     }
-    final source = ref.read(activeSourceProvider);
-    if (source == null) return null;
+    final song = _song;
+    if (song == null) return null;
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
-    setState(() => _busy = true);
     try {
-      final file = await ref
-          .read(clipMakerProvider)
-          .make(source, widget.track, _start, _length);
-      _made = (start: _start, length: _length, file: file);
+      final bytes = song.cut(
+        _start,
+        _length,
+        fadeIn: _fade ? clipFadeIn : Duration.zero,
+        fadeOut: _fade ? clipFadeOut : Duration.zero,
+      );
+      if (bytes.isEmpty) throw const ParsingFailure();
+      final file = await writeClipFile(widget.track, bytes);
+      _made = (start: _start, end: _end, fade: _fade, file: file);
       return file;
     } on Object catch (e) {
       _log.error('Clip failed', e);
       messenger.showSnackBar(SnackBar(content: Text(l10n.clipFailed)));
       return null;
-    } finally {
-      if (mounted) setState(() => _busy = false);
     }
   }
 
@@ -310,18 +382,19 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
     }
     final file = await _file();
     if (file == null || !mounted) return;
-    final player = ref.read(playerControllerProvider);
-    if (player.playing) {
+    if (ref.read(playerControllerProvider).playing) {
       await ref.read(playerControllerProvider.notifier).pause();
     }
     await preview.play(file);
   }
 
-  Future<void> _share(BuildContext button) async {
+  Rect? _origin(BuildContext button) {
     final box = button.findRenderObject() as RenderBox?;
-    final origin = box == null
-        ? null
-        : box.localToGlobal(Offset.zero) & box.size;
+    return box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+  }
+
+  Future<void> _share(BuildContext button) async {
+    final origin = _origin(button);
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
     if (!await _confirmRights()) return;
@@ -342,13 +415,25 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
     }
   }
 
+  /// Lyrics states over the chosen piece, or one plain picture.
+  List<LyricFrame> _lyricFrames() {
+    final lyrics = _syncedLyrics;
+    if (!_lyrics || lyrics == null) {
+      return const [LyricFrame(at: Duration.zero)];
+    }
+    final frames = storyLyricFrames(
+      lyrics,
+      start: _start,
+      end: _end,
+      offset: _lyricsOffset,
+    );
+    return frames.isEmpty ? const [LyricFrame(at: Duration.zero)] : frames;
+  }
+
   Future<void> _shareVideo(BuildContext button) async {
-    final renderCard = widget.renderCard;
-    if (renderCard == null) return;
-    final box = button.findRenderObject() as RenderBox?;
-    final origin = box == null
-        ? null
-        : box.localToGlobal(Offset.zero) & box.size;
+    final render = widget.renderPictures;
+    if (render == null) return;
+    final origin = _origin(button);
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
     if (!await _confirmRights()) return;
@@ -357,10 +442,11 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
     await ref.read(clipPreviewProvider).stop();
     setState(() => _busy = _makingVideo = true);
     try {
+      final pictures = await render(_lyricFrames());
       final video = await ref
           .read(storyVideoMakerProvider)
           .make(
-            image: await renderCard(),
+            pictures: pictures,
             audio: clip,
             name: clipFileName(widget.track)
                 .replaceFirst(RegExp(r'\.mp3$'), ''),
@@ -412,88 +498,91 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
     return true;
   }
 
-  void _setStart(Duration start) {
-    setState(() => _start = _clamp(start));
-    unawaited(ref.read(clipPreviewProvider).stop());
+  Lyrics? get _syncedLyrics {
+    final lyrics = ref.read(trackLyricsProvider(widget.track)).value;
+    return lyrics != null && lyrics.synced && !lyrics.isEmpty ? lyrics : null;
+  }
+
+  Duration get _lyricsOffset =>
+      ref.read(lyricsSettingsControllerProvider).offsetOf(widget.track.id);
+
+  /// Shows the lyrics at the start of the piece on the story card.
+  void _sendCardLyrics() {
+    final callback = widget.onCardLyrics;
+    if (callback == null) return;
+    final first = _lyrics && _syncedLyrics != null
+        ? _lyricFrames().first
+        : null;
+    if (first == _sentLyrics) return;
+    _sentLyrics = first;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) callback(first);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final supported =
-        _duration > Duration.zero &&
-        ref.watch(activeSourceProvider)?.clipRequest(widget.track, _start) !=
-            null;
-    if (!supported) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Text(
-            l10n.clipUnsupported,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
+    if (ref
+            .watch(activeSourceProvider)
+            ?.clipRequest(widget.track, Duration.zero) ==
+        null) {
+      return _Message(text: l10n.clipUnsupported);
+    }
+    if (_loadError != null) {
+      return _Message(
+        text: l10n.clipFailed,
+        action: TextButton(onPressed: _load, child: Text(l10n.retry)),
       );
     }
+    final song = _song;
+    if (song == null) {
+      return _Message(text: l10n.clipLoading, busy: true);
+    }
+    final lyrics = ref.watch(trackLyricsProvider(widget.track)).value;
+    final synced = lyrics != null && lyrics.synced && !lyrics.isEmpty;
+    final offset = ref.watch(
+      lyricsSettingsControllerProvider.select(
+        (s) => s.offsetOf(widget.track.id),
+      ),
+    );
+    _sendCardLyrics();
     final preview = ref.watch(clipPreviewProvider);
-    final end = _start + _length > _duration ? _duration : _start + _length;
     final playingAt = _playingAt;
+    final totalSeconds = max(1, _duration.inMilliseconds) / 1000;
+    final canVideo =
+        widget.renderPictures != null &&
+        ref.watch(storyVideoMakerProvider).supported;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       children: [
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: const Icon(Icons.graphic_eq_rounded),
-          title: Text(
-            widget.track.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            widget.track.artistLine,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(l10n.clipLength, style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
-        SegmentedButton<Duration>(
-          segments: [
-            for (final d in clipLengths)
-              ButtonSegment(
-                value: d,
-                enabled: d <= _duration,
-                label: Text(l10n.clipSeconds(d.inSeconds)),
-              ),
-          ],
-          selected: {_length},
-          showSelectedIcon: false,
-          onSelectionChanged: (s) {
-            _length = s.first;
-            _setStart(_start);
-          },
-        ),
-        const SizedBox(height: 24),
-        Text(l10n.clipPart, style: theme.textTheme.titleSmall),
-        _ClipBar(
+        _Waveform(
+          wave: _wave,
           duration: _duration,
           start: _start,
-          end: end,
-          onChanged: _setStart,
+          end: _end,
+          onMove: _move,
+        ),
+        RangeSlider(
+          values: RangeValues(
+            _start.inMilliseconds / 1000,
+            _end.inMilliseconds / 1000,
+          ),
+          max: totalSeconds,
+          onChanged: _setRange,
         ),
         Row(
           children: [
             IconButton(
               tooltip: l10n.clipEarlier,
               icon: const Icon(Icons.replay_5_rounded),
-              onPressed: () => _setStart(_start - const Duration(seconds: 5)),
+              onPressed: () => _move(_start - const Duration(seconds: 5)),
             ),
             Expanded(
               child: Text(
-                '${formatDuration(_start)} – ${formatDuration(end)}',
+                '${formatDuration(_start)} – ${formatDuration(_end)}'
+                ' · ${l10n.clipSeconds(_length.inSeconds)}',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontFeatures: const [FontFeature.tabularFigures()],
@@ -503,19 +592,86 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
             IconButton(
               tooltip: l10n.clipLater,
               icon: const Icon(Icons.forward_5_rounded),
-              onPressed: () => _setStart(_start + const Duration(seconds: 5)),
+              onPressed: () => _move(_start + const Duration(seconds: 5)),
             ),
           ],
         ),
-        if (playingAt != null)
-          Center(
-            child: TextButton.icon(
-              onPressed: () => _setStart(playingAt),
-              icon: const Icon(Icons.my_location_rounded),
-              label: Text(l10n.clipFromNow),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 8,
+          children: [
+            ActionChip(
+              avatar: const Icon(Icons.auto_awesome_rounded, size: 18),
+              label: Text(l10n.clipBestPart),
+              onPressed: () => _move(song.loudestPart(_length)),
             ),
+            if (playingAt != null)
+              ActionChip(
+                avatar: const Icon(Icons.my_location_rounded, size: 18),
+                label: Text(l10n.clipFromNow),
+                onPressed: () => _move(playingAt),
+              ),
+          ],
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(l10n.clipFade),
+          value: _fade,
+          onChanged: (v) {
+            setState(() => _fade = v);
+            _changed();
+          },
+        ),
+        if (widget.renderPictures != null) ...[
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.clipLyrics),
+            subtitle: synced ? null : Text(l10n.clipLyricsNone),
+            value: _lyrics && synced,
+            onChanged: synced ? (v) => setState(() => _lyrics = v) : null,
           ),
-        const SizedBox(height: 16),
+          if (_lyrics && synced)
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.clipLyricsTiming,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+                IconButton(
+                  tooltip: l10n.lyricsEarlier,
+                  icon: const Icon(Icons.remove_rounded),
+                  onPressed: () => ref
+                      .read(lyricsSettingsControllerProvider.notifier)
+                      .shift(
+                        widget.track.id,
+                        const Duration(milliseconds: -250),
+                      ),
+                ),
+                Text(
+                  l10n.lyricsOffset(
+                    '${offset.isNegative || offset == Duration.zero ? '' : '+'}'
+                    '${(offset.inMilliseconds / 1000).toStringAsFixed(2)}',
+                  ),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+                IconButton(
+                  tooltip: l10n.lyricsLater,
+                  icon: const Icon(Icons.add_rounded),
+                  onPressed: () => ref
+                      .read(lyricsSettingsControllerProvider.notifier)
+                      .shift(
+                        widget.track.id,
+                        const Duration(milliseconds: 250),
+                      ),
+                ),
+              ],
+            ),
+        ],
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -535,20 +691,14 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
               child: Builder(
                 builder: (button) => FilledButton.icon(
                   onPressed: _busy ? null : () => unawaited(_share(button)),
-                  icon: _busy
-                      ? const SizedBox.square(
-                          dimension: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.send_rounded),
+                  icon: const Icon(Icons.send_rounded),
                   label: Text(l10n.clipShare),
                 ),
               ),
             ),
           ],
         ),
-        if (widget.renderCard != null &&
-            ref.watch(storyVideoMakerProvider).supported) ...[
+        if (canVideo) ...[
           const SizedBox(height: 12),
           Builder(
             builder: (button) => FilledButton.tonalIcon(
@@ -585,31 +735,63 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
   }
 }
 
-/// The whole song as a bar with the chosen piece highlighted; dragging or
+class _Message extends StatelessWidget {
+  const _Message({required this.text, this.action, this.busy = false});
+
+  final String text;
+  final Widget? action;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (busy) ...[
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+          ],
+          Text(
+            text,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          ?action,
+        ],
+      ),
+    ),
+  );
+}
+
+/// The song's loudness with the chosen piece highlighted; dragging or
 /// tapping moves the piece.
-class _ClipBar extends StatelessWidget {
-  const _ClipBar({
+class _Waveform extends StatelessWidget {
+  const _Waveform({
+    required this.wave,
     required this.duration,
     required this.start,
     required this.end,
-    required this.onChanged,
+    required this.onMove,
   });
 
+  final List<double> wave;
   final Duration duration;
   final Duration start;
   final Duration end;
-  final ValueChanged<Duration> onChanged;
+  final ValueChanged<Duration> onMove;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final total = duration.inMilliseconds.toDouble();
+    final total = max(1, duration.inMilliseconds).toDouble();
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         final piece = (end - start).inMilliseconds;
         // The finger holds the middle of the piece.
-        void move(double dx) => onChanged(
+        void move(double dx) => onMove(
           Duration(milliseconds: (dx / width * total - piece / 2).round()),
         );
         final left = start.inMilliseconds / total * width;
@@ -622,38 +804,40 @@ class _ClipBar extends StatelessWidget {
             onTapDown: (d) => move(d.localPosition.dx),
             onHorizontalDragUpdate: (d) => move(d.localPosition.dx),
             child: SizedBox(
-              height: 56,
+              height: 72,
               child: Stack(
-                alignment: Alignment.centerLeft,
                 children: [
-                  // A fake waveform, so it reads as "sound".
-                  Row(
-                    children: [
-                      for (var i = 0; i < 48; i++)
-                        Expanded(
-                          child: Center(
-                            child: Container(
-                              width: 3,
-                              height: 10 + 26 * ((i * 37 % 11) / 10),
-                              decoration: BoxDecoration(
-                                color: scheme.onSurfaceVariant.withValues(
-                                  alpha: 0.35,
+                  Positioned.fill(
+                    child: Row(
+                      children: [
+                        for (var i = 0; i < wave.length; i++)
+                          Expanded(
+                            child: Center(
+                              child: Container(
+                                width: 2.5,
+                                height: 6 + 54 * wave[i],
+                                decoration: BoxDecoration(
+                                  color: _inside(i)
+                                      ? scheme.primary
+                                      : scheme.onSurfaceVariant.withValues(
+                                          alpha: 0.35,
+                                        ),
+                                  borderRadius: BorderRadius.circular(2),
                                 ),
-                                borderRadius: BorderRadius.circular(2),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                   Positioned(
                     left: left,
                     width: (right - left).clamp(4, width),
-                    top: 4,
-                    bottom: 4,
+                    top: 2,
+                    bottom: 2,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: scheme.primary.withValues(alpha: 0.25),
+                        color: scheme.primary.withValues(alpha: 0.12),
                         border: Border.all(color: scheme.primary, width: 2),
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -666,5 +850,11 @@ class _ClipBar extends StatelessWidget {
         );
       },
     );
+  }
+
+  bool _inside(int bar) {
+    if (wave.isEmpty) return false;
+    final at = duration * ((bar + 0.5) / wave.length);
+    return at >= start && at <= end;
   }
 }

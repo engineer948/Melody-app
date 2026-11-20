@@ -1,0 +1,6 @@
+Daha yaxşı səs parçaları və ayar nüsxəsi.
+- Real səs dalğası; "Ən yaxşı hissə" ən gur hissəyə (adətən nəqarət) keçir
+- 5–60 saniyə arası istədiyin uzunluq: ucları sürüşdür
+- Yumşaq giriş və çıxış
+- Hekayə videosunda istəyə bağlı zamanlı sözlər, zamanlama ayarı ilə
+- Ayarlar → Ehtiyat nüsxə: ayarları, ağıllı siyahıları və serverləri fayla saxla, yeni telefonda bərpa et

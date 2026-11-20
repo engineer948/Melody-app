@@ -12,6 +12,7 @@ import 'package:melody/features/settings/widgets/account_section.dart';
 import 'package:melody/features/settings/widgets/android_auto_section.dart';
 import 'package:melody/features/settings/widgets/appearance_section.dart';
 import 'package:melody/features/settings/widgets/auto_dj_section.dart';
+import 'package:melody/features/settings/widgets/backup_section.dart';
 import 'package:melody/features/settings/widgets/downloads_section.dart';
 import 'package:melody/features/settings/widgets/language_section.dart';
 import 'package:melody/features/settings/widgets/media_sections.dart';
@@ -60,6 +61,8 @@ class SettingsScreen extends ConsumerWidget {
             SectionHeader(l10n.settingsAndroidAuto),
             const AndroidAutoSection(),
           ],
+          SectionHeader(l10n.backupSection),
+          const BackupSection(),
           SectionHeader(l10n.settingsPrivacy),
           const PrivacySection(),
           SectionHeader(l10n.settingsLanguage),

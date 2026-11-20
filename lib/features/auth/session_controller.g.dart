@@ -286,7 +286,7 @@ final class SessionControllerProvider
   }
 }
 
-String _$sessionControllerHash() => r'3591ef4358302d27972181fef9c1b7e8abd7a32c';
+String _$sessionControllerHash() => r'1530251413f03786b6e56ad4ea2bf2401c3fd107';
 
 /// Owns the list of accounts and the active one.
 

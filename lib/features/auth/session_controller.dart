@@ -135,6 +135,29 @@ class SessionController extends _$SessionController {
     await _setActive(account.id);
   }
 
+  /// Adds servers from a settings backup that are not saved yet. They have
+  /// no token, so each asks to sign in again when chosen. Returns how many
+  /// were added.
+  Future<int> addFromBackup(List<ServerAccount> accounts) async {
+    final known = {for (final a in state.accounts) a.id};
+    final added = [
+      for (final a in accounts)
+        if (!known.contains(a.id)) a,
+    ];
+    if (added.isEmpty) return 0;
+    for (final account in added) {
+      await _store.save(account);
+    }
+    final activeId = state.activeId ?? added.first.id;
+    state = SessionState(
+      accounts: [...state.accounts, ...added],
+      tokens: state.tokens,
+      activeId: activeId,
+    );
+    await _setActive(activeId);
+    return added.length;
+  }
+
   /// Makes [accountId] the active account.
   Future<void> switchTo(String accountId) async {
     if (!state.accounts.any((a) => a.id == accountId)) return;

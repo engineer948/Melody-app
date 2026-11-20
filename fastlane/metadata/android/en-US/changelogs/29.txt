@@ -1,0 +1,6 @@
+Better song clips and settings backup.
+- Real waveform; "Best part" jumps to the loudest part (usually the chorus)
+- Any length from 5 to 60 seconds: drag the ends
+- Smooth start and end
+- Optional synced lyrics on the story video, with timing control
+- Settings → Backup: save settings, smart playlists and servers to a file and restore them on a new phone

@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/logging/app_logger.dart';
+import 'package:melody/domain/share/story_lyrics.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/share/audio_clip.dart';
@@ -70,6 +71,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   /// Whether a piece of the song is shared instead of the image.
   bool _sound = false;
 
+  /// Lyrics shown on the card (sound clips only).
+  LyricFrame? _cardLyrics;
+
   @override
   void initState() {
     super.initState();
@@ -112,9 +116,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
     if (mounted) setState(() => _ready = true);
   }
 
-  /// Renders the card to a PNG in the temporary folder [folder]; only the
-  /// latest file of each folder is kept.
-  Future<File> _renderPng({String folder = 'share'}) async {
+  /// Renders the card to a PNG in the temporary folder [folder]; the
+  /// folder is emptied first unless [keep] is set.
+  Future<File> _renderPng({String folder = 'share', bool keep = false}) async {
     final boundary =
         _cardKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(
@@ -123,12 +127,35 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
     image.dispose();
     final dir = Directory('${(await getTemporaryDirectory()).path}/$folder');
-    if (dir.existsSync()) dir.deleteSync(recursive: true);
+    if (!keep && dir.existsSync()) dir.deleteSync(recursive: true);
     dir.createSync(recursive: true);
-    final stamp = DateTime.now().millisecondsSinceEpoch;
+    final stamp = DateTime.now().microsecondsSinceEpoch;
     final file = File('${dir.path}/melody-$stamp.png');
     await file.writeAsBytes(data!.buffer.asUint8List(), flush: true);
     return file;
+  }
+
+  /// Renders the card once for each lyrics state, for a story video.
+  Future<List<(File, Duration)>> _renderPictures(
+    List<LyricFrame> frames,
+  ) async {
+    final shown = _cardLyrics;
+    final pictures = <(File, Duration)>[];
+    try {
+      for (final (i, frame) in frames.indexed) {
+        setState(
+          () => _cardLyrics = frame.line == null && frame.next == null
+              ? null
+              : frame,
+        );
+        await WidgetsBinding.instance.endOfFrame;
+        final file = await _renderPng(folder: 'story', keep: i > 0);
+        pictures.add((file, frame.at));
+      }
+    } finally {
+      if (mounted) setState(() => _cardLyrics = shown);
+    }
+    return pictures;
   }
 
   Rect? _origin(BuildContext context) {
@@ -189,6 +216,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                           image: _image,
                           palette: _palette,
                           background: _background,
+                          lyrics: _sound ? _cardLyrics : null,
                         )
                       : const ColoredBox(
                           color: Color(0xFF121212),
@@ -252,7 +280,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
               Expanded(
                 child: AudioClipPanel(
                   track: track,
-                  renderCard: _ready ? () => _renderPng(folder: 'story') : null,
+                  renderPictures: _ready ? _renderPictures : null,
+                  onCardLyrics: (lyrics) =>
+                      setState(() => _cardLyrics = lyrics),
                 ),
               ),
             ] else ...[
@@ -338,11 +368,15 @@ class ShareCard extends StatelessWidget {
     required this.background,
     this.image,
     this.palette,
+    this.lyrics,
     super.key,
   });
 
   /// What is shown.
   final ShareSubject subject;
+
+  /// Song lines shown under the title, if any.
+  final LyricFrame? lyrics;
 
   /// Loaded cover, or `null` for a placeholder.
   final ImageProvider? image;
@@ -398,7 +432,12 @@ class ShareCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = this.image;
-    const coverSize = 180.0;
+    final lyrics = this.lyrics;
+    final line = lyrics?.line;
+    final next = lyrics?.next;
+    final hasLyrics = line != null || next != null;
+    // Smaller cover to make room for the lyrics.
+    final coverSize = hasLyrics ? 132.0 : 180.0;
     final placeholder = ColoredBox(
       color: const Color(0xFF2A2A2A),
       child: Icon(
@@ -483,6 +522,32 @@ class ShareCard extends StatelessWidget {
                         color: Colors.white70,
                       ),
                     ),
+                  ],
+                  if (hasLyrics) ...[
+                    const SizedBox(height: 20),
+                    Text(
+                      line ?? '♪',
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.3,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (next != null) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        next,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          height: 1.3,
+                          color: Colors.white54,
+                        ),
+                      ),
+                    ],
                   ],
                   const Spacer(),
                   const Row(

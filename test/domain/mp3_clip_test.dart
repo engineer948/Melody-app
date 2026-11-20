@@ -1,80 +1,63 @@
-import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:melody/domain/share/mp3_clip.dart';
 
-/// MPEG-1 Layer III, 128 kbps, 44.1 kHz: 417 bytes and ~26.1 ms a frame.
-const frameBytes = 417;
-const int frameUs = 1152 * 1000000 ~/ 44100;
-
-Uint8List frame(int marker, {bool info = false}) {
-  final f = Uint8List(frameBytes)
-    ..[0] = 0xFF
-    ..[1] = 0xFB
-    ..[2] = 0x90
-    ..[3] = 0x00
-    ..[4] = marker;
-  if (info) f.setAll(36, 'Info'.codeUnits);
-  return f;
-}
-
-Uint8List song(int frames) {
-  final b = BytesBuilder()
-    ..add(id3Tag(title: 'Firuze', artist: 'Sezen Aksu'))
-    ..add(frame(255, info: true));
-  for (var i = 0; i < frames; i++) {
-    b.add(frame(i % 200));
-    // Some junk between frames must be skipped.
-    if (i == 5) b.add([0x00, 0xFF, 0x12]);
-  }
-  return b.takeBytes();
-}
-
-void feed(Mp3Clipper clipper, Uint8List bytes, Random random) {
-  var p = 0;
-  while (p < bytes.length && !clipper.isDone) {
-    final n = min(1 + random.nextInt(3000), bytes.length - p);
-    clipper.add(Uint8List.sublistView(bytes, p, p + n));
-    p += n;
-  }
-}
+import '../helpers/fake_mp3.dart';
 
 void main() {
-  test('keeps whole frames from the skip point for the wanted length', () {
-    for (final seed in [1, 2, 3]) {
-      final clipper = Mp3Clipper(
-        skip: const Duration(seconds: 1),
-        length: const Duration(seconds: 2),
-      );
-      feed(clipper, song(400), Random(seed));
-      expect(clipper.isDone, isTrue);
-      final out = clipper.takeBytes();
-      // First kept frame starts at or after 1 s; enough frames for 2 s.
-      final first = (1000000 / frameUs).ceil();
-      final count = (2000000 / frameUs).ceil();
-      expect(out.length, count * frameBytes);
-      expect(out[4], first % 200);
-      for (var i = 0; i < count; i++) {
-        expect(out[i * frameBytes], 0xFF);
-        expect(out[i * frameBytes + 4], (first + i) % 200);
-      }
-    }
+  test('frames are found past the tag, the Info frame and junk', () {
+    final song = Mp3Song.parse(fakeSong(List.filled(100, 160)));
+    expect(song.frames, hasLength(100));
+    expect(song.frames.first.loudness, 160);
+    expect(song.bytes[song.frames.first.offset + 200], 0, reason: 'frame 0');
+    expect(song.duration, const Duration(microseconds: 100 * fakeFrameUs));
   });
 
-  test('drops the ID3 tag and the Info frame of the original file', () {
-    final clipper = Mp3Clipper(length: const Duration(milliseconds: 100))
-      ..add(song(10));
-    final out = clipper.takeBytes();
-    expect(out[0], 0xFF);
-    expect(out[4], 0); // Frame 0, not the Info frame (marker 255).
+  test('the waveform follows the loudness', () {
+    final song = Mp3Song.parse(fakeSongWithChorus());
+    final wave = song.waveform(37); // 5 s per bar
+    expect(wave[0], lessThan(0.1));
+    expect(wave[22], greaterThan(0.9)); // 110 s
+    expect(wave[30], lessThan(0.1)); // 150 s
   });
 
-  test('a song shorter than the clip gives what there is', () {
-    final clipper = Mp3Clipper(length: const Duration(seconds: 30))
-      ..add(song(20));
-    expect(clipper.isDone, isFalse);
-    expect(clipper.kept, const Duration(microseconds: 20 * frameUs));
+  test('the best part is the loud one, away from the edges', () {
+    final song = Mp3Song.parse(fakeSongWithChorus());
+    final start = song.loudestPart(const Duration(seconds: 20));
+    expect(start.inSeconds, inInclusiveRange(99, 110));
+
+    // Loudest at the very start: the first 8 seconds are avoided.
+    final intro = Mp3Song.parse(fakeSongWithChorus(loudFrom: 0, loudFor: 20));
+    expect(
+      intro.loudestPart(const Duration(seconds: 10)).inMilliseconds,
+      greaterThanOrEqualTo(8000),
+    );
+
+    // A piece longer than the song starts at 0.
+    final short = Mp3Song.parse(fakeSong(List.filled(50, 160)));
+    expect(short.loudestPart(const Duration(seconds: 30)), Duration.zero);
+  });
+
+  test('a cut keeps whole frames and fades in and out', () {
+    final gains = [for (var i = 0; i < 400; i++) 180];
+    final song = Mp3Song.parse(fakeSong(gains));
+    final out = song.cut(
+      const Duration(seconds: 2),
+      const Duration(seconds: 5),
+      fadeIn: const Duration(seconds: 1),
+      fadeOut: const Duration(seconds: 1),
+    );
+    final first = (2000000 / fakeFrameUs).ceil();
+    final count = ((7000000 - 1) ~/ fakeFrameUs) - first + 1;
+    expect(out.length, count * fakeFrameBytes);
+    int gain(int frame) =>
+        readBits(out, frame * fakeFrameBytes * 8 + fakeGainBit(0), 8);
+    expect(out[200], first % 250, reason: 'starts at 2 s');
+    expect(gain(0), 180 - 40, reason: 'silent at the start');
+    expect(gain(count ~/ 2), 180, reason: 'full volume in the middle');
+    expect(gain(count - 1), lessThan(180 - 35), reason: 'silent at the end');
+    // Every block of a frame is faded, the original is untouched.
+    expect(readBits(out, fakeGainBit(3), 8), 180 - 40);
+    expect(song.frames[first].loudness, 180);
   });
 
   test('id3Tag holds title and artist in UTF-16 with a syncsafe size', () {

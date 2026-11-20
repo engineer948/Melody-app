@@ -929,7 +929,6 @@
   },
   "shareModeImage": "Picture",
   "shareModeSound": "Sound clip",
-  "clipLength": "Length",
   "clipSeconds": "{seconds} s",
   "@clipSeconds": {
     "placeholders": {
@@ -938,14 +937,13 @@
       }
     }
   },
-  "clipPart": "Part of the song",
   "clipEarlier": "5 seconds earlier",
   "clipLater": "5 seconds later",
   "clipFromNow": "Start where it is playing",
   "clipListen": "Listen",
   "clipStop": "Stop",
   "clipShare": "Share clip",
-  "clipHint": "Shared as an MP3 file: send it in WhatsApp, Telegram or any app that takes audio. Drag the box to choose the part.",
+  "clipHint": "Shared as an MP3 file: send it in WhatsApp, Telegram or any app that takes audio. Drag the box or its ends to choose the part (5–60 s).",
   "clipFailed": "The clip could not be made. Check the connection to the server.",
   "clipUnsupported": "Sound clips can only be made from songs on a Jellyfin or Subsonic server.",
   "clipRightsTitle": "You are responsible for what you share",
@@ -954,5 +952,37 @@
   "clipRightsNote": "Respect copyright: you alone are responsible for the clips you share.",
   "clipVideo": "Story video (picture + song)",
   "clipVideoMaking": "Making the video…",
-  "clipVideoFailed": "The video could not be made. Share the picture and the clip separately instead."
+  "clipVideoFailed": "The video could not be made. Share the picture and the clip separately instead.",
+  "clipLoading": "Getting the song ready…",
+  "clipBestPart": "Best part",
+  "clipFade": "Smooth start and end",
+  "clipLyrics": "Show the lyrics on the story",
+  "clipLyricsNone": "This song has no time-synced lyrics",
+  "clipLyricsTiming": "Lyrics timing",
+  "backupSection": "Backup",
+  "backupExport": "Back up settings",
+  "backupExportBody": "Settings, smart playlists and the server list in one file (no passwords). Save it to Drive, Files or send it to yourself.",
+  "backupRestore": "Restore from a backup",
+  "backupRestoreSubtitle": "For a new phone or after reinstalling",
+  "backupRestoreTitle": "Restore settings?",
+  "backupRestoreBody": "Backup from {date}: {settings} settings and {servers} servers. Your current settings are replaced by the ones in the file. Servers need a new sign-in.",
+  "@backupRestoreBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "settings": {
+        "type": "int"
+      },
+      "servers": {
+        "type": "int"
+      }
+    }
+  },
+  "backupRestored": "Settings restored",
+  "backupRestartBody": "Close and open Melody again so that every setting takes effect.",
+  "backupCloseApp": "Close Melody",
+  "backupLater": "Later",
+  "backupInvalid": "This is not a Melody settings backup.",
+  "backupFailed": "The backup could not be made."
 }
