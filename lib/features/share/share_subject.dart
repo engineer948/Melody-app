@@ -27,6 +27,7 @@ class ShareSubject {
     required this.title,
     this.subtitle = '',
     this.artwork,
+    this.track,
   });
 
   /// A song: title, artists and its album cover.
@@ -35,6 +36,7 @@ class ShareSubject {
     title: track.title,
     subtitle: track.artistLine,
     artwork: track.artwork,
+    track: track,
   );
 
   /// An album: title, album artist and cover.
@@ -74,6 +76,9 @@ class ShareSubject {
 
   /// Cover or picture; `null` shows a placeholder.
   final Artwork? artwork;
+
+  /// The song, for sharing a piece of it as sound.
+  final Track? track;
 
   /// Whether the picture is drawn as a circle (artists).
   bool get circular => kind == ShareKind.artist;

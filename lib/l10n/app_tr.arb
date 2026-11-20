@@ -488,5 +488,19 @@
   "m3uFound": "{total} şarkıdan {found} tanesi bulundu",
   "m3uImported": "Liste oluşturuldu: {total} şarkıdan {found} tanesi",
   "m3uShowMissing": "Eksikler",
-  "m3uMissingTitle": "{count} şarkı bulunamadı"
+  "m3uMissingTitle": "{count} şarkı bulunamadı",
+  "shareModeImage": "Görsel",
+  "shareModeSound": "Ses parçası",
+  "clipLength": "Uzunluk",
+  "clipSeconds": "{seconds} sn",
+  "clipPart": "Şarkının bölümü",
+  "clipEarlier": "5 saniye geri",
+  "clipLater": "5 saniye ileri",
+  "clipFromNow": "Çalan yerden başlat",
+  "clipListen": "Dinle",
+  "clipStop": "Durdur",
+  "clipShare": "Parçayı paylaş",
+  "clipHint": "MP3 dosyası olarak paylaşılır: WhatsApp, Telegram ya da ses kabul eden herhangi bir uygulamaya gönder. Bölümü seçmek için kutuyu sürükle.",
+  "clipFailed": "Ses parçası hazırlanamadı. Sunucu bağlantısını kontrol et.",
+  "clipUnsupported": "Ses parçası sadece Jellyfin veya Subsonic sunucusundaki şarkılardan yapılabilir."
 }

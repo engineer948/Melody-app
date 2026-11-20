@@ -509,6 +509,21 @@ class JellyfinMusicSource implements MusicSource {
     });
   }
 
+  /// The server converts to MP3 and starts at [start] itself.
+  @override
+  ClipRequest? clipRequest(Track track, Duration start) => (
+    uri: _api.resolve('Audio/${track.id}/stream.mp3', {
+      'audioCodec': 'mp3',
+      'audioBitRate': '192000',
+      'startTimeTicks': '${start.inMicroseconds * 10}',
+      // Its own device id, so the server does not stop the transcode of
+      // the song that is playing.
+      'deviceId': '${_api.identity.deviceId}-clip',
+      'api_key': ?_api.token,
+    }),
+    skip: Duration.zero,
+  );
+
   @override
   Uri? artworkUri(Artwork? artwork, {int size = 300}) {
     if (artwork == null) return null;

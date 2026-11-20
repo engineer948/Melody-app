@@ -926,5 +926,26 @@
         "type": "int"
       }
     }
-  }
+  },
+  "shareModeImage": "Picture",
+  "shareModeSound": "Sound clip",
+  "clipLength": "Length",
+  "clipSeconds": "{seconds} s",
+  "@clipSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "clipPart": "Part of the song",
+  "clipEarlier": "5 seconds earlier",
+  "clipLater": "5 seconds later",
+  "clipFromNow": "Start where it is playing",
+  "clipListen": "Listen",
+  "clipStop": "Stop",
+  "clipShare": "Share clip",
+  "clipHint": "Shared as an MP3 file: send it in WhatsApp, Telegram or any app that takes audio. Drag the box to choose the part.",
+  "clipFailed": "The clip could not be made. Check the connection to the server.",
+  "clipUnsupported": "Sound clips can only be made from songs on a Jellyfin or Subsonic server."
 }

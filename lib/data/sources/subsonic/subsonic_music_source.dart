@@ -380,6 +380,18 @@ class SubsonicMusicSource implements MusicSource {
           ..._quality(options),
         });
 
+  /// Not every server supports `timeOffset`, so the MP3 is read from the
+  /// beginning and the part before [start] dropped on the device.
+  @override
+  ClipRequest? clipRequest(Track track, Duration start) => (
+    uri: _api.resolve('stream', {
+      'id': track.id,
+      'format': 'mp3',
+      'maxBitRate': '192',
+    }),
+    skip: start,
+  );
+
   @override
   Uri? artworkUri(Artwork? artwork, {int size = 300}) => artwork == null
       ? null

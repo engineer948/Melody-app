@@ -10,6 +10,7 @@ import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/logging/app_logger.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
+import 'package:melody/features/share/audio_clip.dart';
 import 'package:melody/features/share/share_subject.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:path_provider/path_provider.dart';
@@ -65,6 +66,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   ShareBackground _background = ShareBackground.blur;
   bool _ready = false;
   bool _busy = false;
+
+  /// Whether a piece of the song is shared instead of the image.
+  bool _sound = false;
 
   @override
   void initState() {
@@ -163,6 +167,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
+    final track = widget.subject.track;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.share),
@@ -175,39 +180,63 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: shareCardSize.aspectRatio,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 24, color: Color(0x40000000)),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: FittedBox(
-                          child: RepaintBoundary(
-                            key: _cardKey,
-                            child: SizedBox.fromSize(
-                              size: shareCardSize,
-                              child: _ready
-                                  ? ShareCard(
-                                      subject: widget.subject,
-                                      image: _image,
-                                      palette: _palette,
-                                      background: _background,
-                                    )
-                                  : const ColoredBox(
-                                      color: Color(0xFF121212),
-                                      child: Center(
-                                        child: CircularProgressIndicator(),
+            if (track != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                child: SegmentedButton<bool>(
+                  segments: [
+                    ButtonSegment(
+                      value: false,
+                      icon: const Icon(Icons.image_outlined),
+                      label: Text(l10n.shareModeImage),
+                    ),
+                    ButtonSegment(
+                      value: true,
+                      icon: const Icon(Icons.graphic_eq_rounded),
+                      label: Text(l10n.shareModeSound),
+                    ),
+                  ],
+                  selected: {_sound},
+                  onSelectionChanged: (s) => setState(() => _sound = s.first),
+                ),
+              ),
+            if (track != null && _sound)
+              Expanded(child: AudioClipPanel(track: track))
+            else ...[
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: shareCardSize.aspectRatio,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: const [
+                            BoxShadow(blurRadius: 24, color: Color(0x40000000)),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: FittedBox(
+                            child: RepaintBoundary(
+                              key: _cardKey,
+                              child: SizedBox.fromSize(
+                                size: shareCardSize,
+                                child: _ready
+                                    ? ShareCard(
+                                        subject: widget.subject,
+                                        image: _image,
+                                        palette: _palette,
+                                        background: _background,
+                                      )
+                                    : const ColoredBox(
+                                        color: Color(0xFF121212),
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
                                       ),
-                                    ),
+                              ),
                             ),
                           ),
                         ),
@@ -216,66 +245,67 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                   ),
                 ),
               ),
-            ),
-            SegmentedButton<ShareBackground>(
-              segments: [
-                ButtonSegment(
-                  value: ShareBackground.blur,
-                  label: Text(l10n.shareStyleBlur),
-                ),
-                ButtonSegment(
-                  value: ShareBackground.color,
-                  label: Text(l10n.shareStyleColor),
-                ),
-                ButtonSegment(
-                  value: ShareBackground.dark,
-                  label: Text(l10n.shareStyleDark),
-                ),
-              ],
-              selected: {_background},
-              showSelectedIcon: false,
-              onSelectionChanged: (s) => setState(() => _background = s.first),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 4),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Builder(
-                      builder: (button) => OutlinedButton.icon(
-                        onPressed: _busy
-                            ? null
-                            : () => _share(button, asImage: false),
-                        icon: const Icon(Icons.notes_rounded),
-                        label: Text(l10n.shareAsText),
-                      ),
-                    ),
+              SegmentedButton<ShareBackground>(
+                segments: [
+                  ButtonSegment(
+                    value: ShareBackground.blur,
+                    label: Text(l10n.shareStyleBlur),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Builder(
-                      builder: (button) => FilledButton.icon(
-                        onPressed: !_ready || _busy
-                            ? null
-                            : () => _share(button, asImage: true),
-                        icon: const Icon(Icons.auto_awesome_rounded),
-                        label: Text(l10n.shareToStory),
-                      ),
-                    ),
+                  ButtonSegment(
+                    value: ShareBackground.color,
+                    label: Text(l10n.shareStyleColor),
+                  ),
+                  ButtonSegment(
+                    value: ShareBackground.dark,
+                    label: Text(l10n.shareStyleDark),
                   ),
                 ],
+                selected: {_background},
+                showSelectedIcon: false,
+                onSelectionChanged: (s) =>
+                    setState(() => _background = s.first),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 4, 24, 12),
-              child: Text(
-                l10n.shareHint,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 4),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Builder(
+                        builder: (button) => OutlinedButton.icon(
+                          onPressed: _busy
+                              ? null
+                              : () => _share(button, asImage: false),
+                          icon: const Icon(Icons.notes_rounded),
+                          label: Text(l10n.shareAsText),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Builder(
+                        builder: (button) => FilledButton.icon(
+                          onPressed: !_ready || _busy
+                              ? null
+                              : () => _share(button, asImage: true),
+                          icon: const Icon(Icons.auto_awesome_rounded),
+                          label: Text(l10n.shareToStory),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 4, 24, 12),
+                child: Text(
+                  l10n.shareHint,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

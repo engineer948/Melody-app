@@ -322,6 +322,10 @@ class PlaybackReport {
   };
 }
 
+/// Where a short MP3 piece of a song can be fetched: an MP3 stream and how
+/// much audio to drop from its start.
+typedef ClipRequest = ({Uri uri, Duration skip});
+
 /// A music backend. The UI and the player only ever talk to this interface.
 abstract interface class MusicSource {
   /// What this source can do.
@@ -399,6 +403,10 @@ abstract interface class MusicSource {
 
   /// Address a complete file of [track] can be downloaded from.
   Uri downloadUri(Track track, [StreamOptions options = const StreamOptions()]);
+
+  /// MP3 stream for a piece of [track] starting at [start] (song sharing),
+  /// or `null` when the source cannot provide one.
+  ClipRequest? clipRequest(Track track, Duration start);
 
   /// Address of a cover image scaled to roughly [size] pixels.
   Uri? artworkUri(Artwork? artwork, {int size = 300});

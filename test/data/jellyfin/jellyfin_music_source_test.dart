@@ -313,6 +313,19 @@ void main() {
     expect(missing.valueOrNull, isNull);
   });
 
+  test('song clips start on the server, as MP3, apart from playback', () {
+    final s = source((_) => page([]));
+    final clip = s.clipRequest(makeTrack('t1'), const Duration(seconds: 42))!;
+    expect(clip.skip, Duration.zero);
+    expect(clip.uri.path, '/jf/Audio/t1/stream.mp3');
+    expect(clip.uri.queryParameters, containsPair('audioCodec', 'mp3'));
+    expect(
+      clip.uri.queryParameters,
+      containsPair('startTimeTicks', '420000000'),
+    );
+    expect(clip.uri.queryParameters['deviceId'], endsWith('-clip'));
+  });
+
   test('stream formats ask the server for the right container', () {
     final s = source((_) => page([]));
     Map<String, String> query(StreamFormat f, [int? kbps]) => s

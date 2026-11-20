@@ -139,6 +139,17 @@ void main() {
     );
   });
 
+  test('song clips read MP3 from the start and skip on the device', () {
+    final s = source((_) => (status: 200, body: ok({})));
+    final clip = s.clipRequest(
+      const Track(id: 's1', title: 'x'),
+      const Duration(seconds: 42),
+    )!;
+    expect(clip.skip, const Duration(seconds: 42));
+    expect(clip.uri.path, '/rest/stream');
+    expect(clip.uri.queryParameters, containsPair('format', 'mp3'));
+  });
+
   test('server errors become failures', () async {
     final s = source((_) => (status: 200, body: failed(70)));
     expect((await s.album('x')).failureOrNull, isA<NotFoundFailure>());

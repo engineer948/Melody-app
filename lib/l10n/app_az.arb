@@ -488,5 +488,19 @@
   "m3uFound": "{total} mahnıdan {found} tapıldı",
   "m3uImported": "Siyahı yaradıldı: {total} mahnıdan {found}",
   "m3uShowMissing": "Çatışmayanlar",
-  "m3uMissingTitle": "{count} mahnı tapılmadı"
+  "m3uMissingTitle": "{count} mahnı tapılmadı",
+  "shareModeImage": "Şəkil",
+  "shareModeSound": "Səs parçası",
+  "clipLength": "Uzunluq",
+  "clipSeconds": "{seconds} san",
+  "clipPart": "Mahnının hissəsi",
+  "clipEarlier": "5 saniyə geri",
+  "clipLater": "5 saniyə irəli",
+  "clipFromNow": "Çalan yerdən başla",
+  "clipListen": "Dinlə",
+  "clipStop": "Dayandır",
+  "clipShare": "Parçanı paylaş",
+  "clipHint": "MP3 faylı kimi paylaşılır: WhatsApp, Telegram və ya səs qəbul edən istənilən tətbiqə göndər. Hissəni seçmək üçün qutunu sürüşdür.",
+  "clipFailed": "Səs parçası hazırlanmadı. Serverlə əlaqəni yoxla.",
+  "clipUnsupported": "Səs parçası yalnız Jellyfin və ya Subsonic serverindəki mahnılardan hazırlana bilər."
 }

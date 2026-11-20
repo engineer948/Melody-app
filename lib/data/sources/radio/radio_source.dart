@@ -290,6 +290,9 @@ class RadioSource implements MusicSource {
   ]) => parseId(track.id).url;
 
   @override
+  ClipRequest? clipRequest(Track track, Duration start) => null;
+
+  @override
   Uri? artworkUri(Artwork? artwork, {int size = 300}) =>
       artwork == null ? null : Uri.tryParse(artwork.itemId);
 

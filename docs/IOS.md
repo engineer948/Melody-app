@@ -18,7 +18,8 @@ the build is only tried on GitHub Actions (CI → "iOS build", unsigned).
 - App Transport Security exception for HTTP servers
 - Privacy manifest (`ios/Runner/PrivacyInfo.xcprivacy`): no tracking, no
   data collected; UserDefaults and file timestamp usage with their reasons
-- Sharing (story image and text) through the system share sheet
+- Sharing (story image, text and MP3 song clips) through the system share
+  sheet
 - Haptic feedback (play / pause / skip), swipe-back on iOS
 - The equalizer, Android Auto settings and the home screen widget are
   hidden on iOS

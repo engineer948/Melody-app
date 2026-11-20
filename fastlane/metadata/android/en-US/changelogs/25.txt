@@ -1,0 +1,4 @@
+Share a piece of a song.
+- Share → Sound clip: choose 15, 30 or 60 seconds of a song, listen to it and send it as an MP3 file (WhatsApp, Telegram, …)
+- Drag the box over the song or start from where it is playing
+- Works with Jellyfin and Subsonic servers

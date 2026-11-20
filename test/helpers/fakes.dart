@@ -377,6 +377,14 @@ class FakeMusicSource implements MusicSource {
   ]) => Uri.parse('https://music.example.com/download/${track.id}');
 
   @override
+  ClipRequest? clipRequest(Track track, Duration start) => (
+    uri: Uri.parse(
+      'https://music.example.com/clip/${track.id}?ms=${start.inMilliseconds}',
+    ),
+    skip: Duration.zero,
+  );
+
+  @override
   Uri? artworkUri(Artwork? artwork, {int size = 300}) => null;
 }
 

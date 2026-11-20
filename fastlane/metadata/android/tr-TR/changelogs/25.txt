@@ -1,0 +1,4 @@
+Şarkının bir parçasını paylaş.
+- Paylaş → Ses parçası: şarkının 15, 30 ya da 60 saniyesini seç, dinle ve MP3 dosyası olarak gönder (WhatsApp, Telegram, …)
+- Kutuyu şarkı üzerinde sürükle ya da çalan yerden başlat
+- Jellyfin ve Subsonic sunucularıyla çalışır

@@ -299,6 +299,9 @@ class LocalSource implements MusicSource {
   ]) => streamUri(track);
 
   @override
+  ClipRequest? clipRequest(Track track, Duration start) => null;
+
+  @override
   Uri? artworkUri(Artwork? artwork, {int size = 300}) => artwork == null
       ? null
       : Uri.parse('content://media/external/audio/albumart/${artwork.itemId}');
