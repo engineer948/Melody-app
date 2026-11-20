@@ -4,7 +4,7 @@ go 1.27.4
 
 require (
 	golang.org/x/mobile v0.0.0-20261011034528-197770444867
-	tailscale.com v1.104.6
+	tailscale.com v1.104.7
 )
 
 require (
