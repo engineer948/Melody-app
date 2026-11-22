@@ -1,0 +1,1 @@
+Sözler kendiliğinden senkronlanır: bir şarkının senkron sözleri ilk kez gösterildiğinde Melody müziğin gerçekten nerede başladığını (baştaki sessizlik) bulur, sözleri ona göre kaydırır ve hatırlar. Altta "otomatik" yazar; senin − / + düzeltmen her zaman önceliklidir, ✨ düğmesi otomatiğe döner. Anahtar: Ayarlar → Sözler.

@@ -126,6 +126,37 @@ class Mp3Song {
     return [for (final v in values) ((v - low) / range).clamp(0.0, 1.0)];
   }
 
+  /// When the music really starts: the first moment, within [within],
+  /// where the sound rises well above the quiet before it and stays up for
+  /// a moment. `null` when the start cannot be told (no clear rise).
+  Duration? soundStart({Duration within = const Duration(seconds: 30)}) {
+    final limit = within.inMicroseconds;
+    final head = [
+      for (final f in frames)
+        if (f.startUs < limit) f,
+    ];
+    if (head.length < 10) return null;
+    final sorted = [for (final f in head) f.loudness]..sort();
+    final low = sorted.first;
+    final high = sorted[(sorted.length * 0.9).floor()];
+    // Global gain steps are 1.5 dB: less than ~12 dB is no real rise.
+    if (high - low < 8) return null;
+    final threshold = low + (high - low) * 0.4;
+    // Sound must last about a tenth of a second (a few frames).
+    const hold = 4;
+    for (var i = 0; i + hold <= head.length; i++) {
+      var up = true;
+      for (var j = i; j < i + hold; j++) {
+        if (head[j].loudness < threshold) {
+          up = false;
+          break;
+        }
+      }
+      if (up) return Duration(microseconds: head[i].startUs);
+    }
+    return null;
+  }
+
   /// Start of the loudest [length] of the song (usually the chorus); the
   /// first and last 8 seconds are not chosen when the song is long enough.
   Duration loudestPart(Duration length) {

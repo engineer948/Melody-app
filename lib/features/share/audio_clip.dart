@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -33,6 +34,10 @@ abstract interface class SongAudioLoader {
   /// The MP3 of [track]. Throws [UnsupportedFailure] when [source] cannot
   /// provide MP3.
   Future<Uint8List> load(MusicSource source, Track track);
+
+  /// The first [maxBytes] of the MP3 of [track] (its first half minute or
+  /// so), for finding where the music starts.
+  Future<Uint8List> loadStart(MusicSource source, Track track, {int maxBytes});
 }
 
 /// [SongAudioLoader] over HTTP.
@@ -66,6 +71,39 @@ class HttpSongAudioLoader implements SongAudioLoader {
     final data = response.data;
     if (data == null || data.isEmpty) throw const ParsingFailure();
     return data is Uint8List ? data : Uint8List.fromList(data);
+  }
+
+  @override
+  Future<Uint8List> loadStart(
+    MusicSource source,
+    Track track, {
+    int maxBytes = 800000,
+  }) async {
+    final request = source.clipRequest(track, Duration.zero);
+    if (request == null) throw const UnsupportedFailure();
+    final cancel = CancelToken();
+    final response = await _dio.getUri<ResponseBody>(
+      request.uri,
+      cancelToken: cancel,
+      options: Options(
+        responseType: ResponseType.stream,
+        headers: source.requestHeaders,
+      ),
+    );
+    final body = response.data;
+    if (body == null) throw const ParsingFailure();
+    final bytes = BytesBuilder(copy: false);
+    try {
+      await for (final chunk in body.stream) {
+        bytes.add(chunk);
+        if (bytes.length >= maxBytes) break;
+      }
+    } finally {
+      // Stop the download: the rest of the song is not needed.
+      cancel.cancel();
+    }
+    if (bytes.isEmpty) throw const ParsingFailure();
+    return bytes.takeBytes();
   }
 }
 

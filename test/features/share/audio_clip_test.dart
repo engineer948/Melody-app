@@ -24,6 +24,13 @@ class FakeSongLoader implements SongAudioLoader {
     // 3:05, loud from 1:40 to 2:10.
     return fakeSongWithChorus();
   }
+
+  @override
+  Future<Uint8List> loadStart(
+    MusicSource source,
+    Track track, {
+    int maxBytes = 800000,
+  }) async => fakeSongWithChorus();
 }
 
 class FakeClipPreview implements ClipPreview {

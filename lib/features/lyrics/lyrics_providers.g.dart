@@ -45,7 +45,7 @@ final class LyricsSettingsControllerProvider
 }
 
 String _$lyricsSettingsControllerHash() =>
-    r'a47a6e22643139fd89a9e6b9c2b030c733f162c0';
+    r'573c03b4f3dd05d0ee5ed67d8090531d1b5a0538';
 
 /// Holds and persists [LyricsSettings].
 

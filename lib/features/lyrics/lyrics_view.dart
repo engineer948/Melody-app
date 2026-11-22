@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/domain/models/media.dart';
+import 'package:melody/features/lyrics/lyrics_auto_sync.dart';
 import 'package:melody/features/lyrics/lyrics_providers.dart';
 import 'package:melody/features/player/player_look.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -65,6 +66,10 @@ class _LyricsViewState extends ConsumerState<LyricsView> {
                 ),
               ),
       );
+    }
+    if (lyrics.synced && settings.autoSync) {
+      // Measured once per song, in the background.
+      ref.watch(lyricsAutoSyncProvider(widget.track));
     }
     final offset = settings.offsetOf(widget.track.id);
     final position = ref.watch(playerPositionProvider).value ?? Duration.zero;
@@ -235,6 +240,9 @@ class _Footer extends ConsumerWidget {
     final controller = ref.read(lyricsSettingsControllerProvider.notifier);
     const step = Duration(milliseconds: 500);
     final seconds = offset.inMilliseconds / 1000;
+    final settings = ref.watch(lyricsSettingsControllerProvider);
+    final manual = settings.isManual(track.id);
+    final auto = settings.autoSync && !manual && offset != Duration.zero;
     return Row(
       children: [
         if (lyrics.origin == LyricsOrigin.lrclib)
@@ -249,9 +257,12 @@ class _Footer extends ConsumerWidget {
             onPressed: () => controller.shift(track.id, -step),
           ),
           Text(
-            l10n.lyricsOffset(
-              '${seconds > 0 ? '+' : ''}${seconds.toStringAsFixed(1)}',
-            ),
+            [
+              l10n.lyricsOffset(
+                '${seconds > 0 ? '+' : ''}${seconds.toStringAsFixed(1)}',
+              ),
+              if (auto) l10n.lyricsAuto,
+            ].join(' · '),
             style: style,
           ),
           IconButton(
@@ -260,6 +271,13 @@ class _Footer extends ConsumerWidget {
             icon: const Icon(Icons.fast_forward_rounded, size: 18),
             onPressed: () => controller.shift(track.id, step),
           ),
+          if (manual && settings.autoSync)
+            IconButton(
+              color: Colors.white70,
+              tooltip: l10n.lyricsBackToAuto,
+              icon: const Icon(Icons.auto_fix_high_rounded, size: 18),
+              onPressed: () => controller.resetManual(track.id),
+            ),
         ],
       ],
     );

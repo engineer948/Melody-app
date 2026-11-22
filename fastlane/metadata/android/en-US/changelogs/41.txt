@@ -1,0 +1,1 @@
+Lyrics sync themselves: the first time synced lyrics are shown for a song, Melody finds where its music really starts (silence at the beginning) and moves the lyrics to match, then remembers it. The lyrics footer shows "auto"; your own − / + correction always wins, and the ✨ button goes back to automatic. Switch: Settings → Lyrics → "Sync lyrics automatically".

@@ -68,7 +68,7 @@ final class MonthAlbumProvider
   }
 }
 
-String _$monthAlbumHash() => r'5ca53ce31185e00aeab38c29c39866ef0871d8a9';
+String _$monthAlbumHash() => r'0040883fd50134868728ed160f983c52d3e77efb';
 
 /// The album of the month starting at [month] (its first day).
 

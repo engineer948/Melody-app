@@ -129,8 +129,11 @@ void main() {
     expect(container.read(localeControllerProvider), const Locale('az'));
     expect(find.text('Görünüş'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Türkçe'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Türkçe'));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Görünüm'));
     expect(find.text('Görünüm'), findsOneWidget);
     expect(find.text('Açık kaynak lisansları'), findsOneWidget);
   });

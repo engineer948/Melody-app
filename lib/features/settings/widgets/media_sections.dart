@@ -183,6 +183,14 @@ class LyricsSection extends ConsumerWidget {
               unawaited(c.update((s) => s.copyWith(useLrclib: v))),
         ),
         SwitchListTile(
+          secondary: const Icon(Icons.auto_fix_high_outlined),
+          title: Text(l10n.lyricsAutoSync),
+          subtitle: Text(l10n.lyricsAutoSyncBody),
+          isThreeLine: true,
+          value: s.autoSync,
+          onChanged: (v) => unawaited(c.update((s) => s.copyWith(autoSync: v))),
+        ),
+        SwitchListTile(
           secondary: const Icon(Icons.format_align_center),
           title: Text(l10n.lyricsAlignCenter),
           value: s.alignCenter,

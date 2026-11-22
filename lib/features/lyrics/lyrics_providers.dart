@@ -21,6 +21,8 @@ class LyricsSettings {
     this.alignCenter = false,
     this.fontScale = 1,
     this.offsetsMs = const {},
+    this.autoSync = true,
+    this.autoOffsetsMs = const {},
   });
 
   /// Restores settings saved with [toJson].
@@ -31,6 +33,12 @@ class LyricsSettings {
     offsetsMs: {
       for (final e
           in (json['offsetsMs'] as Map<String, dynamic>? ?? {}).entries)
+        e.key: e.value as int,
+    },
+    autoSync: json['autoSync'] as bool? ?? true,
+    autoOffsetsMs: {
+      for (final e
+          in (json['autoOffsetsMs'] as Map<String, dynamic>? ?? {}).entries)
         e.key: e.value as int,
     },
   );
@@ -45,12 +53,24 @@ class LyricsSettings {
   /// Text size factor, 0.8 to 1.6.
   final double fontScale;
 
-  /// Per-track timing correction; positive shows lines later.
+  /// Per-track timing correction set by hand; positive shows lines later.
   final Map<String, int> offsetsMs;
 
-  /// Timing correction of [trackId].
-  Duration offsetOf(String trackId) =>
-      Duration(milliseconds: offsetsMs[trackId] ?? 0);
+  /// Whether synced lyrics are shifted by where the music really starts.
+  final bool autoSync;
+
+  /// Corrections found automatically, per track (kept so each song is
+  /// measured once).
+  final Map<String, int> autoOffsetsMs;
+
+  /// Whether [trackId] was corrected by hand.
+  bool isManual(String trackId) => offsetsMs.containsKey(trackId);
+
+  /// Timing correction of [trackId]: by hand first, else the automatic one.
+  Duration offsetOf(String trackId) => Duration(
+    milliseconds:
+        offsetsMs[trackId] ?? (autoSync ? autoOffsetsMs[trackId] ?? 0 : 0),
+  );
 
   /// Returns a copy with the given fields replaced.
   LyricsSettings copyWith({
@@ -58,11 +78,15 @@ class LyricsSettings {
     bool? alignCenter,
     double? fontScale,
     Map<String, int>? offsetsMs,
+    bool? autoSync,
+    Map<String, int>? autoOffsetsMs,
   }) => LyricsSettings(
     useLrclib: useLrclib ?? this.useLrclib,
     alignCenter: alignCenter ?? this.alignCenter,
     fontScale: fontScale ?? this.fontScale,
     offsetsMs: offsetsMs ?? this.offsetsMs,
+    autoSync: autoSync ?? this.autoSync,
+    autoOffsetsMs: autoOffsetsMs ?? this.autoOffsetsMs,
   );
 
   /// Serialises the settings.
@@ -71,6 +95,8 @@ class LyricsSettings {
     'alignCenter': alignCenter,
     'fontScale': fontScale,
     'offsetsMs': offsetsMs,
+    'autoSync': autoSync,
+    'autoOffsetsMs': autoOffsetsMs,
   };
 }
 
@@ -97,15 +123,47 @@ class LyricsSettingsController extends _$LyricsSettingsController {
     await ref.read(preferencesProvider).setString(key, jsonEncode(state));
   }
 
-  /// Shifts the lyrics of [trackId] by [delta].
+  /// Shifts the lyrics of [trackId] by [delta]; from then on the hand
+  /// correction counts, also when it is back at 0.
   Future<void> shift(String trackId, Duration delta) => update((s) {
     final next = s.offsetOf(trackId) + delta;
-    return s.copyWith(
-      offsetsMs: {...s.offsetsMs, trackId: next.inMilliseconds}
-        ..removeWhere((_, v) => v == 0),
-    );
+    final offsets = {...s.offsetsMs, trackId: next.inMilliseconds};
+    if (next == Duration.zero && (s.autoOffsetsMs[trackId] ?? 0) == 0) {
+      offsets.remove(trackId);
+    }
+    return s.copyWith(offsetsMs: offsets);
   });
+
+  /// Keeps the automatic correction of [trackId]; only the latest
+  /// [maxAutoOffsets] songs are remembered.
+  Future<void> setAuto(String trackId, Duration offset) => update((s) {
+    final autos = {...s.autoOffsetsMs}
+      ..remove(trackId)
+      ..[trackId] = offset.inMilliseconds;
+    while (autos.length > maxAutoOffsets) {
+      autos.remove(autos.keys.first);
+    }
+    return s.copyWith(autoOffsetsMs: autos);
+  });
+
+  /// Forgets the hand correction of [trackId] (back to automatic).
+  Future<void> resetManual(String trackId) =>
+      update((s) => s.copyWith(offsetsMs: {...s.offsetsMs}..remove(trackId)));
 }
+
+/// Songs whose automatic correction is remembered.
+const maxAutoOffsets = 3000;
+
+/// Music starting this late is shifted for; less is usual and already in
+/// the timings of most lyrics.
+const autoSyncMinSilence = Duration(milliseconds: 700);
+
+/// The automatic correction for music that starts at [soundStart]: the
+/// lyrics move later by the silence before it, when there is clearly some.
+Duration autoLyricsOffset(Duration? soundStart) =>
+    soundStart == null || soundStart < autoSyncMinSilence
+    ? Duration.zero
+    : soundStart;
 
 /// LRCLIB client; overridden in tests.
 @Riverpod(keepAlive: true)
