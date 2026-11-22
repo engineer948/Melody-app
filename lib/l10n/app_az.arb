@@ -576,6 +576,8 @@
   "lifeAsk": "Günlərini musiqi ilə xatırla: ana ekranda günlərinin mahnıları, yerləri, şəkilləri və \"1 il əvvəl bu gün\". Açaq? İstədiyin vaxt Ayarlar → Məxfilik bölməsindən dəyişə bilərsən.",
   "lifeTurnOn": "Aç",
   "lifeNoThanks": "Xeyr, sağ ol",
+  "lyricsAutoMeasuring": "avto…",
+  "lyricsAutoFailed": "avto: ölçmək olmadı",
   "lyricsAuto": "avto",
   "lyricsBackToAuto": "Avtomatik vaxta qayıt",
   "lyricsAutoSync": "Sözləri avtomatik sinxronla",

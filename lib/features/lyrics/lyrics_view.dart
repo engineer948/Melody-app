@@ -67,10 +67,6 @@ class _LyricsViewState extends ConsumerState<LyricsView> {
               ),
       );
     }
-    if (lyrics.synced && settings.autoSync) {
-      // Measured once per song, in the background.
-      ref.watch(lyricsAutoSyncProvider(widget.track));
-    }
     final offset = settings.offsetOf(widget.track.id);
     final position = ref.watch(playerPositionProvider).value ?? Duration.zero;
     final current = lyrics.lineAt(position - offset);
@@ -242,7 +238,15 @@ class _Footer extends ConsumerWidget {
     final seconds = offset.inMilliseconds / 1000;
     final settings = ref.watch(lyricsSettingsControllerProvider);
     final manual = settings.isManual(track.id);
-    final auto = settings.autoSync && !manual && offset != Duration.zero;
+    // Measured once per song, in the background; shown while it runs.
+    final measuring = lyrics.synced && settings.autoSync && !manual;
+    final status = measuring
+        ? switch (ref.watch(lyricsAutoSyncProvider(track))) {
+            AsyncData() => l10n.lyricsAuto,
+            AsyncError() => l10n.lyricsAutoFailed,
+            _ => l10n.lyricsAutoMeasuring,
+          }
+        : null;
     return Row(
       children: [
         if (lyrics.origin == LyricsOrigin.lrclib)
@@ -261,7 +265,7 @@ class _Footer extends ConsumerWidget {
               l10n.lyricsOffset(
                 '${seconds > 0 ? '+' : ''}${seconds.toStringAsFixed(1)}',
               ),
-              if (auto) l10n.lyricsAuto,
+              ?status,
             ].join(' · '),
             style: style,
           ),

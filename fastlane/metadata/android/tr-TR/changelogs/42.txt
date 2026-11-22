@@ -1,0 +1,1 @@
+Otomatik söz zamanlaması artık her şarkıda senkron sözlerin altında durumunu gösterir: ölçerken "otomatik…", bitince "otomatik" (+0.0 s ise şarkının başında sessizlik yok, kaydırılacak bir şey yok), sunucu MP3 vermediyse veya çevrimdışıysan "otomatik: ölçülemedi".

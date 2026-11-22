@@ -1,0 +1,1 @@
+Sözlərin avtomatik vaxtı indi hər mahnıda sinxron sözlərin altında vəziyyətini göstərir: ölçəndə "avto…", bitəndə "avto" (+0.0 s-dirsə mahnının əvvəlində səssizlik yoxdur, sürüşdürməyə ehtiyac yoxdur), server MP3 vermədisə və ya internet yoxdursa "avto: ölçmək olmadı".

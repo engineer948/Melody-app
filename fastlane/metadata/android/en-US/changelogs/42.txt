@@ -1,0 +1,1 @@
+Automatic lyrics timing now shows its state under synced lyrics for every song: "auto…" while measuring, "auto" when done (also at +0.0 s: the song has no silence at the start, nothing to move), "auto: could not measure" when the server gave no MP3 or you were offline.

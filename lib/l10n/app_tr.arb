@@ -576,6 +576,8 @@
   "lifeAsk": "Günlerini müzikle hatırla: ana ekranda günlerinin şarkıları, yerleri, fotoğrafları ve \"1 yıl önce bugün\". Açalım mı? İstediğin zaman Ayarlar → Gizlilik'ten değiştirebilirsin.",
   "lifeTurnOn": "Aç",
   "lifeNoThanks": "Hayır, teşekkürler",
+  "lyricsAutoMeasuring": "otomatik…",
+  "lyricsAutoFailed": "otomatik: ölçülemedi",
   "lyricsAuto": "otomatik",
   "lyricsBackToAuto": "Otomatik zamanlamaya dön",
   "lyricsAutoSync": "Sözleri otomatik senkronla",

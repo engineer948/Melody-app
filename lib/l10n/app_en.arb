@@ -1141,6 +1141,8 @@
   "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
   "lifeTurnOn": "Turn on",
   "lifeNoThanks": "No, thanks",
+  "lyricsAutoMeasuring": "auto…",
+  "lyricsAutoFailed": "auto: could not measure",
   "lyricsAuto": "auto",
   "lyricsBackToAuto": "Back to automatic timing",
   "lyricsAutoSync": "Sync lyrics automatically",

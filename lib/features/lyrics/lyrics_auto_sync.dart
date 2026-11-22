@@ -8,26 +8,21 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'lyrics_auto_sync.g.dart';
 
 /// Measures once where the music of [track] really starts and keeps the
-/// matching lyrics correction. Does nothing when the song was corrected by
-/// hand, was measured before, or auto sync is off; a failure (offline, no
-/// MP3 from the server) is tried again next time.
+/// matching lyrics correction, which it returns. Songs measured before
+/// are not measured again. Fails (and is tried again next time) when the
+/// start cannot be read: offline, or no MP3 from the server.
 @riverpod
-Future<void> lyricsAutoSync(Ref ref, Track track) async {
+Future<Duration> lyricsAutoSync(Ref ref, Track track) async {
   final settings = ref.read(lyricsSettingsControllerProvider);
-  if (!settings.autoSync ||
-      settings.isManual(track.id) ||
-      settings.autoOffsetsMs.containsKey(track.id)) {
-    return;
+  if (settings.autoOffsetsMs[track.id] case final ms?) {
+    return Duration(milliseconds: ms);
   }
   final source = ref.read(activeSourceProvider);
-  if (source == null) return;
+  if (source == null) throw StateError('signed out');
   final loader = ref.read(songAudioLoaderProvider);
   final controller = ref.read(lyricsSettingsControllerProvider.notifier);
-  try {
-    final bytes = await loader.loadStart(source, track);
-    final start = Mp3Song.parse(bytes).soundStart();
-    await controller.setAuto(track.id, autoLyricsOffset(start));
-  } on Object {
-    // Tried again the next time the lyrics are shown.
-  }
+  final bytes = await loader.loadStart(source, track);
+  final offset = autoLyricsOffset(Mp3Song.parse(bytes).soundStart());
+  await controller.setAuto(track.id, offset);
+  return offset;
 }

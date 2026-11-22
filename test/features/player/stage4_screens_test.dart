@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -6,13 +8,16 @@ import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/data/sources/lrclib/lrclib_client.dart';
 import 'package:melody/domain/lyrics/lrc_parser.dart';
 import 'package:melody/domain/models/media.dart';
+import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/lyrics/lyrics_providers.dart';
 import 'package:melody/features/playlist/playlist_screen.dart';
+import 'package:melody/features/share/audio_clip.dart';
 import 'package:melody/player/playback_settings.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:melody/player/streaming_settings.dart';
 
 import '../../helpers/fake_engine.dart';
+import '../../helpers/fake_mp3.dart';
 import '../../helpers/fakes.dart';
 import '../../helpers/pump_app.dart';
 
@@ -82,6 +87,26 @@ void main() {
       const Duration(milliseconds: 500),
     );
     expect(find.text('Timing: +0.5 s'), findsOneWidget);
+    await stop(tester, c);
+  });
+
+  testWidgets('lyrics show their automatic timing', (tester) async {
+    final source = FakeMusicSource()
+      ..lyricsByTrack['t1'] = parseLrc('[00:00.00]Birinci\n[00:05.00]İkinci');
+    final engine = FakeAudioEngine();
+    final c = await start(
+      tester,
+      source: source,
+      engine: engine,
+      overrides: [
+        songAudioLoaderProvider.overrideWithValue(_SilentStartLoader()),
+      ],
+    );
+    await playAndOpenPlayer(tester);
+    await tester.tap(find.byTooltip('Lyrics'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('· auto'), findsOneWidget);
+    expect(find.text('Timing: +2.0 s · auto'), findsOneWidget);
     await stop(tester, c);
   });
 
@@ -254,4 +279,25 @@ void main() {
     await tester.pumpAndSettle();
     expect(c.read(lyricsSettingsControllerProvider).useLrclib, isTrue);
   });
+}
+
+/// A song whose music starts after two seconds of silence.
+class _SilentStartLoader implements SongAudioLoader {
+  Uint8List _bytes() {
+    const frames = 40 * 1000000 ~/ fakeFrameUs;
+    return fakeSong([
+      for (var i = 0; i < frames; i++)
+        if (i * fakeFrameUs < 2000000) 0 else 170,
+    ]);
+  }
+
+  @override
+  Future<Uint8List> load(MusicSource source, Track track) async => _bytes();
+
+  @override
+  Future<Uint8List> loadStart(
+    MusicSource source,
+    Track track, {
+    int maxBytes = 800000,
+  }) async => _bytes();
 }
