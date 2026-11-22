@@ -67,7 +67,7 @@ void main() {
           .customSelect('PRAGMA user_version')
           .map((row) => row.read<int>('user_version'))
           .getSingle(),
-      3,
+      4,
     );
   });
 
@@ -136,5 +136,18 @@ void main() {
         );
     final rows = await db.select(db.playHistory).get();
     expect(rows.last.place, 'Sahil, Bakı');
+    // And the song memories table of version 4.
+    await db
+        .into(db.songNotes)
+        .insert(
+          SongNotesCompanion.insert(
+            accountId: 'acc1',
+            trackId: 't1',
+            payload: '{}',
+            body: 'First dance',
+            updatedAt: DateTime(2026),
+          ),
+        );
+    expect(await db.select(db.songNotes).get(), hasLength(1));
   });
 }

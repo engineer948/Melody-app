@@ -19,6 +19,8 @@ import 'package:melody/domain/stats/play_event.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
+import 'package:melody/features/stats/life_cards.dart';
+import 'package:melody/features/stats/song_notes.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/history_recorder.dart';
@@ -320,6 +322,7 @@ class LifeScreen extends ConsumerWidget {
               photos: photos,
             ),
           ),
+          const SliverToBoxAdapter(child: MemoriesShelf()),
           ...loadedSlivers(
             value: days,
             onRetry: () => ref.invalidate(lifeTimelineProvider),
@@ -552,7 +555,16 @@ class _TrackMemorySheet extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: switch (memory) {
-          AsyncData(value: null) => Text(l10n.lifeNeverHeard),
+          AsyncData(value: null) => Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(track.title, style: theme.textTheme.titleLarge),
+              const SizedBox(height: 8),
+              Text(l10n.lifeNeverHeard),
+              SongNoteSection(track: track),
+            ],
+          ),
           AsyncData(:final value?) => Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,6 +603,7 @@ class _TrackMemorySheet extends ConsumerWidget {
                 icon: const Icon(Icons.auto_stories_outlined),
                 label: Text(l10n.lifeTitle),
               ),
+              SongNoteSection(track: track),
             ],
           ),
           AsyncError() => Text(l10n.lifeNeverHeard),
@@ -612,6 +625,8 @@ class TrackMemoryLine extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // A memory the user wrote comes first.
+    if (noteLine(context, ref, track) case final line?) return line;
     final enabled = ref.watch(
       listeningSettingsControllerProvider.select((s) => s.lifeShelf),
     );
@@ -712,7 +727,9 @@ class LifeShelf extends ConsumerWidget {
                   label: l10n.lifeYearsAgo(years),
                   highlight: true,
                 ),
+              const ForgottenCard(),
               for (final day in days) _LifeDayCard(day: day, photos: photos),
+              const YouthCard(),
             ],
           ),
         ),

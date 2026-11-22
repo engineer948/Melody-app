@@ -2266,6 +2266,477 @@ class DownloadsCompanion extends UpdateCompanion<Download> {
   }
 }
 
+class $SongNotesTable extends SongNotes
+    with TableInfo<$SongNotesTable, SongNoteRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SongNotesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _trackIdMeta = const VerificationMeta(
+    'trackId',
+  );
+  @override
+  late final GeneratedColumn<String> trackId = GeneratedColumn<String>(
+    'track_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  @override
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _personMeta = const VerificationMeta('person');
+  @override
+  late final GeneratedColumn<String> person = GeneratedColumn<String>(
+    'person',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _photoMeta = const VerificationMeta('photo');
+  @override
+  late final GeneratedColumn<String> photo = GeneratedColumn<String>(
+    'photo',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    accountId,
+    trackId,
+    payload,
+    body,
+    person,
+    photo,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'song_notes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SongNoteRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('track_id')) {
+      context.handle(
+        _trackIdMeta,
+        trackId.isAcceptableOrUnknown(data['track_id']!, _trackIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_trackIdMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    if (data.containsKey('person')) {
+      context.handle(
+        _personMeta,
+        person.isAcceptableOrUnknown(data['person']!, _personMeta),
+      );
+    }
+    if (data.containsKey('photo')) {
+      context.handle(
+        _photoMeta,
+        photo.isAcceptableOrUnknown(data['photo']!, _photoMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {accountId, trackId};
+  @override
+  SongNoteRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SongNoteRow(
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      trackId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}track_id'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+      person: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person'],
+      ),
+      photo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}photo'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SongNotesTable createAlias(String alias) {
+    return $SongNotesTable(attachedDatabase, alias);
+  }
+}
+
+class SongNoteRow extends DataClass implements Insertable<SongNoteRow> {
+  /// Owning account.
+  final String accountId;
+
+  /// Song the memory belongs to.
+  final String trackId;
+
+  /// JSON of the song, to show and play it without the server.
+  final String payload;
+
+  /// The words; may be empty when there is only a person or a photo.
+  final String body;
+
+  /// Who the song is about ("Mum"); private.
+  final String? person;
+
+  /// File name of the photo inside the app's memories folder.
+  final String? photo;
+
+  /// When it was last written.
+  final DateTime updatedAt;
+  const SongNoteRow({
+    required this.accountId,
+    required this.trackId,
+    required this.payload,
+    required this.body,
+    this.person,
+    this.photo,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['account_id'] = Variable<String>(accountId);
+    map['track_id'] = Variable<String>(trackId);
+    map['payload'] = Variable<String>(payload);
+    map['body'] = Variable<String>(body);
+    if (!nullToAbsent || person != null) {
+      map['person'] = Variable<String>(person);
+    }
+    if (!nullToAbsent || photo != null) {
+      map['photo'] = Variable<String>(photo);
+    }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  SongNotesCompanion toCompanion(bool nullToAbsent) {
+    return SongNotesCompanion(
+      accountId: Value(accountId),
+      trackId: Value(trackId),
+      payload: Value(payload),
+      body: Value(body),
+      person: person == null && nullToAbsent
+          ? const Value.absent()
+          : Value(person),
+      photo: photo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(photo),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory SongNoteRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SongNoteRow(
+      accountId: serializer.fromJson<String>(json['accountId']),
+      trackId: serializer.fromJson<String>(json['trackId']),
+      payload: serializer.fromJson<String>(json['payload']),
+      body: serializer.fromJson<String>(json['body']),
+      person: serializer.fromJson<String?>(json['person']),
+      photo: serializer.fromJson<String?>(json['photo']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'accountId': serializer.toJson<String>(accountId),
+      'trackId': serializer.toJson<String>(trackId),
+      'payload': serializer.toJson<String>(payload),
+      'body': serializer.toJson<String>(body),
+      'person': serializer.toJson<String?>(person),
+      'photo': serializer.toJson<String?>(photo),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  SongNoteRow copyWith({
+    String? accountId,
+    String? trackId,
+    String? payload,
+    String? body,
+    Value<String?> person = const Value.absent(),
+    Value<String?> photo = const Value.absent(),
+    DateTime? updatedAt,
+  }) => SongNoteRow(
+    accountId: accountId ?? this.accountId,
+    trackId: trackId ?? this.trackId,
+    payload: payload ?? this.payload,
+    body: body ?? this.body,
+    person: person.present ? person.value : this.person,
+    photo: photo.present ? photo.value : this.photo,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  SongNoteRow copyWithCompanion(SongNotesCompanion data) {
+    return SongNoteRow(
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      trackId: data.trackId.present ? data.trackId.value : this.trackId,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      body: data.body.present ? data.body.value : this.body,
+      person: data.person.present ? data.person.value : this.person,
+      photo: data.photo.present ? data.photo.value : this.photo,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SongNoteRow(')
+          ..write('accountId: $accountId, ')
+          ..write('trackId: $trackId, ')
+          ..write('payload: $payload, ')
+          ..write('body: $body, ')
+          ..write('person: $person, ')
+          ..write('photo: $photo, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(accountId, trackId, payload, body, person, photo, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SongNoteRow &&
+          other.accountId == this.accountId &&
+          other.trackId == this.trackId &&
+          other.payload == this.payload &&
+          other.body == this.body &&
+          other.person == this.person &&
+          other.photo == this.photo &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SongNotesCompanion extends UpdateCompanion<SongNoteRow> {
+  final Value<String> accountId;
+  final Value<String> trackId;
+  final Value<String> payload;
+  final Value<String> body;
+  final Value<String?> person;
+  final Value<String?> photo;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const SongNotesCompanion({
+    this.accountId = const Value.absent(),
+    this.trackId = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.body = const Value.absent(),
+    this.person = const Value.absent(),
+    this.photo = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SongNotesCompanion.insert({
+    required String accountId,
+    required String trackId,
+    required String payload,
+    required String body,
+    this.person = const Value.absent(),
+    this.photo = const Value.absent(),
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : accountId = Value(accountId),
+       trackId = Value(trackId),
+       payload = Value(payload),
+       body = Value(body),
+       updatedAt = Value(updatedAt);
+  static Insertable<SongNoteRow> custom({
+    Expression<String>? accountId,
+    Expression<String>? trackId,
+    Expression<String>? payload,
+    Expression<String>? body,
+    Expression<String>? person,
+    Expression<String>? photo,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (accountId != null) 'account_id': accountId,
+      if (trackId != null) 'track_id': trackId,
+      if (payload != null) 'payload': payload,
+      if (body != null) 'body': body,
+      if (person != null) 'person': person,
+      if (photo != null) 'photo': photo,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SongNotesCompanion copyWith({
+    Value<String>? accountId,
+    Value<String>? trackId,
+    Value<String>? payload,
+    Value<String>? body,
+    Value<String?>? person,
+    Value<String?>? photo,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return SongNotesCompanion(
+      accountId: accountId ?? this.accountId,
+      trackId: trackId ?? this.trackId,
+      payload: payload ?? this.payload,
+      body: body ?? this.body,
+      person: person ?? this.person,
+      photo: photo ?? this.photo,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (trackId.present) {
+      map['track_id'] = Variable<String>(trackId.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (person.present) {
+      map['person'] = Variable<String>(person.value);
+    }
+    if (photo.present) {
+      map['photo'] = Variable<String>(photo.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SongNotesCompanion(')
+          ..write('accountId: $accountId, ')
+          ..write('trackId: $trackId, ')
+          ..write('payload: $payload, ')
+          ..write('body: $body, ')
+          ..write('person: $person, ')
+          ..write('photo: $photo, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2274,6 +2745,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CachedListsTable cachedLists = $CachedListsTable(this);
   late final $PlayHistoryTable playHistory = $PlayHistoryTable(this);
   late final $DownloadsTable downloads = $DownloadsTable(this);
+  late final $SongNotesTable songNotes = $SongNotesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2284,6 +2756,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     cachedLists,
     playHistory,
     downloads,
+    songNotes,
   ];
 }
 
@@ -3468,6 +3941,251 @@ typedef $$DownloadsTableProcessedTableManager =
       Download,
       PrefetchHooks Function()
     >;
+typedef $$SongNotesTableCreateCompanionBuilder = SongNotesCompanion Function({
+  required String accountId,
+  required String trackId,
+  required String payload,
+  required String body,
+  Value<String?> person,
+  Value<String?> photo,
+  required DateTime updatedAt,
+  Value<int> rowid,
+});
+typedef $$SongNotesTableUpdateCompanionBuilder = SongNotesCompanion Function({
+  Value<String> accountId,
+  Value<String> trackId,
+  Value<String> payload,
+  Value<String> body,
+  Value<String?> person,
+  Value<String?> photo,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$SongNotesTableFilterComposer
+    extends Composer<_$AppDatabase, $SongNotesTable> {
+  $$SongNotesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get person => $composableBuilder(
+    column: $table.person,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get photo => $composableBuilder(
+    column: $table.photo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SongNotesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SongNotesTable> {
+  $$SongNotesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get trackId => $composableBuilder(
+    column: $table.trackId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get person => $composableBuilder(
+    column: $table.person,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get photo => $composableBuilder(
+    column: $table.photo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SongNotesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SongNotesTable> {
+  $$SongNotesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<String> get trackId =>
+      $composableBuilder(column: $table.trackId, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+
+  GeneratedColumn<String> get person =>
+      $composableBuilder(column: $table.person, builder: (column) => column);
+
+  GeneratedColumn<String> get photo =>
+      $composableBuilder(column: $table.photo, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$SongNotesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SongNotesTable,
+          SongNoteRow,
+          $$SongNotesTableFilterComposer,
+          $$SongNotesTableOrderingComposer,
+          $$SongNotesTableAnnotationComposer,
+          $$SongNotesTableCreateCompanionBuilder,
+          $$SongNotesTableUpdateCompanionBuilder,
+          (
+            SongNoteRow,
+            BaseReferences<_$AppDatabase, $SongNotesTable, SongNoteRow>,
+          ),
+          SongNoteRow,
+          PrefetchHooks Function()
+        > {
+  $$SongNotesTableTableManager(_$AppDatabase db, $SongNotesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SongNotesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SongNotesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SongNotesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> accountId = const Value.absent(),
+                Value<String> trackId = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<String?> person = const Value.absent(),
+                Value<String?> photo = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SongNotesCompanion(
+                accountId: accountId,
+                trackId: trackId,
+                payload: payload,
+                body: body,
+                person: person,
+                photo: photo,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String accountId,
+                required String trackId,
+                required String payload,
+                required String body,
+                Value<String?> person = const Value.absent(),
+                Value<String?> photo = const Value.absent(),
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SongNotesCompanion.insert(
+                accountId: accountId,
+                trackId: trackId,
+                payload: payload,
+                body: body,
+                person: person,
+                photo: photo,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SongNotesTable, SongNoteRow>(table),
+                  BaseReferences<_$AppDatabase, $SongNotesTable, SongNoteRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SongNotesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SongNotesTable,
+      SongNoteRow,
+      $$SongNotesTableFilterComposer,
+      $$SongNotesTableOrderingComposer,
+      $$SongNotesTableAnnotationComposer,
+      $$SongNotesTableCreateCompanionBuilder,
+      $$SongNotesTableUpdateCompanionBuilder,
+      (
+        SongNoteRow,
+        BaseReferences<_$AppDatabase, $SongNotesTable, SongNoteRow>,
+      ),
+      SongNoteRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3482,4 +4200,6 @@ class $AppDatabaseManager {
       $$PlayHistoryTableTableManager(_db, _db.playHistory);
   $$DownloadsTableTableManager get downloads =>
       $$DownloadsTableTableManager(_db, _db.downloads);
+  $$SongNotesTableTableManager get songNotes =>
+      $$SongNotesTableTableManager(_db, _db.songNotes);
 }

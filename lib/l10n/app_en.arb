@@ -1141,6 +1141,56 @@
   "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
   "lifeTurnOn": "Turn on",
   "lifeNoThanks": "No, thanks",
+  "noteAdd": "Write a memory",
+  "noteHint": "What does this song remind you of?",
+  "notePerson": "Who is it about? (optional)",
+  "notePersonHelp": "Songs about the same person are kept together",
+  "notePhoto": "Add a photo",
+  "noteRemovePhoto": "Remove photo",
+  "notePrivate": "Kept on this phone only.",
+  "noteReplay": "{count, plural, other{{count}th time today. Write down why?}}",
+  "@noteReplay": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noteMemories": "Memories",
+  "notePlayPerson": "Play the songs about {name}",
+  "@notePlayPerson": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lifeForgotten": "Forgotten loves",
+  "lifeForgottenBody": "{count, plural, =1{A song you once loved} other{{count} songs you once loved}}",
+  "@lifeForgottenBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeYouth": "Your teen years",
+  "lifeYouthSet": "Tap and enter your birth year",
+  "lifeYouthYears": "Songs from {from}–{to}",
+  "@lifeYouthYears": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      }
+    }
+  },
+  "lifeYouthAges": "When you were 13–22 · hold to change",
+  "lifeYouthAsk": "Which year were you born?",
+  "lifeYouthPrivate": "Kept on this phone only",
+  "lifeYouthEmpty": "No songs from those years in your library",
   "placeBack": "📍 You're back: {place}",
   "@placeBack": {
     "placeholders": {

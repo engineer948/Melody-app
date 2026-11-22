@@ -129,9 +129,45 @@ class Downloads extends Table {
   Set<Column<Object>> get primaryKey => {accountId, trackId};
 }
 
+/// A memory the user wrote for a song: a few words, who it is about and
+/// a photo, kept on the device only.
+@DataClassName('SongNoteRow')
+class SongNotes extends Table {
+  /// Owning account.
+  TextColumn get accountId => text()();
+
+  /// Song the memory belongs to.
+  TextColumn get trackId => text()();
+
+  /// JSON of the song, to show and play it without the server.
+  TextColumn get payload => text()();
+
+  /// The words; may be empty when there is only a person or a photo.
+  TextColumn get body => text()();
+
+  /// Who the song is about ("Mum"); private.
+  TextColumn get person => text().nullable()();
+
+  /// File name of the photo inside the app's memories folder.
+  TextColumn get photo => text().nullable()();
+
+  /// When it was last written.
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {accountId, trackId};
+}
+
 /// Local SQLite database.
 @DriftDatabase(
-  tables: [Accounts, CachedItems, CachedLists, PlayHistory, Downloads],
+  tables: [
+    Accounts,
+    CachedItems,
+    CachedLists,
+    PlayHistory,
+    Downloads,
+    SongNotes,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   /// Opens the database, by default the on-device file.
@@ -139,7 +175,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'melody'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -162,6 +198,7 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(playHistory, playHistory.longitude);
         await m.addColumn(playHistory, playHistory.place);
       }
+      if (from < 4) await m.createTable(songNotes);
     },
   );
 
