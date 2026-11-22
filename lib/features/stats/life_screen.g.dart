@@ -101,6 +101,115 @@ final class OnThisDayProvider
 
 String _$onThisDayHash() => r'36377d16e66fb078f6740b92ac1e7447cf8a12eb';
 
+/// What was played the last time at the place the phone is now, when the
+/// user is back after a while; `null` otherwise. Asked again when the app
+/// comes back to the foreground.
+
+@ProviderFor(placeMemory)
+final placeMemoryProvider = PlaceMemoryProvider._();
+
+/// What was played the last time at the place the phone is now, when the
+/// user is back after a while; `null` otherwise. Asked again when the app
+/// comes back to the foreground.
+
+final class PlaceMemoryProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PlaceMemory?>,
+          PlaceMemory?,
+          FutureOr<PlaceMemory?>
+        >
+    with $FutureModifier<PlaceMemory?>, $FutureProvider<PlaceMemory?> {
+  /// What was played the last time at the place the phone is now, when the
+  /// user is back after a while; `null` otherwise. Asked again when the app
+  /// comes back to the foreground.
+  PlaceMemoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'placeMemoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$placeMemoryHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<PlaceMemory?> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PlaceMemory?> create(Ref ref) {
+    return placeMemory(ref);
+  }
+}
+
+String _$placeMemoryHash() => r'089729c9ff209d1ab36a82391a27cc5457c749ea';
+
+/// Hides the place reminder until the app is opened again.
+
+@ProviderFor(PlaceMemoryDismissed)
+final placeMemoryDismissedProvider = PlaceMemoryDismissedProvider._();
+
+/// Hides the place reminder until the app is opened again.
+final class PlaceMemoryDismissedProvider
+    extends $NotifierProvider<PlaceMemoryDismissed, bool> {
+  /// Hides the place reminder until the app is opened again.
+  PlaceMemoryDismissedProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'placeMemoryDismissedProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$placeMemoryDismissedHash();
+
+  @$internal
+  @override
+  PlaceMemoryDismissed create() => PlaceMemoryDismissed();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$placeMemoryDismissedHash() =>
+    r'0810a3e8d3c675a8313950f116a6cd366b7d46f2';
+
+/// Hides the place reminder until the app is opened again.
+
+abstract class _$PlaceMemoryDismissed extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// First play of a song and how often it was played.
 
 @ProviderFor(trackMemory)

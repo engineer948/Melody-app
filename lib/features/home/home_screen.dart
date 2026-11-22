@@ -108,6 +108,7 @@ class HomeScreen extends ConsumerWidget {
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
         const SliverToBoxAdapter(child: UpdateBanner()),
         ...socialHomeSlivers(context, social),
+        const SliverToBoxAdapter(child: PlaceMemoryBanner()),
         const SliverToBoxAdapter(child: LifeShelf()),
         // The year in review is put forward in December.
         if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))

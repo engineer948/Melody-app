@@ -578,5 +578,10 @@
   "lifeAsk": "Günlerini müzikle hatırla: ana ekranda günlerinin şarkıları, yerleri, fotoğrafları ve \"1 yıl önce bugün\". Açalım mı? İstediğin zaman Ayarlar → Gizlilik'ten değiştirebilirsin.",
   "lifeAskPlaces": "Nerede dinlediğini de hatırlayalım mı? Sadece yaklaşık yer (yaklaşık 1 km), bu telefonda saklanır.",
   "lifeTurnOn": "Aç",
-  "lifeNoThanks": "Hayır, teşekkürler"
+  "lifeNoThanks": "Hayır, teşekkürler",
+  "placeBack": "📍 Tekrar buradasın: {place}",
+  "placeLastTime": "Geçen sefer, {date} tarihinde burada {artist} — {song} dinliyordun.",
+  "placePlay": "O günün şarkıları",
+  "placeReminders": "Yer hatırlatıcı",
+  "placeRemindersBody": "Daha önce müzik dinlediğin bir yere dönünce, ana ekran orada ne dinlediğini gösterir"
 }

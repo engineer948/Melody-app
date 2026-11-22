@@ -114,6 +114,48 @@ class HistoryStore {
     );
   }
 
+  /// Plays of [accountId] with a place within about 2 km of the point
+  /// (a box of ±0.02°), any order.
+  Future<List<PlayEvent>> eventsNear(
+    String accountId,
+    double latitude,
+    double longitude,
+  ) async {
+    const box = 0.02;
+    final t = _db.playHistory;
+    final rows =
+        await (_db.select(t)..where(
+              (r) =>
+                  r.accountId.equals(accountId) &
+                  r.latitude.isBetweenValues(latitude - box, latitude + box) &
+                  r.longitude.isBetweenValues(longitude - box, longitude + box),
+            ))
+            .get();
+    final events = <PlayEvent>[];
+    for (final row in rows) {
+      try {
+        events.add(
+          PlayEvent(
+            track: Track.fromJson(
+              jsonDecode(row.payload) as Map<String, dynamic>,
+            ),
+            startedAt: row.startedAt,
+            listened: Duration(milliseconds: row.listenedMs),
+            skipped: row.skipped,
+            place: PlayPlace(
+              latitude: row.latitude!,
+              longitude: row.longitude!,
+              name: row.place,
+            ),
+          ),
+        );
+      } on Object {
+        // Written by an incompatible version; skipped.
+      }
+    }
+    return events;
+  }
+
   /// When each song of [accountId] was first played, by track id.
   Future<Map<String, DateTime>> firstPlays(String accountId) async {
     final first = _db.playHistory.startedAt.min();

@@ -37,6 +37,7 @@ class ListeningSettings {
     this.places = false,
     this.lifeShelf = false,
     this.lifeAsked = false,
+    this.placeReminders = true,
   });
 
   /// Restores settings saved with [toJson].
@@ -52,6 +53,7 @@ class ListeningSettings {
         places: json['places'] as bool? ?? false,
         lifeShelf: json['lifeShelf'] as bool? ?? false,
         lifeAsked: json['lifeAsked'] as bool? ?? false,
+        placeReminders: json['placeReminders'] as bool? ?? true,
       );
 
   /// Whether plays are recorded on the device.
@@ -80,6 +82,10 @@ class ListeningSettings {
   /// Whether the user was asked once about the shelf.
   final bool lifeAsked;
 
+  /// Whether coming back to a place brings up what was played there (only
+  /// with [places]).
+  final bool placeReminders;
+
   /// Returns a copy with the given fields replaced.
   ListeningSettings copyWith({
     bool? history,
@@ -90,6 +96,7 @@ class ListeningSettings {
     bool? places,
     bool? lifeShelf,
     bool? lifeAsked,
+    bool? placeReminders,
   }) => ListeningSettings(
     history: history ?? this.history,
     suggestions: suggestions ?? this.suggestions,
@@ -99,6 +106,7 @@ class ListeningSettings {
     places: places ?? this.places,
     lifeShelf: lifeShelf ?? this.lifeShelf,
     lifeAsked: lifeAsked ?? this.lifeAsked,
+    placeReminders: placeReminders ?? this.placeReminders,
   );
 
   /// Serialises the settings.
@@ -111,6 +119,7 @@ class ListeningSettings {
     'places': places,
     'lifeShelf': lifeShelf,
     'lifeAsked': lifeAsked,
+    'placeReminders': placeReminders,
   };
 
   @override
@@ -123,7 +132,8 @@ class ListeningSettings {
       other.autoDjThreshold == autoDjThreshold &&
       other.places == places &&
       other.lifeShelf == lifeShelf &&
-      other.lifeAsked == lifeAsked;
+      other.lifeAsked == lifeAsked &&
+      other.placeReminders == placeReminders;
 
   @override
   int get hashCode => Object.hash(
@@ -135,6 +145,7 @@ class ListeningSettings {
     places,
     lifeShelf,
     lifeAsked,
+    placeReminders,
   );
 }
 

@@ -1,0 +1,4 @@
+Place reminder.
+- Back somewhere you played music before? Home shows what you listened to there last time, with a button to play that day's songs
+- At most once a week per place; everyday places (home, work) are skipped
+- Settings → Privacy → Place reminder (needs "Remember places"); checked only when the app is open

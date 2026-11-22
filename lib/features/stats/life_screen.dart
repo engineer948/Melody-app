@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:melody/core/router/app_routes.dart';
+import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/core/widgets/large_title_page.dart';
@@ -13,6 +14,7 @@ import 'package:melody/core/widgets/shelf_header.dart';
 import 'package:melody/data/places/places_bridge.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/stats/life_days.dart';
+import 'package:melody/domain/stats/place_memory.dart';
 import 'package:melody/domain/stats/play_event.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
@@ -21,6 +23,7 @@ import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/history_recorder.dart';
 import 'package:melody/player/listening_settings.dart';
+import 'package:melody/player/player_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'life_screen.g.dart';
@@ -69,6 +72,159 @@ Future<List<(int, LifeDay)>> onThisDay(Ref ref) async {
     found.add((years, lifeDays(events, firsts).single));
   }
   return found;
+}
+
+/// Preference prefix: when a place was last brought up.
+const placeReminderKey = 'life.placeReminder.';
+
+/// How long a place stays quiet after being brought up.
+const placeReminderPause = Duration(days: 7);
+
+/// What was played the last time at the place the phone is now, when the
+/// user is back after a while; `null` otherwise. Asked again when the app
+/// comes back to the foreground.
+@riverpod
+Future<PlaceMemory?> placeMemory(Ref ref) async {
+  final settings = ref.watch(listeningSettingsControllerProvider);
+  if (!settings.places || !settings.placeReminders) return null;
+  final accountId = ref.watch(
+    sessionControllerProvider.select((s) => s.activeId),
+  );
+  final bridge = ref.watch(placesBridgeProvider);
+  if (accountId == null || !bridge.supported) return null;
+  if (!await bridge.hasLocation()) return null;
+  ({double latitude, double longitude})? here;
+  try {
+    here = await bridge.location().timeout(const Duration(seconds: 8));
+  } on Object {
+    return null;
+  }
+  if (here == null) return null;
+  final events = await ref
+      .read(historyStoreProvider)
+      .eventsNear(accountId, here.latitude, here.longitude);
+  final now = DateTime.now();
+  final memory = findPlaceMemory(
+    events,
+    latitude: here.latitude,
+    longitude: here.longitude,
+    now: now,
+  );
+  if (memory == null) return null;
+  final prefs = ref.read(preferencesProvider);
+  final shown = DateTime.tryParse(
+    prefs.getString('$placeReminderKey${memory.key}') ?? '',
+  );
+  if (shown != null && now.difference(shown) < placeReminderPause) {
+    return null;
+  }
+  // Brought up once: quiet for a week from now on.
+  await prefs.setString(
+    '$placeReminderKey${memory.key}',
+    now.toIso8601String(),
+  );
+  return memory;
+}
+
+/// Hides the place reminder until the app is opened again.
+@Riverpod(keepAlive: true)
+class PlaceMemoryDismissed extends _$PlaceMemoryDismissed {
+  @override
+  bool build() => false;
+
+  /// Hides it.
+  void dismiss() => state = true;
+
+  /// Shows it again when there is one (the app came back).
+  void reset() => state = false;
+}
+
+/// "You are back here: last time you played …" at the top of Home.
+class PlaceMemoryBanner extends ConsumerWidget {
+  /// Creates the banner.
+  const PlaceMemoryBanner({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(placeMemoryDismissedProvider)) return const SizedBox.shrink();
+    final memory = ref.watch(placeMemoryProvider).value;
+    if (memory == null || memory.songs.isEmpty) return const SizedBox.shrink();
+    final l10n = context.l10n;
+    final scheme = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final song = memory.songs.first;
+    return Card(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      clipBehavior: Clip.antiAlias,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [scheme.primaryContainer, scheme.tertiaryContainer],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 8, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.placeBack(memory.place.label),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: MaterialLocalizations.of(context)
+                        .closeButtonTooltip,
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => ref
+                        .read(placeMemoryDismissedProvider.notifier)
+                        .dismiss(),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  l10n.placeLastTime(
+                    DateFormat.yMMMMd(locale).format(memory.day),
+                    song.title,
+                    song.artistLine,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  ArtworkImage(
+                    artwork: song.artwork,
+                    size: 40,
+                    radius: 6,
+                    icon: Icons.music_note_outlined,
+                  ),
+                  const Spacer(),
+                  FilledButton.icon(
+                    onPressed: () {
+                      ref.read(placeMemoryDismissedProvider.notifier).dismiss();
+                      unawaited(
+                        ref
+                            .read(playerControllerProvider.notifier)
+                            .playTracks(memory.songs),
+                      );
+                    },
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: Text(l10n.placePlay),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// First play of a song and how often it was played.

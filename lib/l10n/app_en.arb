@@ -1143,5 +1143,30 @@
   "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
   "lifeAskPlaces": "Also remember where you listen? Only a rough place (about 1 km), kept on this phone.",
   "lifeTurnOn": "Turn on",
-  "lifeNoThanks": "No, thanks"
+  "lifeNoThanks": "No, thanks",
+  "placeBack": "📍 You're back: {place}",
+  "@placeBack": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "placeLastTime": "Last time, on {date}, you were listening to {song} by {artist} here.",
+  "@placeLastTime": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "song": {
+        "type": "String"
+      },
+      "artist": {
+        "type": "String"
+      }
+    }
+  },
+  "placePlay": "That day's songs",
+  "placeReminders": "Place reminder",
+  "placeRemindersBody": "When you come back somewhere you played music before, Home shows what you listened to there"
 }

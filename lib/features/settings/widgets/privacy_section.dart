@@ -80,6 +80,17 @@ class PrivacySection extends ConsumerWidget {
             onChanged: (on) =>
                 unawaited(setLifeSoundtrack(context, ref, on: on)),
           ),
+        if (ref.watch(placesBridgeProvider).supported)
+          SwitchListTile(
+            secondary: const Icon(Icons.share_location_outlined),
+            title: Text(l10n.placeReminders),
+            subtitle: Text(l10n.placeRemindersBody),
+            value: s.places && s.placeReminders,
+            onChanged: s.places
+                ? (v) =>
+                      unawaited(c.update((s) => s.copyWith(placeReminders: v)))
+                : null,
+          ),
         SwitchListTile(
           secondary: const Icon(Icons.recommend_outlined),
           title: Text(l10n.privacySuggestions),

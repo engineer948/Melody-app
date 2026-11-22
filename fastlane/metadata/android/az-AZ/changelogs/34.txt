@@ -1,0 +1,4 @@
+Yer xatırladıcısı.
+- Əvvəl musiqi dinlədiyin yerə qayıtdın? Ana ekran keçən dəfə orada nə dinlədiyini göstərir, o günün mahnılarını çalan düymə ilə
+- Hər yer üçün ən çox həftədə bir; hər gün gedilən yerlər (ev, iş) atlanır
+- Ayarlar → Məxfilik → Yer xatırladıcısı ("Yerləri xatırla" açıq olmalıdır); yalnız tətbiq açıq olanda yoxlanılır

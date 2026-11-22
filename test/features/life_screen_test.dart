@@ -3,8 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/stats/play_event.dart';
+import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/player/history_recorder.dart';
 import 'package:melody/player/listening_settings.dart';
+import 'package:melody/player/player_controller.dart';
 
 import '../helpers/fake_places.dart';
 import '../helpers/fakes.dart';
@@ -236,5 +238,53 @@ void main() {
     await tester.tap(find.text('Soundtrack of your life on Home'));
     await tester.pumpAndSettle();
     expect(c.read(listeningSettingsControllerProvider).lifeShelf, isTrue);
+  });
+
+  testWidgets('back at a place: Home shows what was played there, once', (
+    tester,
+  ) async {
+    final places = FakePlacesBridge()..locationAllowed = true;
+    final c = await pumpApp(
+      tester,
+      preferences: {
+        ..._english,
+        ListeningSettingsController.key: '{"places":true,"lifeAsked":true}',
+      },
+      overrides: [placesBridgeProvider.overrideWithValue(places)],
+    );
+    final ago = DateTime.now().subtract(const Duration(days: 10));
+    await c
+        .read(historyStoreProvider)
+        .add(
+          testAccount.id,
+          PlayEvent(
+            track: makeTrack('t1', title: 'Firuze'),
+            startedAt: ago,
+            listened: const Duration(minutes: 3),
+            place: PlayPlace(
+              latitude: 40.37767,
+              longitude: 49.89201,
+              name: 'Sahil, Bakı',
+            ),
+          ),
+        );
+    c.invalidate(placeMemoryProvider);
+    await tester.pumpAndSettle();
+    expect(find.text("📍 You're back: Sahil, Bakı"), findsOneWidget);
+    expect(find.textContaining('Firuze by Sezen here'), findsOneWidget);
+
+    await tester.tap(find.text("That day's songs"));
+    await tester.pumpAndSettle();
+    expect(c.read(playerControllerProvider).current?.id, 't1');
+    expect(find.text("📍 You're back: Sahil, Bakı"), findsNothing);
+
+    // Coming back to the app the same week: not again.
+    c
+      ..read(placeMemoryDismissedProvider.notifier).reset()
+      ..invalidate(placeMemoryProvider);
+    await tester.pumpAndSettle();
+    expect(find.text("📍 You're back: Sahil, Bakı"), findsNothing);
+    await c.read(playerControllerProvider.notifier).clear();
+    await tester.pumpAndSettle();
   });
 }

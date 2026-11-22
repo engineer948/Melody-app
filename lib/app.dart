@@ -11,6 +11,7 @@ import 'package:melody/core/theme/app_theme.dart';
 import 'package:melody/core/theme/system_colors.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_home.dart';
+import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/features/tailnet/tailnet_controller.dart';
 import 'package:melody/l10n/l10n.dart';
 
@@ -48,6 +49,9 @@ class _MelodyAppState extends ConsumerState<MelodyApp>
       unawaited(ref.read(tailnetControllerProvider.notifier).appLeft());
     }
     if (state != AppLifecycleState.resumed) return;
+    // Back in the app: maybe somewhere music was played before.
+    ref.read(placeMemoryDismissedProvider.notifier).reset();
+    ref.invalidate(placeMemoryProvider);
     // Back in the app: reconnect Tailscale if it dropped meanwhile.
     unawaited(ref.read(tailnetControllerProvider.notifier).ensureConnected());
     final canPop = ref.read(appRouterProvider).canPop();
