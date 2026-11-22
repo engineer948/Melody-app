@@ -374,8 +374,12 @@ class Cassette extends StatelessWidget {
     this.from = '',
     this.turns,
     this.width = 220,
+    this.progress,
     super.key,
   });
+
+  /// How far the tape has played (0–1); `null` draws no tape.
+  final double? progress;
 
   /// Text on the label.
   final String title;
@@ -396,7 +400,7 @@ class Cassette extends StatelessWidget {
   Widget build(BuildContext context) {
     final w = width;
     final h = w * 0.63;
-    Widget reel() {
+    Widget reel([double? wound]) {
       final r = RotationTransition(
         turns: turns ?? const AlwaysStoppedAnimation(0),
         child: CustomPaint(
@@ -404,8 +408,34 @@ class Cassette extends StatelessWidget {
           painter: _ReelPainter(),
         ),
       );
-      return r;
+      if (wound == null) return r;
+      // Tape wound on the reel: from a thin ring to a full spool.
+      final tape = w * (0.11 + 0.13 * wound);
+      return SizedBox.square(
+        dimension: w * 0.17,
+        child: Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
+          children: [
+            OverflowBox(
+              maxWidth: tape,
+              maxHeight: tape,
+              child: Container(
+                width: tape,
+                height: tape,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF4A3426),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            r,
+          ],
+        ),
+      );
     }
+
+    final played = progress;
 
     return Container(
       width: w,
@@ -464,9 +494,13 @@ class Cassette extends StatelessWidget {
                     color: const Color(0xFF26262B),
                     borderRadius: BorderRadius.circular(h * 0.13),
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [reel(), reel()],
+                    children: [
+                      reel(played == null ? null : 1 - played),
+                      reel(played),
+                    ],
                   ),
                 ),
                 SizedBox(height: h * 0.04),

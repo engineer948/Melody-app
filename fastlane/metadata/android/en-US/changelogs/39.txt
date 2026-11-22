@@ -1,0 +1,1 @@
+Player looks: hold the cover in the full player to turn it into a cassette whose tape winds from reel to reel as the song plays (or pick it in Settings → Appearance → Player). Moving lyrics: words of synced lyrics light up one by one (same place). Slowed and Sped up: tap the speed button in the player; speed and pitch change together, like a record.

@@ -305,6 +305,9 @@ class DlnaEngine implements AudioEngine {
   @override
   Future<void> setSpeed(double speed) async {}
 
+  @override
+  Future<void> setPitch(double pitch) async {}
+
   // The renderer has its own volume; fades and normalisation stay local.
   @override
   Future<void> setVolume(double volume) async {}

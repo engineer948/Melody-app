@@ -11,6 +11,7 @@ import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/lyrics/lyrics_view.dart';
+import 'package:melody/features/player/player_look.dart';
 import 'package:melody/features/player/track_actions.dart';
 import 'package:melody/features/player/widgets/output_sheet.dart';
 import 'package:melody/features/player/widgets/player_sheets.dart';
@@ -178,6 +179,8 @@ class _SwipeableCover extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final player = ref.read(playerControllerProvider.notifier);
+    final face = ref.watch(playerLookControllerProvider.select((l) => l.face));
+    final track = state.current;
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         final v = details.primaryVelocity ?? 0;
@@ -185,32 +188,48 @@ class _SwipeableCover extends ConsumerWidget {
         if (v < -300) unawaited(player.next());
         if (v > 300) unawaited(player.previous());
       },
-      child: AnimatedScale(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutBack,
-        scale: state.playing ? 1 : 0.86,
-        child: Hero(
-          tag: 'now-playing-artwork',
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x66000000),
-                  blurRadius: 30,
-                  offset: Offset(0, 12),
+      // Hold to switch between the cover and the cassette.
+      onLongPress: () {
+        unawaited(HapticFeedback.mediumImpact());
+        unawaited(ref.read(playerLookControllerProvider.notifier).toggleFace());
+      },
+      child: face == PlayerFace.cassette && track != null
+          ? SizedBox(
+              height: size,
+              child: Center(
+                child: PlayerCassette(
+                  track: track,
+                  playing: state.playing,
+                  width: size,
                 ),
-              ],
+              ),
+            )
+          : AnimatedScale(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutBack,
+              scale: state.playing ? 1 : 0.86,
+              child: Hero(
+                tag: 'now-playing-artwork',
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x66000000),
+                        blurRadius: 30,
+                        offset: Offset(0, 12),
+                      ),
+                    ],
+                  ),
+                  child: ArtworkImage(
+                    artwork: state.current?.artwork,
+                    size: size,
+                    radius: 14,
+                    icon: Icons.music_note_outlined,
+                  ),
+                ),
+              ),
             ),
-            child: ArtworkImage(
-              artwork: state.current?.artwork,
-              size: size,
-              radius: 14,
-              icon: Icons.music_note_outlined,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -399,7 +418,11 @@ class _BottomRow extends ConsumerWidget {
           style: TextButton.styleFrom(foregroundColor: fg),
           onPressed: () => showSpeedSheet(context, ref),
           child: Text(
-            l10n.speedValue(formatSpeed(state.speed)),
+            !state.vinyl
+                ? l10n.speedValue(formatSpeed(state.speed))
+                : state.speed < 1
+                ? '🌙 ${l10n.vibeSlowed}'
+                : '⚡ ${l10n.vibeSpedUp}',
             semanticsLabel: l10n.playbackSpeed,
           ),
         ),

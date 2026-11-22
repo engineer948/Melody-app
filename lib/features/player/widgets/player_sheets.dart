@@ -15,43 +15,72 @@ String formatSpeed(double speed) =>
 /// Lets the user pick the playback speed.
 Future<void> showSpeedSheet(BuildContext context, WidgetRef ref) {
   final l10n = context.l10n;
-  final current = ref.read(playerControllerProvider).speed;
+  final state = ref.read(playerControllerProvider);
+  final current = state.vinyl ? null : state.speed;
+  final player = ref.read(playerControllerProvider.notifier);
   return showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
+    isScrollControlled: true,
     builder: (context) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            l10n.playbackSpeed,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          RadioGroup<double>(
-            groupValue: current,
-            onChanged: (speed) {
-              if (speed == null) return;
-              unawaited(
-                ref.read(playerControllerProvider.notifier).setSpeed(speed),
-              );
-              Navigator.pop(context);
-            },
-            child: Column(
-              children: [
-                for (final speed in playbackSpeeds)
-                  RadioListTile<double>(
-                    value: speed,
-                    title: Text(l10n.speedValue(formatSpeed(speed))),
-                  ),
-              ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.playbackSpeed,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            // Like a record turning slower or faster: the pitch follows.
+            for (final (speed, icon, label) in [
+              (slowedSpeed, Icons.nightlight_round, l10n.vibeSlowed),
+              (spedUpSpeed, Icons.bolt_rounded, l10n.vibeSpedUp),
+            ])
+              ListTile(
+                leading: Icon(icon),
+                title: Text(label),
+                subtitle: Text(l10n.vibeBody),
+                trailing: state.vinyl && state.speed == speed
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () {
+                  unawaited(player.setSpeed(speed, vinyl: true));
+                  Navigator.pop(context);
+                },
+              ),
+            const Divider(),
+            RadioGroup<double>(
+              groupValue: current,
+              onChanged: (speed) {
+                if (speed == null) return;
+                unawaited(
+                  ref.read(playerControllerProvider.notifier).setSpeed(speed),
+                );
+                Navigator.pop(context);
+              },
+              child: Column(
+                children: [
+                  for (final speed in playbackSpeeds)
+                    RadioListTile<double>(
+                      value: speed,
+                      title: Text(l10n.speedValue(formatSpeed(speed))),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );
 }
+
+/// Speed of "slowed": lower and slower, like a record at the wrong speed.
+const slowedSpeed = 0.85;
+
+/// Speed of "sped up".
+const spedUpSpeed = 1.2;
 
 /// Minutes offered by the sleep timer.
 const sleepMinutes = [5, 10, 15, 30, 45, 60, 90];

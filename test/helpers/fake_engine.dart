@@ -161,6 +161,12 @@ class FakeAudioEngine implements AudioEngine {
   @override
   Future<void> setSpeed(double speed) async => this.speed = speed;
 
+  /// Last pitch set.
+  double pitch = 1;
+
+  @override
+  Future<void> setPitch(double pitch) async => this.pitch = pitch;
+
   @override
   Future<void> setVolume(double volume) async => this.volume = volume;
 

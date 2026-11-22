@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/features/lyrics/lyrics_providers.dart';
+import 'package:melody/features/player/player_look.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -68,6 +69,9 @@ class _LyricsViewState extends ConsumerState<LyricsView> {
     final offset = settings.offsetOf(widget.track.id);
     final position = ref.watch(playerPositionProvider).value ?? Duration.zero;
     final current = lyrics.lineAt(position - offset);
+    final moving =
+        lyrics.synced &&
+        ref.watch(playerLookControllerProvider.select((l) => l.movingLyrics));
     if (lyrics.synced) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _follow(current));
     }
@@ -118,7 +122,19 @@ class _LyricsViewState extends ConsumerState<LyricsView> {
                       ),
                       child: SizedBox(
                         width: double.infinity,
-                        child: Text(line.text.isEmpty ? '♪' : line.text),
+                        child: moving && i == current && start != null
+                            ? MovingLine(
+                                text: line.text.isEmpty ? '♪' : line.text,
+                                progress: lineProgress(
+                                  position - offset,
+                                  start,
+                                  i + 1 < lyrics.lines.length
+                                      ? lyrics.lines[i + 1].start
+                                      : null,
+                                ),
+                                align: align,
+                              )
+                            : Text(line.text.isEmpty ? '♪' : line.text),
                       ),
                     ),
                   ),
@@ -128,6 +144,73 @@ class _LyricsViewState extends ConsumerState<LyricsView> {
           ),
         ),
         _Footer(track: widget.track, lyrics: lyrics, offset: offset),
+      ],
+    );
+  }
+}
+
+/// How far [position] is through a line from [start] to [end] (0–1); a
+/// line without an end lasts four seconds.
+double lineProgress(Duration position, Duration start, Duration? end) {
+  final stop = end != null && end > start
+      ? end
+      : start + const Duration(seconds: 4);
+  final total = (stop - start).inMilliseconds;
+  final done = (position - start).inMilliseconds;
+  return (done / total).clamp(0.0, 1.0);
+}
+
+/// The current lyrics line, its words lighting up one by one as the line
+/// is sung, the word being sung a little bigger.
+class MovingLine extends StatelessWidget {
+  /// Creates the line.
+  const MovingLine({
+    required this.text,
+    required this.progress,
+    this.align = TextAlign.center,
+    super.key,
+  });
+
+  /// The words.
+  final String text;
+
+  /// How far the line is sung (0–1).
+  final double progress;
+
+  /// Alignment of the words.
+  final TextAlign align;
+
+  @override
+  Widget build(BuildContext context) {
+    final words = text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty);
+    final list = words.toList();
+    // Words take turns by their length, like singing.
+    final total = list.fold<int>(0, (n, w) => n + w.length + 1);
+    var before = 0;
+    return Wrap(
+      alignment: switch (align) {
+        TextAlign.center => WrapAlignment.center,
+        _ => WrapAlignment.start,
+      },
+      spacing: 8,
+      children: [
+        for (final word in list)
+          () {
+            final from = before / total;
+            before += word.length + 1;
+            final to = before / total;
+            final sung = progress >= from;
+            final singing = sung && progress < to;
+            return AnimatedScale(
+              duration: const Duration(milliseconds: 180),
+              scale: singing ? 1.12 : 1,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 180),
+                opacity: sung ? 1 : 0.35,
+                child: Text(word),
+              ),
+            );
+          }(),
       ],
     );
   }

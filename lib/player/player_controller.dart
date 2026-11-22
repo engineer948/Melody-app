@@ -544,11 +544,13 @@ class PlayerController extends _$PlayerController {
     await _persist();
   }
 
-  /// Changes the playback speed (0.5–2).
-  Future<void> setSpeed(double speed) async {
+  /// Changes the playback speed (0.5–2), keeping the pitch; with [vinyl]
+  /// the pitch follows the speed like a record ("slowed", "sped up").
+  Future<void> setSpeed(double speed, {bool vinyl = false}) async {
     final value = speed.clamp(0.5, 2.0);
-    state = state.copyWith(speed: value);
+    state = state.copyWith(speed: value, vinyl: vinyl);
     await _engine.setSpeed(value);
+    await _engine.setPitch(vinyl ? value : 1);
   }
 
   /// Starts a sleep timer; `null` [after] means "at the end of the track".

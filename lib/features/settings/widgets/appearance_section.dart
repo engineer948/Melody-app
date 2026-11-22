@@ -6,6 +6,7 @@ import 'package:melody/core/settings/theme_controller.dart';
 import 'package:melody/core/theme/app_fonts.dart';
 import 'package:melody/core/theme/system_colors.dart';
 import 'package:melody/core/theme/theme_settings.dart';
+import 'package:melody/features/player/player_look.dart';
 import 'package:melody/features/settings/widgets/color_wheel.dart';
 import 'package:melody/l10n/l10n.dart';
 
@@ -130,6 +131,7 @@ class AppearanceSection extends ConsumerWidget {
           trailing: const Icon(Icons.chevron_right),
           onTap: () => context.push(AppRoutes.fontPickerIn(context)),
         ),
+        const _PlayerLookTiles(),
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: Padding(
@@ -245,6 +247,60 @@ class _Swatch extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The full player: cover or cassette, and moving lyrics.
+class _PlayerLookTiles extends ConsumerWidget {
+  const _PlayerLookTiles();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final look = ref.watch(playerLookControllerProvider);
+    final controller = ref.read(playerLookControllerProvider.notifier);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: Text(
+            l10n.lookPlayer,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<PlayerFace>(
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment(
+                  value: PlayerFace.cover,
+                  label: Text(l10n.lookCover),
+                  icon: const Icon(Icons.album_outlined),
+                ),
+                ButtonSegment(
+                  value: PlayerFace.cassette,
+                  label: Text(l10n.lookCassette),
+                  icon: const Icon(Icons.radio_outlined),
+                ),
+              ],
+              selected: {look.face},
+              onSelectionChanged: (s) => controller.setFace(s.first),
+            ),
+          ),
+        ),
+        SwitchListTile(
+          secondary: const Icon(Icons.lyrics_outlined),
+          title: Text(l10n.lookMovingLyrics),
+          subtitle: Text(l10n.lookMovingLyricsBody),
+          value: look.movingLyrics,
+          onChanged: (v) => controller.setMovingLyrics(value: v),
+        ),
+      ],
     );
   }
 }

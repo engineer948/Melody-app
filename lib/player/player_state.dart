@@ -37,6 +37,7 @@ class PlayerState {
     this.buffering = false,
     this.duration,
     this.speed = 1,
+    this.vinyl = false,
     this.sleepTimer,
     this.error,
     this.albumInOrder = false,
@@ -56,6 +57,10 @@ class PlayerState {
 
   /// Playback speed.
   final double speed;
+
+  /// Whether the pitch follows [speed], like a record played slower or
+  /// faster ("slowed" / "sped up").
+  final bool vinyl;
 
   /// Active sleep timer.
   final SleepTimer? sleepTimer;
@@ -79,6 +84,7 @@ class PlayerState {
     bool? buffering,
     Duration? duration,
     double? speed,
+    bool? vinyl,
     SleepTimer? sleepTimer,
     bool clearSleepTimer = false,
     String? error,
@@ -90,6 +96,7 @@ class PlayerState {
     buffering: buffering ?? this.buffering,
     duration: duration ?? this.duration,
     speed: speed ?? this.speed,
+    vinyl: vinyl ?? this.vinyl,
     sleepTimer: clearSleepTimer ? null : sleepTimer ?? this.sleepTimer,
     error: clearError ? null : error ?? this.error,
     albumInOrder: albumInOrder ?? this.albumInOrder,

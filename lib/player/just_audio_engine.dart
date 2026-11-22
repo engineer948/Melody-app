@@ -261,6 +261,15 @@ class JustAudioEngine implements AudioEngine {
   Future<void> setSpeed(double speed) => _player.setSpeed(speed);
 
   @override
+  Future<void> setPitch(double pitch) async {
+    try {
+      await _player.setPitch(pitch);
+    } on Object {
+      // Not every platform can change the pitch.
+    }
+  }
+
+  @override
   Future<void> setVolume(double volume) async {
     _volume = volume.clamp(0.0, 1.0);
     if (_fader == null) await _player.setVolume(_volume);

@@ -44,7 +44,7 @@ final class LetterInboxProvider
   }
 }
 
-String _$letterInboxHash() => r'c0376e3252817b593b94d7b427b7e461c8a44449';
+String _$letterInboxHash() => r'd7ba2e697706665de4f76dffd22090d390f302d8';
 
 /// Letters received or kept, newest first.
 

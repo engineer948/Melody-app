@@ -164,6 +164,9 @@ abstract interface class AudioEngine {
   /// Sets the playback speed.
   Future<void> setSpeed(double speed);
 
+  /// Sets the pitch (1 = unchanged); ignored where not supported.
+  Future<void> setPitch(double pitch);
+
   /// Sets the volume, 0 to 1.
   Future<void> setVolume(double volume);
 

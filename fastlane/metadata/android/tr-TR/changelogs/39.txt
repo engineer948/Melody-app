@@ -1,0 +1,1 @@
+Oynatıcı görünümleri: tam oynatıcıda kapağa basılı tut, şarkı çaldıkça bandı makaradan makaraya sarılan bir kasete dönüşsün (veya Ayarlar → Görünüm → Oynatıcı). Hareketli sözler: senkron sözlerde kelimeler tek tek yanar (aynı yer). Yavaşlatılmış ve Hızlandırılmış: oynatıcıda hız düğmesine dokun; hız ve ses tonu plak gibi birlikte değişir.
