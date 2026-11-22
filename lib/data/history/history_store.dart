@@ -156,6 +156,40 @@ class HistoryStore {
     return events;
   }
 
+  /// Every play of [accountId] that has a place, any order.
+  Future<List<PlayEvent>> placedEvents(String accountId) async {
+    final t = _db.playHistory;
+    final rows =
+        await (_db.select(t)..where(
+              (r) => r.accountId.equals(accountId) & r.latitude.isNotNull(),
+            ))
+            .get();
+    final events = <PlayEvent>[];
+    for (final row in rows) {
+      if (row.longitude == null) continue;
+      try {
+        events.add(
+          PlayEvent(
+            track: Track.fromJson(
+              jsonDecode(row.payload) as Map<String, dynamic>,
+            ),
+            startedAt: row.startedAt,
+            listened: Duration(milliseconds: row.listenedMs),
+            skipped: row.skipped,
+            place: PlayPlace(
+              latitude: row.latitude!,
+              longitude: row.longitude!,
+              name: row.place,
+            ),
+          ),
+        );
+      } on Object {
+        // Written by an incompatible version; skipped.
+      }
+    }
+    return events;
+  }
+
   /// When each song of [accountId] was first played, by track id.
   Future<Map<String, DateTime>> firstPlays(String accountId) async {
     final first = _db.playHistory.startedAt.min();

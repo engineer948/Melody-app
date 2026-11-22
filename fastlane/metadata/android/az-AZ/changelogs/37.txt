@@ -1,0 +1,1 @@
+Bir günü yenidən yaşa: ana ekranda gün kartına toxun (və ya Həyatının musiqisi ekranında "Yenidən yaşa"), o günün mahnıları sırayla çalır, şəkilləri arxada yavaşca keçir. Səyahətlər: evdən uzaq günlər səyahət kimi qruplaşır; toxun, yenidən yaşa. Ulduz xəritəsi (ekranın yuxarısında ✨): dinlədiyin hər yer bir ulduzdur; toxun, mahnılarını gör.

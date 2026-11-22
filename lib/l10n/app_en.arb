@@ -1141,6 +1141,38 @@
   "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
   "lifeTurnOn": "Turn on",
   "lifeNoThanks": "No, thanks",
+  "replayDay": "Relive",
+  "replayEmpty": "No songs were played on these days.",
+  "tripsTitle": "Trips",
+  "tripDays": "{count, plural, =1{1 day} other{{count} days}}",
+  "@tripDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tripSongCount": "{count, plural, =1{1 song} other{{count} songs}}",
+  "@tripSongCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "starMap": "Star map",
+  "starEmpty": "Places you listen to music will appear here as stars.",
+  "starFirst": "{plays, plural, =1{First here on {date} · 1 play} other{First here on {date} · {plays} plays}}",
+  "@starFirst": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "plays": {
+        "type": "int"
+      }
+    }
+  },
   "noteAdd": "Write a memory",
   "noteHint": "What does this song remind you of?",
   "notePerson": "Who is it about? (optional)",

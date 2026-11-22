@@ -20,6 +20,7 @@ import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/stats/life_cards.dart';
+import 'package:melody/features/stats/life_journeys.dart';
 import 'package:melody/features/stats/song_notes.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -311,6 +312,14 @@ class LifeScreen extends ConsumerWidget {
     return Scaffold(
       body: LargeTitlePage(
         title: l10n.lifeTitle,
+        actions: [
+          if (supported)
+            IconButton(
+              tooltip: l10n.starMap,
+              icon: const Icon(Icons.auto_awesome_outlined),
+              onPressed: () => unawaited(showStarMap(context)),
+            ),
+        ],
         onRefresh: () async => ref
           ..invalidate(lifeTimelineProvider)
           ..invalidate(dayPhotosProvider),
@@ -323,6 +332,7 @@ class LifeScreen extends ConsumerWidget {
             ),
           ),
           const SliverToBoxAdapter(child: MemoriesShelf()),
+          const SliverToBoxAdapter(child: TripsShelf()),
           ...loadedSlivers(
             value: days,
             onRetry: () => ref.invalidate(lifeTimelineProvider),
@@ -426,10 +436,28 @@ class _DayCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                DateFormat.yMMMMEEEEd(locale).format(day.day),
-                style: theme.textTheme.titleMedium,
+              padding: const EdgeInsets.only(left: 16, right: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      DateFormat.yMMMMEEEEd(locale).format(day.day),
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => unawaited(
+                      showReplay(
+                        context,
+                        from: day.day,
+                        to: day.day,
+                        title: DateFormat.yMMMMEEEEd(locale).format(day.day),
+                      ),
+                    ),
+                    icon: const Icon(Icons.replay_rounded),
+                    label: Text(l10n.replayDay),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -769,7 +797,15 @@ class _LifeDayCard extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: GestureDetector(
-        onTap: () => context.push(AppRoutes.lifeIn(context)),
+        // Lives the day again.
+        onTap: () => unawaited(
+          showReplay(
+            context,
+            from: day.day,
+            to: day.day,
+            title: DateFormat.yMMMMEEEEd(locale).format(day.day),
+          ),
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(14),
           child: SizedBox(
