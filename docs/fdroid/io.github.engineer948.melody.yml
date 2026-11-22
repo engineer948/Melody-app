@@ -15,9 +15,9 @@ RepoType: git
 Repo: https://github.com/engineer948/Melody-app.git
 
 Builds:
-  - versionName: 0.23.0
-    versionCode: 37
-    commit: v0.23.0
+  - versionName: 0.24.0
+    versionCode: 38
+    commit: v0.24.0
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
       - flutter@3.47.9
@@ -47,5 +47,5 @@ Builds:
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
-CurrentVersion: 0.23.0
-CurrentVersionCode: 37
+CurrentVersion: 0.24.0
+CurrentVersionCode: 38

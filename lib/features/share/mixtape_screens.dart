@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/logging/app_logger.dart';
 import 'package:melody/domain/models/media.dart';
@@ -16,6 +17,7 @@ import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/player/track_actions.dart';
+import 'package:melody/features/share/letter_extras.dart';
 import 'package:melody/features/share/share_screen.dart';
 import 'package:melody/features/tailnet/qr_code.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -29,12 +31,19 @@ Future<T?> _push<T>(BuildContext context, Widget screen) => Navigator.of(
   rootNavigator: true,
 ).push(MaterialPageRoute<T>(fullscreenDialog: true, builder: (_) => screen));
 
-/// Opens the editor of a mixtape with [tracks].
-Future<void> showMixtapeComposer(BuildContext context, List<Track> tracks) =>
-    _push<void>(
-      context,
-      MixtapeComposer(tracks: tracks.take(Mixtape.maxSongs).toList()),
-    );
+/// Opens the editor of a mixtape with [tracks]; [passing] is a received
+/// letter being passed on with one more song.
+Future<void> showMixtapeComposer(
+  BuildContext context,
+  List<Track> tracks, {
+  Mixtape? passing,
+}) => _push<void>(
+  context,
+  MixtapeComposer(
+    tracks: tracks.take(Mixtape.maxSongs).toList(),
+    passing: passing,
+  ),
+);
 
 /// Opens the screen where a received mixtape code is pasted or read.
 Future<void> showOpenMixtape(BuildContext context) =>
@@ -44,10 +53,13 @@ Future<void> showOpenMixtape(BuildContext context) =>
 /// a cassette picture plus a code.
 class MixtapeComposer extends ConsumerStatefulWidget {
   /// Creates the editor.
-  const MixtapeComposer({required this.tracks, super.key});
+  const MixtapeComposer({required this.tracks, this.passing, super.key});
 
   /// Songs of the mixtape.
   final List<Track> tracks;
+
+  /// The received letter passed on, when relaying.
+  final Mixtape? passing;
 
   @override
   ConsumerState<MixtapeComposer> createState() => _MixtapeComposerState();
@@ -55,10 +67,11 @@ class MixtapeComposer extends ConsumerStatefulWidget {
 
 class _MixtapeComposerState extends ConsumerState<MixtapeComposer> {
   final GlobalKey _cardKey = GlobalKey();
-  late final _title = TextEditingController();
-  final _note = TextEditingController();
-  int _color = Mixtape.defaultColor;
+  late final _title = TextEditingController(text: widget.passing?.title);
+  late final _note = TextEditingController(text: widget.passing?.note);
+  late int _color = widget.passing?.color ?? Mixtape.defaultColor;
   bool _busy = false;
+  DateTime? _openOn;
 
   @override
   void initState() {
@@ -82,7 +95,76 @@ class _MixtapeComposerState extends ConsumerState<MixtapeComposer> {
     from: ref.read(sessionControllerProvider).active?.userName ?? '',
     color: _color,
     songs: [for (final t in widget.tracks) MixtapeSong.of(t)],
+    openOn: _openOn,
+    hops: [
+      ...?widget.passing?.hops,
+      if (widget.passing?.from case final from? when from.isNotEmpty) from,
+    ],
   );
+
+  Future<void> _pickOpenDay() async {
+    final now = DateTime.now();
+    final day = await showDatePicker(
+      context: context,
+      initialDate: _openOn ?? DateTime(now.year + 1, now.month, now.day),
+      firstDate: now.add(const Duration(days: 1)),
+      lastDate: DateTime(now.year + 30),
+      helpText: context.l10n.capsuleOpenOn,
+    );
+    if (day != null) setState(() => _openOn = day);
+  }
+
+  Future<void> _keepForMe() async {
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    await ref
+        .read(letterInboxProvider.notifier)
+        .keep(_mixtape(context).encode(), own: true);
+    messenger.showSnackBar(SnackBar(content: Text(l10n.capsuleKept)));
+    navigator.pop();
+  }
+
+  Future<void> _hideInPhoto(BuildContext button) async {
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+    final box = button.findRenderObject() as RenderBox?;
+    final origin = box == null
+        ? null
+        : box.localToGlobal(Offset.zero) & box.size;
+    final code = _mixtape(context).encode();
+    final file = await openFile(
+      acceptedTypeGroups: const [
+        XTypeGroup(label: 'images', mimeTypes: ['image/*']),
+      ],
+    );
+    if (file == null) return;
+    setState(() => _busy = true);
+    try {
+      final png = await hideLetterInPhoto(await file.readAsBytes(), code);
+      if (png == null) {
+        messenger.showSnackBar(SnackBar(content: Text(l10n.hiddenFailed)));
+        return;
+      }
+      final dir = Directory('${(await getTemporaryDirectory()).path}/hidden');
+      if (dir.existsSync()) dir.deleteSync(recursive: true);
+      dir.createSync(recursive: true);
+      final out = File('${dir.path}/photo.png');
+      await out.writeAsBytes(png, flush: true);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.hiddenHint)));
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(out.path, mimeType: 'image/png')],
+          sharePositionOrigin: origin,
+        ),
+      );
+    } on Object catch (e) {
+      _log.error('Hiding a letter failed', e);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.hiddenFailed)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   Future<void> _share(BuildContext button) async {
     final l10n = context.l10n;
@@ -211,6 +293,62 @@ class _MixtapeComposerState extends ConsumerState<MixtapeComposer> {
                 icon: const Icon(Icons.send_rounded),
                 label: Text(l10n.mixtapeSend),
               ),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.hourglass_bottom_rounded),
+              title: Text(l10n.capsuleOpenOn),
+              subtitle: Text(
+                _openOn == null
+                    ? l10n.capsuleAnyTime
+                    : DateFormat.yMMMMd(
+                        Localizations.localeOf(context).toLanguageTag(),
+                      ).format(_openOn!),
+              ),
+              trailing: _openOn == null
+                  ? null
+                  : IconButton(
+                      tooltip: l10n.capsuleClear,
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () => setState(() => _openOn = null),
+                    ),
+              onTap: () => unawaited(_pickOpenDay()),
+            ),
+            if (_openOn != null)
+              OutlinedButton.icon(
+                onPressed: _busy ? null : () => unawaited(_keepForMe()),
+                icon: const Icon(Icons.inventory_2_outlined),
+                label: Text(l10n.capsuleKeep),
+              ),
+            Wrap(
+              spacing: 8,
+              alignment: WrapAlignment.center,
+              children: [
+                Builder(
+                  builder: (button) => TextButton.icon(
+                    onPressed: _busy
+                        ? null
+                        : () => unawaited(_hideInPhoto(button)),
+                    icon: const Icon(Icons.image_outlined),
+                    label: Text(l10n.hiddenMake),
+                  ),
+                ),
+                if (Platform.isAndroid)
+                  TextButton.icon(
+                    onPressed: _busy
+                        ? null
+                        : () => unawaited(
+                            writeLetterToSticker(
+                              context,
+                              ref,
+                              _mixtape(context).encode(),
+                            ),
+                          ),
+                    icon: const Icon(Icons.nfc_rounded),
+                    label: Text(l10n.nfcMake),
+                  ),
+              ],
             ),
             const SizedBox(height: 12),
             Text(
@@ -498,15 +636,15 @@ class MixtapeCard extends StatelessWidget {
 }
 
 /// Paste a code, or read the QR code of a received mixtape picture.
-class OpenMixtapeScreen extends StatefulWidget {
+class OpenMixtapeScreen extends ConsumerStatefulWidget {
   /// Creates the screen.
   const OpenMixtapeScreen({super.key});
 
   @override
-  State<OpenMixtapeScreen> createState() => _OpenMixtapeScreenState();
+  ConsumerState<OpenMixtapeScreen> createState() => _OpenMixtapeScreenState();
 }
 
-class _OpenMixtapeScreenState extends State<OpenMixtapeScreen> {
+class _OpenMixtapeScreenState extends ConsumerState<OpenMixtapeScreen> {
   final _code = TextEditingController();
   String? _error;
 
@@ -520,7 +658,9 @@ class _OpenMixtapeScreenState extends State<OpenMixtapeScreen> {
     try {
       final mixtape = Mixtape.decode(text);
       setState(() => _error = null);
-      Navigator.of(context).pushReplacement(
+      // Every letter opened is kept, so it can be found again.
+      unawaited(ref.read(letterInboxProvider.notifier).keep(mixtape.encode()));
+      Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => MixtapeScreen(mixtape: mixtape),
         ),
@@ -544,7 +684,9 @@ class _OpenMixtapeScreenState extends State<OpenMixtapeScreen> {
       ],
     );
     if (file == null) return;
-    final text = await decodeQrImage(await file.readAsBytes());
+    final bytes = await file.readAsBytes();
+    // A QR code on a cassette picture, or a letter hidden in a photo.
+    final text = await decodeQrImage(bytes) ?? await revealLetterInPhoto(bytes);
     if (!mounted) return;
     if (text == null) {
       setState(() => _error = context.l10n.mixtapeNoQr);
@@ -592,8 +734,122 @@ class _OpenMixtapeScreenState extends State<OpenMixtapeScreen> {
             icon: const Icon(Icons.qr_code_scanner_rounded),
             label: Text(l10n.mixtapeFromPicture),
           ),
+          const _Inbox(),
         ],
       ),
+    );
+  }
+}
+
+/// Opens the letter in [link] (from an NFC sticker) on top of everything
+/// and keeps it in the inbox.
+Future<void> openLetterLink(
+  WidgetRef ref,
+  NavigatorState? navigator,
+  String link,
+) async {
+  final code = letterCodeOf(link);
+  if (code == null || navigator == null) return;
+  final mixtape = Mixtape.decode(code);
+  await ref.read(letterInboxProvider.notifier).keep(mixtape.encode());
+  await navigator.push(
+    MaterialPageRoute<void>(builder: (_) => MixtapeScreen(mixtape: mixtape)),
+  );
+}
+
+/// "A letter can be opened today" at the top of Home, for time capsules
+/// whose day has come.
+class DueLetterBanner extends ConsumerWidget {
+  /// Creates the banner.
+  const DueLetterBanner({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final due = ref.watch(dueLettersProvider);
+    final mixtape = due.firstOrNull?.mixtape;
+    if (mixtape == null) return const SizedBox.shrink();
+    final l10n = context.l10n;
+    return Card(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      color: Color(mixtape.color).withValues(alpha: 0.25),
+      child: ListTile(
+        leading: const Icon(Icons.mark_email_unread_rounded),
+        title: Text(l10n.capsuleDue),
+        subtitle: Text(
+          due.first.own || mixtape.from.isEmpty
+              ? mixtape.title
+              : '${mixtape.title} · ${mixtape.from}',
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () =>
+            unawaited(_push<void>(context, MixtapeScreen(mixtape: mixtape))),
+      ),
+    );
+  }
+}
+
+/// Letters kept on the phone, newest first.
+class _Inbox extends ConsumerWidget {
+  const _Inbox();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final letters = ref.watch(letterInboxProvider);
+    if (letters.isEmpty) return const SizedBox.shrink();
+    final now = DateTime.now();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        Text(l10n.inboxTitle, style: theme.textTheme.titleMedium),
+        for (final letter in letters)
+          if (letter.mixtape case final mixtape?)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: CircleAvatar(
+                backgroundColor: Color(mixtape.color),
+                child: Icon(
+                  mixtape.sealedAt(now)
+                      ? Icons.lock_clock_rounded
+                      : letter.opened
+                      ? Icons.drafts_outlined
+                      : Icons.mail_rounded,
+                  color: Colors.white,
+                ),
+              ),
+              title: Text(mixtape.title, maxLines: 1),
+              subtitle: Text(
+                [
+                  if (letter.own)
+                    l10n.capsuleMine
+                  else if (mixtape.from.isNotEmpty)
+                    mixtape.from,
+                  if (mixtape.sealedAt(now))
+                    l10n.capsuleSealed(
+                      DateFormat.yMMMd(locale).format(mixtape.openOn!),
+                    )
+                  else
+                    DateFormat.yMMMd(locale).format(letter.received),
+                ].join(' · '),
+                maxLines: 1,
+              ),
+              trailing: IconButton(
+                tooltip: l10n.delete,
+                icon: const Icon(Icons.delete_outline),
+                onPressed: () => unawaited(
+                  ref.read(letterInboxProvider.notifier).remove(letter.code),
+                ),
+              ),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => MixtapeScreen(mixtape: mixtape),
+                ),
+              ),
+            ),
+      ],
     );
   }
 }
@@ -632,9 +888,21 @@ class _MixtapeScreenState extends ConsumerState<MixtapeScreen>
   }
 
   Future<void> _unseal() async {
+    unawaited(
+      ref.read(letterInboxProvider.notifier).opened(widget.mixtape.encode()),
+    );
     unawaited(_find());
     await _open.forward();
     if (mounted) _reels.repeat();
+  }
+
+  Future<void> _passOn(List<Track> tracks) async {
+    final song = await pickSong(context);
+    if (song == null || !mounted) return;
+    await showMixtapeComposer(context, [
+      ...tracks,
+      song,
+    ], passing: widget.mixtape);
   }
 
   Future<void> _find() async {
@@ -673,6 +941,7 @@ class _MixtapeScreenState extends ConsumerState<MixtapeScreen>
             return _Envelope(
               color: color,
               from: mixtape.from,
+              openOn: mixtape.sealedAt(DateTime.now()) ? mixtape.openOn : null,
               onOpen: () => unawaited(_unseal()),
             );
           }
@@ -692,6 +961,20 @@ class _MixtapeScreenState extends ConsumerState<MixtapeScreen>
                       width: 280,
                     ),
                   ),
+                  if (mixtape.hops.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      [
+                        ...mixtape.hops,
+                        if (mixtape.from.isNotEmpty) mixtape.from,
+                        l10n.relayYou,
+                      ].join(' → '),
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
                   if (mixtape.note.trim().isNotEmpty) ...[
                     const SizedBox(height: 20),
                     Text(
@@ -738,6 +1021,12 @@ class _MixtapeScreenState extends ConsumerState<MixtapeScreen>
                           icon: const Icon(Icons.playlist_add_rounded),
                           label: Text(l10n.mixtapeSave),
                         ),
+                      if (tracks.length < Mixtape.maxSongs)
+                        TextButton.icon(
+                          onPressed: () => unawaited(_passOn(tracks)),
+                          icon: const Icon(Icons.forward_to_inbox_rounded),
+                          label: Text(l10n.relayAdd),
+                        ),
                     ],
                   ],
                 ],
@@ -755,18 +1044,28 @@ class _Envelope extends StatelessWidget {
     required this.color,
     required this.from,
     required this.onOpen,
+    this.openOn,
   });
 
   final Color color;
   final String from;
   final VoidCallback onOpen;
 
+  /// Set while the letter is a time capsule that cannot be opened yet.
+  final DateTime? openOn;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final sealedUntil = openOn;
+    final now = DateTime.now();
+    final daysLeft = sealedUntil
+        ?.difference(DateTime(now.year, now.month, now.day))
+        .inDays;
     return Center(
       child: GestureDetector(
-        onTap: onOpen,
+        onTap: sealedUntil == null ? onOpen : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -779,14 +1078,33 @@ class _Envelope extends StatelessWidget {
             Text(
               from.isEmpty ? l10n.mixtapeSealed : l10n.mixtapeSealedFrom(from),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: onOpen,
-              icon: const Icon(Icons.drafts_rounded),
-              label: Text(l10n.mixtapeOpenButton),
-            ),
+            if (sealedUntil != null) ...[
+              const Icon(Icons.lock_clock_rounded, size: 32),
+              const SizedBox(height: 8),
+              Text(
+                l10n.capsuleSealed(
+                  DateFormat.yMMMMd(
+                    Localizations.localeOf(context).toLanguageTag(),
+                  ).format(sealedUntil),
+                ),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleMedium,
+              ),
+              Text(
+                l10n.capsuleDaysLeft(daysLeft ?? 0),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ] else
+              FilledButton.icon(
+                onPressed: onOpen,
+                icon: const Icon(Icons.drafts_rounded),
+                label: Text(l10n.mixtapeOpenButton),
+              ),
           ],
         ),
       ),

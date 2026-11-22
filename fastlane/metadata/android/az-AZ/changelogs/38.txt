@@ -1,0 +1,1 @@
+Mahnı məktubları üçün yeni yollar: zaman kapsulu üçün "Açılma tarixi" seç (və ya özün üçün saxla); məktubu şəklə gizlət; toxunanda açılan NFC stikerinə yaz; gələn məktuba mahnı əlavə edib ötür (zəncir görünür). Açılan məktublar Kitabxana → Mahnı məktubunu aç bölməsində saxlanır; kapsulun günü gələndə ana ekran xəbər verir.

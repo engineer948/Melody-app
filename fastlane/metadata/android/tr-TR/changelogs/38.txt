@@ -1,0 +1,1 @@
+Şarkı mektupları için yeni yollar: zaman kapsülü için "Açılış tarihi" seç (veya kendine sakla); mektubu bir fotoğrafa gizle; dokununca açılan bir NFC etiketine yaz; gelen mektuba bir şarkı ekleyip ilet (zincir görünür). Açılan mektuplar Kütüphane → Şarkı mektubu aç'ta saklanır; kapsülün günü gelince ana ekran haber verir.

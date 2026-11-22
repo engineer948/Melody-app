@@ -1,6 +1,8 @@
 package io.github.engineer948.melody
 
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -8,6 +10,22 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : AudioServiceActivity() {
     private val localMedia = LocalMedia(this)
     private val places = Places(this)
+    private val nfc = Nfc(this)
+    private var nfcChannel: MethodChannel? = null
+
+    // A song letter link the app was opened with (NFC sticker), given to
+    // Flutter once.
+    private var initialLink: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        initialLink = Nfc.linkOf(intent)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        Nfc.linkOf(intent)?.let { nfcChannel?.invokeMethod("link", it) }
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -82,6 +100,27 @@ class MainActivity : AudioServiceActivity() {
                     else -> result.notImplemented()
                 }
             }
+        nfcChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "melody/nfc").also {
+            it.setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "state" -> result.success(nfc.state())
+                    "write" -> {
+                        val uri = call.arguments as? String
+                        if (uri == null) result.error("args", "uri is required", null)
+                        else nfc.write(uri, result)
+                    }
+                    "cancel" -> {
+                        nfc.cancel()
+                        result.success(null)
+                    }
+                    "initialLink" -> {
+                        result.success(initialLink)
+                        initialLink = null
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+        }
         // The engine outlives the activity (background playback), so the
         // handlers only keep the application context.
         val app = applicationContext

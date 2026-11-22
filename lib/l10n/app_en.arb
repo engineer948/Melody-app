@@ -1141,6 +1141,45 @@
   "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
   "lifeTurnOn": "Turn on",
   "lifeNoThanks": "No, thanks",
+  "capsuleOpenOn": "Open on",
+  "capsuleAnyTime": "Any time",
+  "capsuleClear": "Remove the date",
+  "capsuleKeep": "Keep it for myself (time capsule)",
+  "capsuleKept": "Kept until its day. Find it in Library → Open a song letter.",
+  "capsuleSealed": "Opens on {date}",
+  "@capsuleSealed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "capsuleDaysLeft": "{count, plural, =0{Opens tomorrow} =1{1 day left} other{{count} days left}}",
+  "@capsuleDaysLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "capsuleMine": "From you",
+  "capsuleDue": "A song letter can be opened today 💌",
+  "hiddenMake": "Hide in a photo",
+  "hiddenFailed": "Could not hide the letter in this picture.",
+  "hiddenHint": "Send the picture as a file, not as a photo: apps that shrink photos erase the letter.",
+  "nfcMake": "Write to an NFC sticker",
+  "nfcMissing": "This phone has no NFC.",
+  "nfcOff": "Turn on NFC in the phone's settings first.",
+  "nfcHold": "Hold the phone to the sticker",
+  "nfcHoldBody": "Keep it still until it is written. Then anyone with Melody can touch the sticker to open the letter.",
+  "nfcWritten": "Written to the sticker.",
+  "nfcTooBig": "The letter does not fit on this sticker. Use fewer songs or a bigger sticker (NTAG215 or NTAG216).",
+  "nfcReadOnly": "This sticker cannot be written.",
+  "nfcFailed": "Writing failed. Try again and keep the phone still.",
+  "relayPick": "Search for a song to add",
+  "relayAdd": "Add a song and pass it on",
+  "relayYou": "you",
+  "inboxTitle": "Your letters",
   "replayDay": "Relive",
   "replayEmpty": "No songs were played on these days.",
   "tripsTitle": "Trips",

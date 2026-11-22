@@ -9,6 +9,8 @@ import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/core/settings/theme_controller.dart';
 import 'package:melody/core/theme/app_theme.dart';
 import 'package:melody/core/theme/system_colors.dart';
+import 'package:melody/features/share/letter_extras.dart';
+import 'package:melody/features/share/mixtape_screens.dart';
 import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/features/social/social_home.dart';
 import 'package:melody/features/stats/life_screen.dart';
@@ -26,14 +28,35 @@ class MelodyApp extends ConsumerStatefulWidget {
 
 class _MelodyAppState extends ConsumerState<MelodyApp>
     with WidgetsBindingObserver {
+  StreamSubscription<String>? _letters;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Song letters from NFC stickers: the one the app was opened with, then
+    // any touched while it runs.
+    final nfc = ref.read(nfcBridgeProvider);
+    _letters = nfc.links.listen(_openLetter);
+    unawaited(
+      nfc.initialLink().then((link) {
+        if (link != null) _openLetter(link);
+      }),
+    );
+  }
+
+  void _openLetter(String link) {
+    final navigator = ref
+        .read(appRouterProvider)
+        .routerDelegate
+        .navigatorKey
+        .currentState;
+    unawaited(openLetterLink(ref, navigator, link));
   }
 
   @override
   void dispose() {
+    unawaited(_letters?.cancel());
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

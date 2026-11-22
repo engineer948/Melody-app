@@ -60,6 +60,8 @@ class Mixtape {
     this.note = '',
     this.from = '',
     this.color = defaultColor,
+    this.openOn,
+    this.hops = const [],
   });
 
   /// Reads a code made by [encode]; throws [FormatException] otherwise.
@@ -95,6 +97,14 @@ class Mixtape {
       from: _cut(json['f'] as String? ?? '', maxTitle),
       color: json['c'] as int? ?? defaultColor,
       songs: songs.take(maxSongs).toList(),
+      openOn: switch (json['o']) {
+        final String day => DateTime.tryParse(day),
+        _ => null,
+      },
+      hops: [
+        for (final h in json['p'] as List<dynamic>? ?? const [])
+          if (h is String && h.trim().isNotEmpty) _cut(h, maxTitle),
+      ].take(maxSongs).toList(),
     );
   }
 
@@ -137,6 +147,28 @@ class Mixtape {
   /// The songs in order.
   final List<MixtapeSong> songs;
 
+  /// The day it may be opened (a time capsule), or `null` for any time.
+  final DateTime? openOn;
+
+  /// Who passed it on before [from], first one first (a relay letter).
+  final List<String> hops;
+
+  /// Whether it is still sealed at [now] (before [openOn]).
+  bool sealedAt(DateTime now) {
+    final day = openOn;
+    return day != null && DateTime(now.year, now.month, now.day).isBefore(day);
+  }
+
+  /// A copy with [song] added at the end, passed on by [by].
+  Mixtape passOn(MixtapeSong song, {required String by}) => Mixtape(
+    title: title,
+    note: note,
+    from: by,
+    color: color,
+    songs: [...songs, song].take(maxSongs).toList(),
+    hops: [...hops, if (from.isNotEmpty) from],
+  );
+
   /// The mixtape as a short text code (compressed JSON).
   String encode() {
     final json = jsonEncode({
@@ -144,6 +176,12 @@ class Mixtape {
       if (note.isNotEmpty) 'n': _cut(note, maxNote),
       if (from.isNotEmpty) 'f': _cut(from, maxTitle),
       'c': color,
+      if (openOn case final day?)
+        'o':
+            '${day.year.toString().padLeft(4, '0')}-'
+            '${day.month.toString().padLeft(2, '0')}-'
+            '${day.day.toString().padLeft(2, '0')}',
+      if (hops.isNotEmpty) 'p': hops,
       's': [
         for (final s in songs.take(maxSongs))
           [s.id, s.title, s.artist, ?s.duration?.inSeconds],
