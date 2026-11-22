@@ -1,0 +1,1 @@
+Otomatik söz zamanlaması artık herhangi bir sesi değil şarkı söyleyen sesi dinler: Android'de şarkının başı telefonda çözülür, sesin girdiği an (stereonun ortasında, insan sesi frekanslarında) bulunur ve ilk söylenen satır oraya kaydırılır. Ses bulunamazsa baştaki sessizliğe göre yapılır. Şarkılar yeni yöntemle bir kez yeniden ölçülür.

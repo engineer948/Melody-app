@@ -38,7 +38,7 @@ class LyricsSettings {
     autoSync: json['autoSync'] as bool? ?? true,
     autoOffsetsMs: {
       for (final e
-          in (json['autoOffsetsMs'] as Map<String, dynamic>? ?? {}).entries)
+          in (json['autoOffsets2'] as Map<String, dynamic>? ?? {}).entries)
         e.key: e.value as int,
     },
   );
@@ -96,7 +96,9 @@ class LyricsSettings {
     'fontScale': fontScale,
     'offsetsMs': offsetsMs,
     'autoSync': autoSync,
-    'autoOffsetsMs': autoOffsetsMs,
+    // Renamed when the singing started to count: older measurements of
+    // the silence alone are made again.
+    'autoOffsets2': autoOffsetsMs,
   };
 }
 

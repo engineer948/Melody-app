@@ -1,0 +1,1 @@
+Automatic lyrics timing now listens for the singing, not just any sound: on Android the start of the song is decoded on the phone, the moment a voice comes in (in the middle of the stereo picture, voice frequencies) is found, and the first sung line is moved there. When no voice is found it falls back to the silence at the start. Songs are measured again once with the new method.

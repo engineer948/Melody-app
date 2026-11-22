@@ -1146,7 +1146,7 @@
   "lyricsAuto": "auto",
   "lyricsBackToAuto": "Back to automatic timing",
   "lyricsAutoSync": "Sync lyrics automatically",
-  "lyricsAutoSyncBody": "Finds where the music really starts (silence at the beginning) and moves the lyrics to match, once per song. Your own corrections always win.",
+  "lyricsAutoSyncBody": "Finds where the singing starts and moves the lyrics so the first line comes with it (or, when no singing is found, by the silence at the start). Once per song; your own corrections always win.",
   "filmTitle": "Film of the year",
   "filmMaking": "Making the film of your year… this takes a minute.",
   "yearGame": "Which year?",

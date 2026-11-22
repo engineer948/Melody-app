@@ -1,0 +1,1 @@
+Sözlərin avtomatik vaxtı indi istənilən səsə yox, oxuyan səsə qulaq asır: Android-də mahnının əvvəli telefonda açılır, səsin girdiyi an (stereonun ortasında, insan səsi tezliklərində) tapılır və ilk oxunan sətir ora sürüşdürülür. Səs tapılmasa, əvvəldəki səssizliyə görə edilir. Mahnılar yeni üsulla bir dəfə yenidən ölçülür.

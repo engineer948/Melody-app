@@ -581,7 +581,7 @@
   "lyricsAuto": "avto",
   "lyricsBackToAuto": "Avtomatik vaxta qayıt",
   "lyricsAutoSync": "Sözləri avtomatik sinxronla",
-  "lyricsAutoSyncBody": "Musiqinin əslində harada başladığını (əvvəldəki səssizliyi) tapır və sözləri ona görə sürüşdürür, hər mahnı üçün bir dəfə. Sənin düzəlişlərin həmişə üstündür.",
+  "lyricsAutoSyncBody": "Mahnının harada oxunmağa başladığını tapır və sözləri ilk sətir onunla gələcək kimi sürüşdürür (səs tapılmasa, əvvəldəki səssizliyə görə). Hər mahnı üçün bir dəfə; sənin düzəlişlərin həmişə üstündür.",
   "filmTitle": "İlin filmi",
   "filmMaking": "İlinin filmi hazırlanır… bir dəqiqə çəkir.",
   "yearGame": "Hansı il?",

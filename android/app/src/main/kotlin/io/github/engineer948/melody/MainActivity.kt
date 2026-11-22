@@ -161,6 +161,29 @@ class MainActivity : AudioServiceActivity() {
                     }
                 }.start()
             }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "melody/voice")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "bands") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                val path = call.argument<String>("path")
+                if (path == null) {
+                    result.error("args", "path is required", null)
+                    return@setMethodCallHandler
+                }
+                val seconds = call.argument<Int>("seconds") ?: 60
+                // Decoding takes a moment: off the main thread.
+                Thread {
+                    val bands = runCatching { VoiceBands.analyze(path, seconds) }
+                    android.os.Handler(android.os.Looper.getMainLooper()).post {
+                        bands.fold(
+                            { result.success(it) },
+                            { result.error("voice", it.message ?: it.toString(), null) },
+                        )
+                    }
+                }.start()
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "melody/widget")
             .setMethodCallHandler { call, result ->
                 if (call.method == "update") {

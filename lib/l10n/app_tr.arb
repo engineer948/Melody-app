@@ -581,7 +581,7 @@
   "lyricsAuto": "otomatik",
   "lyricsBackToAuto": "Otomatik zamanlamaya dön",
   "lyricsAutoSync": "Sözleri otomatik senkronla",
-  "lyricsAutoSyncBody": "Müziğin gerçekten nerede başladığını (baştaki sessizlik) bulur ve sözleri ona göre kaydırır, her şarkı için bir kez. Senin düzeltmelerin her zaman önceliklidir.",
+  "lyricsAutoSyncBody": "Şarkının nerede söylenmeye başladığını bulur ve sözleri ilk satır onunla gelecek şekilde kaydırır (şarkı sesi bulunamazsa baştaki sessizliğe göre). Her şarkı için bir kez; senin düzeltmelerin her zaman önceliklidir.",
   "filmTitle": "Yılın filmi",
   "filmMaking": "Yılının filmi hazırlanıyor… bir dakika sürer.",
   "yearGame": "Hangi yıl?",

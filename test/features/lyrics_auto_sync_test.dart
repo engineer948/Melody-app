@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:melody/domain/lyrics/lrc_parser.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/domain/share/mp3_clip.dart';
 import 'package:melody/features/lyrics/lyrics_auto_sync.dart';
 import 'package:melody/features/lyrics/lyrics_providers.dart';
+import 'package:melody/features/lyrics/voice_analyzer.dart';
 import 'package:melody/features/share/audio_clip.dart';
 
 import '../helpers/fake_mp3.dart';
@@ -98,4 +100,60 @@ void main() {
     );
     expect(back.autoOffsetsMs['t1'], auto.inMilliseconds);
   });
+
+  test('the first sung line goes where the singing starts', () async {
+    final source = FakeMusicSource()
+      ..lyricsByTrack['t1'] = parseLrc(
+        '[00:00.00]♪\n[00:06.00]Birinci\n[00:09.00]İkinci',
+      );
+    final analyzer = _Analyzer(singingAt: 8);
+    final c = await createContainer(
+      source: source,
+      overrides: [
+        songAudioLoaderProvider.overrideWithValue(_Loader(_song(0.2))),
+        voiceAnalyzerProvider.overrideWithValue(analyzer),
+      ],
+    );
+    final offset = await c.read(lyricsAutoSyncProvider(makeTrack('t1')).future);
+    expect(offset.inMilliseconds, closeTo(2000, 300));
+    expect(analyzer.seconds, 18, reason: 'first line + 12 s');
+
+    // No singing found: the silence rule is used.
+    final quiet = _Analyzer(singingAt: null);
+    final d = await createContainer(
+      source: source,
+      overrides: [
+        songAudioLoaderProvider.overrideWithValue(_Loader(_song(2))),
+        voiceAnalyzerProvider.overrideWithValue(quiet),
+      ],
+    );
+    final fallback = await d.read(
+      lyricsAutoSyncProvider(makeTrack('t1')).future,
+    );
+    expect(fallback.inMilliseconds, closeTo(2000, 60));
+  });
+}
+
+class _Analyzer implements VoiceAnalyzer {
+  _Analyzer({required this.singingAt});
+
+  final double? singingAt;
+  int? seconds;
+
+  @override
+  bool get supported => true;
+
+  @override
+  Future<VoiceBandLevels?> bands(Uint8List mp3, {int seconds = 60}) async {
+    this.seconds = seconds;
+    final mid = <double>[];
+    final side = <double>[];
+    for (var t = 0.0; t < seconds; t += 0.02) {
+      final singing = singingAt != null && t >= singingAt!;
+      final beat = (t * 2).floor().isEven ? 1.0 : 0.8;
+      mid.add(t < 0.5 ? 0.0001 : (singing ? 0.3 : 0.05 * beat));
+      side.add(t < 0.5 ? 0.0001 : 0.05 * beat);
+    }
+    return (mid: mid, side: side, hop: const Duration(milliseconds: 20));
+  }
 }
