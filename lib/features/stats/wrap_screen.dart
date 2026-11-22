@@ -6,6 +6,7 @@ import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/domain/stats/listening_stats.dart';
 import 'package:melody/features/stats/stats_providers.dart';
+import 'package:melody/features/stats/year_film.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// The year in review: a few full-screen cards, flipped through like a story.
@@ -210,6 +211,7 @@ class _StoryState extends State<_Story> {
                           ),
                         ),
                       ),
+                    YearFilmButton(year: widget.year, stats: widget.stats),
                     IconButton(
                       icon: const Icon(Icons.close, color: Colors.white),
                       tooltip: l10n.close,

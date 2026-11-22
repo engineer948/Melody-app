@@ -1141,6 +1141,86 @@
   "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
   "lifeTurnOn": "Turn on",
   "lifeNoThanks": "No, thanks",
+  "filmTitle": "Film of the year",
+  "filmMaking": "Making the film of your year… this takes a minute.",
+  "yearGame": "Which year?",
+  "yearGameNoSongs": "Not enough songs with a year in your library for this game.",
+  "yearGameScore": "{score} of {total} right!",
+  "@yearGameScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "yearGameAgain": "Play again",
+  "yearGameRound": "Song {round} of {total}",
+  "@yearGameRound": {
+    "placeholders": {
+      "round": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "yearGameAsk": "Which year is this song from?",
+  "yearGameNext": "Next song",
+  "yearGamePoints": "{count, plural, =1{1 point} other{{count} points}}",
+  "@yearGamePoints": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "partyTitle": "House party",
+  "partyBody": "Guests on the same Wi-Fi scan a code and add songs to the queue from their own phone's browser. No app or internet needed.",
+  "partyScan": "Scan with the phone camera. Guests need the same Wi-Fi.",
+  "partyAdded": "{count, plural, =0{No songs from guests yet} =1{1 song from guests} other{{count} songs from guests}}",
+  "@partyAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "partyStart": "Start the party",
+  "partyStop": "End the party",
+  "partyNoNetwork": "Connect to a Wi-Fi network first.",
+  "dnaTitle": "Music DNA",
+  "dnaHour": "Most music at {hour}:00",
+  "@dnaHour": {
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
+  },
+  "monthAlbum": "Album of the month",
+  "monthAlbumSongs": "{count, plural, =1{1 song} other{{count} songs}}",
+  "@monthAlbumSongs": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "monthAlbumEmpty": "Not enough music this month for an album yet.",
+  "monthAlbumFirsts": "{count, plural, =1{1 new song} other{{count} new songs}}",
+  "@monthAlbumFirsts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "monthPrevious": "Previous month",
+  "monthNext": "Next month",
   "vibeSlowed": "Slowed",
   "vibeSpedUp": "Sped up",
   "vibeBody": "Speed and pitch together, like a record",
@@ -1241,15 +1321,6 @@
     "placeholders": {
       "name": {
         "type": "String"
-      }
-    }
-  },
-  "lifeForgotten": "Forgotten loves",
-  "lifeForgottenBody": "{count, plural, =1{A song you once loved} other{{count} songs you once loved}}",
-  "@lifeForgottenBody": {
-    "placeholders": {
-      "count": {
-        "type": "int"
       }
     }
   },

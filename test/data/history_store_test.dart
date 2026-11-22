@@ -76,26 +76,10 @@ void main() {
     expect(await store.memoryOf('acc1', 'never'), isNull);
   });
 
-  test('forgotten loves and plays since a time', () async {
-    // t1: loved long ago; t2: loved and still played; t3: played little.
+  test('plays since a time', () async {
     for (var i = 0; i < 8; i++) {
-      await store.add('acc1', play('t1', DateTime(2024, 1, 1 + i)));
       await store.add('acc1', play('t2', DateTime(2026, 5, 1 + i)));
     }
-    await store.add('acc1', play('t3', DateTime(2024, 2)));
-    await store.add(
-      'acc1',
-      PlayEvent(
-        track: makeTrack('t1'),
-        startedAt: DateTime(2024, 3),
-        listened: const Duration(seconds: 5),
-        skipped: true,
-      ),
-    );
-    final forgotten = await store.forgotten('acc1', before: DateTime(2026));
-    expect(forgotten.map((t) => t.id), ['t1']);
-    expect(await store.forgotten('acc2', before: DateTime(2026)), isEmpty);
-
     expect(await store.playsSince('acc1', 't2', DateTime(2026, 5, 5)), 4);
     expect(await store.playsSince('acc1', 't1', DateTime(2024, 3)), 0);
   });

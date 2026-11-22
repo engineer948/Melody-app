@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +9,11 @@ import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/core/widgets/shelf_header.dart';
 import 'package:melody/domain/stats/listening_stats.dart';
+import 'package:melody/features/stats/month_album.dart';
+import 'package:melody/features/stats/music_dna.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/features/stats/widgets/hour_chart.dart';
+import 'package:melody/features/stats/year_game.dart';
 import 'package:melody/l10n/l10n.dart';
 
 /// Listening statistics, computed on the device.
@@ -69,10 +74,32 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: OutlinedButton.icon(
-              onPressed: () => context.push(AppRoutes.lifeIn(context)),
-              icon: const Icon(Icons.auto_stories_outlined),
-              label: Text(l10n.lifeTitle),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () => context.push(AppRoutes.lifeIn(context)),
+                  icon: const Icon(Icons.auto_stories_outlined),
+                  label: Text(l10n.lifeTitle),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => unawaited(showMusicDna(context, _period)),
+                  icon: const Icon(Icons.fingerprint_rounded),
+                  label: Text(l10n.dnaTitle),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () =>
+                      unawaited(showMonthAlbum(context, lastMonth())),
+                  icon: const Icon(Icons.album_outlined),
+                  label: Text(l10n.monthAlbum),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => unawaited(showYearGame(context)),
+                  icon: const Icon(Icons.quiz_outlined),
+                  label: Text(l10n.yearGame),
+                ),
+              ],
             ),
           ),
           switch (stats) {

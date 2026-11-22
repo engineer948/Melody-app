@@ -98,7 +98,7 @@ void main() {
     expect(notes.single.person, 'Leyla');
   });
 
-  testWidgets('home: forgotten loves and teen years cards', (tester) async {
+  testWidgets('home: teen years card', (tester) async {
     final c = await pumpApp(
       tester,
       preferences: {
@@ -110,16 +110,6 @@ void main() {
     );
     final store = c.read(historyStoreProvider);
     final now = DateTime.now();
-    for (var i = 0; i < 8; i++) {
-      await store.add(
-        testAccount.id,
-        PlayEvent(
-          track: makeTrack('t1', title: 'Old love'),
-          startedAt: now.subtract(Duration(days: 400 + i)),
-          listened: const Duration(minutes: 3),
-        ),
-      );
-    }
     await store.add(
       testAccount.id,
       PlayEvent(
@@ -131,16 +121,13 @@ void main() {
     c.read(historyRevisionProvider.notifier).bump();
     await tester.pumpAndSettle();
 
-    expect(find.text('Forgotten loves'), findsOneWidget);
-    expect(find.text('A song you once loved'), findsOneWidget);
-
     // The last card of the shelf.
     await tester.scrollUntilVisible(
       find.text('Your teen years'),
       200,
       scrollable: find
           .ancestor(
-            of: find.text('Forgotten loves'),
+            of: find.text('♪ Yesterday · Sezen'),
             matching: find.byType(Scrollable),
           )
           .first,

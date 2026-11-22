@@ -21,6 +21,7 @@ import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/library/widgets/paged_scroll_view.dart';
 import 'package:melody/features/stats/life_cards.dart';
 import 'package:melody/features/stats/life_journeys.dart';
+import 'package:melody/features/stats/month_album.dart';
 import 'package:melody/features/stats/song_notes.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/l10n/l10n.dart';
@@ -755,7 +756,7 @@ class LifeShelf extends ConsumerWidget {
                   label: l10n.lifeYearsAgo(years),
                   highlight: true,
                 ),
-              const ForgottenCard(),
+              const MonthAlbumCard(),
               for (final day in days) _LifeDayCard(day: day, photos: photos),
               const YouthCard(),
             ],

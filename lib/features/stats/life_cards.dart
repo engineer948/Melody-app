@@ -10,27 +10,10 @@ import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/playlists/smart_playlist.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/l10n/l10n.dart';
-import 'package:melody/player/history_recorder.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'life_cards.g.dart';
-
-/// A song is "forgotten" when it was last played this long ago.
-const forgottenAfter = Duration(days: 180);
-
-/// Songs loved once (many plays) and not played for half a year.
-@riverpod
-Future<List<Track>> forgottenLoves(Ref ref) async {
-  ref.watch(historyRevisionProvider);
-  final accountId = ref.watch(
-    sessionControllerProvider.select((s) => s.activeId),
-  );
-  if (accountId == null) return const [];
-  return await ref
-      .watch(historyStoreProvider)
-      .forgotten(accountId, before: DateTime.now().subtract(forgottenAfter));
-}
 
 /// Preference: the year the user was born, for "your teen years".
 const birthYearKey = 'life.birthYear';
@@ -48,31 +31,6 @@ class BirthYear extends _$BirthYear {
   Future<void> set(int year) async {
     await ref.read(preferencesProvider).setInt(birthYearKey, year);
     state = year;
-  }
-}
-
-/// "Forgotten loves" on the home shelf: play them again.
-class ForgottenCard extends ConsumerWidget {
-  /// Creates the card.
-  const ForgottenCard({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final songs = ref.watch(forgottenLovesProvider).value ?? const [];
-    if (songs.isEmpty) return const SizedBox.shrink();
-    return LifePictureCard(
-      artwork: songs.first.artwork,
-      label: l10n.lifeForgotten,
-      title: l10n.lifeForgottenBody(songs.length),
-      subtitle: '♪ ${songs.first.title} · ${songs.first.artistLine}',
-      icon: Icons.favorite_border_rounded,
-      onTap: () => unawaited(
-        ref
-            .read(playerControllerProvider.notifier)
-            .playTracks(songs, shuffle: true),
-      ),
-    );
   }
 }
 

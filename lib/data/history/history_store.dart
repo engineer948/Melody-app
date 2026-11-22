@@ -204,43 +204,6 @@ class HistoryStore {
     };
   }
 
-  /// Songs played (not skipped) at least [minPlays] times whose last play
-  /// was before [before]: loved once, forgotten since. Most played first.
-  Future<List<Track>> forgotten(
-    String accountId, {
-    required DateTime before,
-    int minPlays = 8,
-    int limit = 30,
-  }) async {
-    final t = _db.playHistory;
-    final plays = t.id.count();
-    final last = t.startedAt.max();
-    final query = _db.selectOnly(t)
-      ..addColumns([t.payload, plays, last])
-      ..where(t.accountId.equals(accountId) & t.skipped.equals(false))
-      ..groupBy(
-        [t.trackId],
-        having:
-            plays.isBiggerOrEqualValue(minPlays) &
-            last.isSmallerThanValue(before),
-      )
-      ..orderBy([OrderingTerm(expression: plays, mode: OrderingMode.desc)])
-      ..limit(limit);
-    final tracks = <Track>[];
-    for (final row in await query.get()) {
-      try {
-        tracks.add(
-          Track.fromJson(
-            jsonDecode(row.read(t.payload)!) as Map<String, dynamic>,
-          ),
-        );
-      } on Object {
-        // Written by an incompatible version; skipped.
-      }
-    }
-    return tracks;
-  }
-
   /// How often [trackId] was played (not skipped) since [since].
   Future<int> playsSince(
     String accountId,

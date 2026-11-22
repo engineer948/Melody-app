@@ -8,50 +8,6 @@ part of 'life_cards.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Songs loved once (many plays) and not played for half a year.
-
-@ProviderFor(forgottenLoves)
-final forgottenLovesProvider = ForgottenLovesProvider._();
-
-/// Songs loved once (many plays) and not played for half a year.
-
-final class ForgottenLovesProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<Track>>,
-          List<Track>,
-          FutureOr<List<Track>>
-        >
-    with $FutureModifier<List<Track>>, $FutureProvider<List<Track>> {
-  /// Songs loved once (many plays) and not played for half a year.
-  ForgottenLovesProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'forgottenLovesProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$forgottenLovesHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<Track>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<Track>> create(Ref ref) {
-    return forgottenLoves(ref);
-  }
-}
-
-String _$forgottenLovesHash() => r'21a363431e2657d4089f687799a0455cd9c82a77';
-
 /// The birth year the user gave, if any.
 
 @ProviderFor(BirthYear)

@@ -69,6 +69,10 @@ class HttpSongAudioLoader implements SongAudioLoader {
   }
 }
 
+/// Preference set once the user accepted that sharing music is their own
+/// responsibility.
+const clipRightsKey = 'share.clipRightsAccepted';
+
 /// The song loader in use.
 @Riverpod(keepAlive: true)
 SongAudioLoader songAudioLoader(Ref ref) => HttpSongAudioLoader();
@@ -533,7 +537,7 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
 
   /// Preference set once the user accepted that sharing is their own
   /// responsibility.
-  static const rightsKey = 'share.clipRightsAccepted';
+  static const String rightsKey = clipRightsKey;
 
   /// Asks once whether the user takes responsibility for what they share.
   Future<bool> _confirmRights() async {
