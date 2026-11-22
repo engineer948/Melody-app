@@ -1,0 +1,1 @@
+"Soundtrack of your life" is now one switch (Settings → Privacy, or the Soundtrack screen). On: the home cards and the rough place of each song. Off: both stop. The home question asks once for both. Place reminder stays as its own option under it.

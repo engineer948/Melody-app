@@ -22,6 +22,12 @@ Track _song(String id, String title) => Track(
 );
 
 void main() {
+  test('remembering places alone means the one switch is on', () {
+    const placesOnly = {'places': true};
+    expect(ListeningSettings.fromJson(placesOnly).lifeShelf, isTrue);
+    expect(ListeningSettings.fromJson(const {}).lifeShelf, isFalse);
+  });
+
   testWidgets('turning it on asks for location; days show places and firsts', (
     tester,
   ) async {
@@ -34,9 +40,12 @@ void main() {
     );
     await tester.tap(find.byTooltip('Settings'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Remember places'));
+    await tester.tap(
+      find.widgetWithText(SwitchListTile, 'Soundtrack of your life'),
+    );
     await tester.pumpAndSettle();
     expect(c.read(listeningSettingsControllerProvider).places, isTrue);
+    expect(c.read(listeningSettingsControllerProvider).lifeShelf, isTrue);
     expect(places.locationAllowed, isTrue);
 
     // A play now records the place.
@@ -184,16 +193,8 @@ void main() {
     expect(find.text('Turn on'), findsOneWidget);
     expect(find.text('♪ Song 1 · Sezen'), findsNothing, reason: 'not yet');
 
+    // One answer turns on the cards and places together.
     await tester.tap(find.text('Turn on'));
-    await tester.pumpAndSettle();
-    // Then asked about places.
-    expect(find.text('Remember places'), findsOneWidget);
-    await tester.tap(
-      find.descendant(
-        of: find.byType(AlertDialog),
-        matching: find.text('Turn on'),
-      ),
-    );
     await tester.pumpAndSettle();
     final settings = c.read(listeningSettingsControllerProvider);
     expect(
@@ -235,9 +236,20 @@ void main() {
 
     await tester.tap(find.byTooltip('Settings'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Soundtrack of your life on Home'));
+    final lifeSwitch = find.widgetWithText(
+      SwitchListTile,
+      'Soundtrack of your life',
+    );
+    await tester.tap(lifeSwitch);
     await tester.pumpAndSettle();
-    expect(c.read(listeningSettingsControllerProvider).lifeShelf, isTrue);
+    var settings = c.read(listeningSettingsControllerProvider);
+    expect((settings.lifeShelf, settings.places), (true, true));
+
+    // Off stops both the home cards and place recording.
+    await tester.tap(lifeSwitch);
+    await tester.pumpAndSettle();
+    settings = c.read(listeningSettingsControllerProvider);
+    expect((settings.lifeShelf, settings.places), (false, false));
   });
 
   testWidgets('back at a place: Home shows what was played there, once', (

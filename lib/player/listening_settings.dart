@@ -51,7 +51,11 @@ class ListeningSettings {
             AutoDjMode.similar,
         autoDjThreshold: json['autoDjThreshold'] as int? ?? 1,
         places: json['places'] as bool? ?? false,
-        lifeShelf: json['lifeShelf'] as bool? ?? false,
+        // One switch since 0.21.1: remembering places turns the whole
+        // "soundtrack of your life" on.
+        lifeShelf:
+            (json['lifeShelf'] as bool? ?? false) ||
+            (json['places'] as bool? ?? false),
         lifeAsked: json['lifeAsked'] as bool? ?? false,
         placeReminders: json['placeReminders'] as bool? ?? true,
       );
@@ -76,7 +80,8 @@ class ListeningSettings {
   /// life"); off until the user turns it on.
   final bool places;
 
-  /// Whether the home screen shows the "soundtrack of your life" shelf.
+  /// The one "soundtrack of your life" switch: the home screen shelf, and
+  /// [places] when location is allowed.
   final bool lifeShelf;
 
   /// Whether the user was asked once about the shelf.

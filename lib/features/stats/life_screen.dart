@@ -269,17 +269,26 @@ Future<void> setLifeSoundtrack(
 }) async {
   final settings = ref.read(listeningSettingsControllerProvider.notifier);
   if (!on) {
-    await settings.update((s) => s.copyWith(places: false));
+    await settings.update(
+      (s) => s.copyWith(lifeShelf: false, places: false, lifeAsked: true),
+    );
     return;
   }
   final messenger = ScaffoldMessenger.of(context);
   final l10n = context.l10n;
-  final allowed = await ref.read(placesBridgeProvider).requestLocation();
-  if (!allowed) {
+  final bridge = ref.read(placesBridgeProvider);
+  final places = bridge.supported && await bridge.requestLocation();
+  if (bridge.supported && !places) {
     messenger.showSnackBar(SnackBar(content: Text(l10n.lifeNoLocation)));
-    return;
   }
-  await settings.update((s) => s.copyWith(places: true, history: true));
+  await settings.update(
+    (s) => s.copyWith(
+      lifeShelf: true,
+      lifeAsked: true,
+      history: true,
+      places: places,
+    ),
+  );
 }
 
 /// "Soundtrack of your life": every day with its places, songs, first
@@ -292,7 +301,7 @@ class LifeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final enabled = ref.watch(
-      listeningSettingsControllerProvider.select((s) => s.places),
+      listeningSettingsControllerProvider.select((s) => s.lifeShelf),
     );
     final supported = ref.watch(placesBridgeProvider).supported;
     final photos = ref.watch(photosAllowedProvider).value ?? false;
@@ -366,9 +375,9 @@ class _Intro extends ConsumerWidget {
           if (supported) ...[
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              secondary: const Icon(Icons.place_outlined),
-              title: Text(l10n.lifePlaces),
-              subtitle: Text(l10n.lifePlacesBody),
+              secondary: const Icon(Icons.auto_stories_outlined),
+              title: Text(l10n.lifeSwitch),
+              subtitle: Text(l10n.lifeSwitchBody),
               value: enabled,
               onChanged: (on) =>
                   unawaited(setLifeSoundtrack(context, ref, on: on)),
@@ -604,7 +613,7 @@ class TrackMemoryLine extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final enabled = ref.watch(
-      listeningSettingsControllerProvider.select((s) => s.places),
+      listeningSettingsControllerProvider.select((s) => s.lifeShelf),
     );
     if (!enabled) return const SizedBox.shrink();
     final memory = ref.watch(trackMemoryProvider(track.id)).value;
@@ -851,46 +860,8 @@ class _LifeDayCard extends ConsumerWidget {
 class _LifeInvite extends ConsumerWidget {
   const _LifeInvite();
 
-  Future<void> _answer(BuildContext context, WidgetRef ref, bool yes) async {
-    // Every question is asked before the answer is saved: saving removes
-    // this card (and its context) from the screen.
-    final settings = ref.read(listeningSettingsControllerProvider.notifier);
-    var places = false;
-    if (yes &&
-        ref.read(placesBridgeProvider).supported &&
-        !ref.read(listeningSettingsControllerProvider).places) {
-      final l10n = context.l10n;
-      final wanted = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          icon: const Icon(Icons.place_outlined),
-          title: Text(l10n.lifePlaces),
-          content: Text(l10n.lifeAskPlaces),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(l10n.lifeNoThanks),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(l10n.lifeTurnOn),
-            ),
-          ],
-        ),
-      );
-      if (wanted == true && context.mounted) {
-        await setLifeSoundtrack(context, ref, on: true);
-        places = true;
-      }
-    }
-    await settings.update(
-      (s) => s.copyWith(
-        lifeAsked: true,
-        lifeShelf: yes,
-        places: places ? null : s.places,
-      ),
-    );
-  }
+  Future<void> _answer(BuildContext context, WidgetRef ref, bool yes) =>
+      setLifeSoundtrack(context, ref, on: yes);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -1068,8 +1068,6 @@
   },
   "lifeTitle": "Soundtrack of your life",
   "lifeBody": "Your days in music: where you were, what you heard, the songs you discovered and the photos you took that day. Everything stays on this phone.",
-  "lifePlaces": "Remember places",
-  "lifePlacesBody": "Keeps the rough place (about 1 km) of every song you play, on this phone only",
   "lifePhotos": "Show the day's photos",
   "lifePhotosBody": "Shows the photos you took on each day next to its songs",
   "lifeNoLocation": "Without location permission, places cannot be kept.",
@@ -1138,10 +1136,9 @@
       }
     }
   },
-  "lifeShelf": "Soundtrack of your life on Home",
-  "lifeShelfBody": "Cards of your days in music on the home screen",
+  "lifeSwitch": "Soundtrack of your life",
+  "lifeSwitchBody": "Cards of your days on Home and the rough place (about 1 km) of every song, on this phone only. Off stops both.",
   "lifeAsk": "Remember your days through music: on the home screen, the songs, places and photos of your days and \"1 year ago today\". Turn it on? You can change this any time in Settings → Privacy.",
-  "lifeAskPlaces": "Also remember where you listen? Only a rough place (about 1 km), kept on this phone.",
   "lifeTurnOn": "Turn on",
   "lifeNoThanks": "No, thanks",
   "placeBack": "📍 You're back: {place}",

@@ -1,0 +1,1 @@
+"Hayatının müziği" artık tek bir anahtar (Ayarlar → Gizlilik veya Hayatının müziği ekranı). Açık: ana ekran kartları ve her şarkının yaklaşık yeri. Kapalı: ikisi de durur. Ana ekrandaki soru ikisini birlikte bir kez sorar. Yer hatırlatıcı altında ayrı seçenek olarak kalır.

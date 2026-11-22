@@ -1,7 +1,7 @@
 name: melody
 description: "Jellyfin-first multi-source music player"
 publish_to: 'none'
-version: 0.21.0+34
+version: 0.21.1+35
 
 environment:
   sdk: ^3.13.7
