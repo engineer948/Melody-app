@@ -12,7 +12,7 @@ Clips, story pictures and videos and cards are made on this phone only when you 
 
 ## Privacy
 
-Melody has no account with us, no ads, no analytics and no tracking. Your listening history, places, memories, letters and settings stay on this phone and in backups you make yourself. Your server address and sign-in go only to your server. Location and photos are read only if you turn on "Soundtrack of your life" and allow them, and they never leave the phone.
+Melody has no account with us, no ads, no analytics and no tracking. Your listening history, places, memories and settings stay on this phone and in backups you make yourself. Your server address and sign-in go only to your server. Location and photos are read only if you turn on "Soundtrack of your life" and allow them, and they never leave the phone.
 
 ## Other services the app can contact
 
