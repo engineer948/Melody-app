@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -48,7 +49,9 @@ class UpdateCheckSetting extends Notifier<bool> {
   static const key = 'update.check';
 
   @override
-  bool build() => ref.watch(preferencesProvider).getBool(key) ?? true;
+  bool build() =>
+      !AppConfig.fromFdroid &&
+      (ref.watch(preferencesProvider).getBool(key) ?? true);
 
   /// Turns the check on or off.
   Future<void> set({required bool on}) async {
@@ -152,6 +155,7 @@ class UpdateCheckTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (AppConfig.fromFdroid) return const SizedBox.shrink();
     final l10n = context.l10n;
     return SwitchListTile(
       secondary: const Icon(Icons.system_update_outlined),

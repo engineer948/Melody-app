@@ -1,0 +1,1 @@
+Terms and privacy: Settings → About → "Terms and privacy" explains what Melody is, the rules for sharing clips, videos and song letters (you are responsible for what you share), privacy, the services the app can contact and the MIT licence's no-warranty clause. Before the first share the app asks once and keeps the accepted version and date on the phone. Preparations for F-Droid.

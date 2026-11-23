@@ -39,6 +39,13 @@ with the app and shown under **Settings → About → Open source licenses**.
 | `file_selector` (pick a QR picture; no storage permission) | BSD-3-Clause |
 | `url_launcher` (open the release page of a new version) | BSD-3-Clause |
 
+All 180 Dart packages in `pubspec.lock` (direct and transitive) were
+checked: BSD (128), MIT (36), Apache-2.0 (9), plus the Flutter SDK. Two
+transitive packages are under the Mozilla Public License 2.0, a free
+(weak copyleft) licence: `dbus` and `nm`, used only by the Linux
+implementation of `connectivity_plus`; they are not compiled into the
+Android app.
+
 ## Tailscale library (Android, `native/tailscale`)
 
 Built from source with Go and gomobile. Every Go module linked into it is

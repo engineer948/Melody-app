@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:melody/core/logging/app_logger.dart';
-import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/share/mp3_clip.dart';
 import 'package:melody/domain/stats/listening_stats.dart';
 import 'package:melody/domain/stats/play_event.dart';
 import 'package:melody/features/auth/session_controller.dart';
+import 'package:melody/features/settings/legal_screen.dart';
 import 'package:melody/features/share/audio_clip.dart';
 import 'package:melody/features/share/picture_share.dart';
 import 'package:melody/features/stats/stats_providers.dart';
@@ -245,32 +245,7 @@ class YearFilmButton extends ConsumerStatefulWidget {
 class _YearFilmButtonState extends ConsumerState<YearFilmButton> {
   var _busy = false;
 
-  Future<bool> _confirmRights() async {
-    final prefs = ref.read(preferencesProvider);
-    if (prefs.getBool(clipRightsKey) ?? false) return true;
-    final l10n = context.l10n;
-    final accepted = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        icon: const Icon(Icons.copyright_rounded),
-        title: Text(l10n.clipRightsTitle),
-        content: Text(l10n.clipRightsBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.clipRightsAccept),
-          ),
-        ],
-      ),
-    );
-    if (accepted != true) return false;
-    await prefs.setBool(clipRightsKey, true);
-    return true;
-  }
+  Future<bool> _confirmRights() => confirmShareTerms(context, ref);
 
   Future<void> _make(BuildContext button) async {
     final l10n = context.l10n;

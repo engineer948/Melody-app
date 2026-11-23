@@ -17,9 +17,14 @@ prebuilt binaries may be downloaded.
 | Unsigned build option (`MELODY_UNSIGNED=1`) | ✅ |
 | `pubspec.lock` in the repository | ✅ |
 | SQLite built from source | ✅ official 3.54.1 source, see section 2 |
-| Public repository | ❌ |
+| Public repository | ✅ |
 | Version tag (`v0.x.y`) and GitHub release | ✅ automatic when a tag is pushed |
-| Screenshots | ❌ not added yet |
+| Screenshots | ❌ not added yet (`fastlane/metadata/android/en-US/images/phoneScreenshots/1.png`, …) |
+| All Dart dependencies free (180 checked: BSD, MIT, Apache-2.0; `dbus`/`nm` MPL-2.0, Linux only) | ✅ |
+| Go toolchain pinned with SHA-256, no toolchain download during the build | ✅ |
+| No update check in the F-Droid build (`MELODY_DISTRIBUTION=fdroid`) | ✅ |
+| `NonFreeNet` anti-feature declared (optional Tailscale) | ✅ |
+| Terms and privacy text (`docs/LEGAL.md`, in the app too) | ✅ |
 
 ## 2. SQLite
 

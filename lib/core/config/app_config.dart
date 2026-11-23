@@ -8,6 +8,16 @@ abstract final class AppConfig {
   /// Client name reported to media servers.
   static const String clientName = appName;
 
+  /// Where this build is published, set with
+  /// `--dart-define=MELODY_DISTRIBUTION=fdroid` by the F-Droid recipe.
+  static const String distribution = String.fromEnvironment(
+    'MELODY_DISTRIBUTION',
+  );
+
+  /// Whether this is the F-Droid build: F-Droid delivers updates itself,
+  /// so the app does not look for new versions on GitHub.
+  static const bool fromFdroid = distribution == 'fdroid';
+
   /// Width (dp) at which the bottom bar is replaced by a navigation rail.
   static const double railBreakpoint = 600;
 

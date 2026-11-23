@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -7,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/router/app_routes.dart';
 import 'package:melody/features/settings/app_info.dart';
+import 'package:melody/features/settings/legal_screen.dart';
 import 'package:melody/features/settings/update_check.dart';
 import 'package:melody/features/settings/widgets/account_section.dart';
 import 'package:melody/features/settings/widgets/android_auto_section.dart';
@@ -82,6 +84,11 @@ class SettingsScreen extends ConsumerWidget {
                 '${AppRoutes.settingsIn(context)}/debug-sources',
               ),
             ),
+          ListTile(
+            leading: const Icon(Icons.gavel_outlined),
+            title: Text(l10n.legalTitle),
+            onTap: () => unawaited(showLegal(context)),
+          ),
           ListTile(
             leading: const Icon(Icons.description_outlined),
             title: Text(l10n.aboutLicenses),

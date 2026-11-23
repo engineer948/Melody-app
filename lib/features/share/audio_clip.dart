@@ -11,7 +11,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:melody/core/errors/failure.dart';
 import 'package:melody/core/logging/app_logger.dart';
-import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/core/utils/formatters.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
@@ -19,6 +18,7 @@ import 'package:melody/domain/share/mp3_clip.dart';
 import 'package:melody/domain/share/story_lyrics.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/lyrics/lyrics_providers.dart';
+import 'package:melody/features/settings/legal_screen.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:path_provider/path_provider.dart';
@@ -106,10 +106,6 @@ class HttpSongAudioLoader implements SongAudioLoader {
     return bytes.takeBytes();
   }
 }
-
-/// Preference set once the user accepted that sharing music is their own
-/// responsibility.
-const clipRightsKey = 'share.clipRightsAccepted';
 
 /// The song loader in use.
 @Riverpod(keepAlive: true)
@@ -573,37 +569,7 @@ class _AudioClipPanelState extends ConsumerState<AudioClipPanel> {
     }
   }
 
-  /// Preference set once the user accepted that sharing is their own
-  /// responsibility.
-  static const String rightsKey = clipRightsKey;
-
-  /// Asks once whether the user takes responsibility for what they share.
-  Future<bool> _confirmRights() async {
-    final prefs = ref.read(preferencesProvider);
-    if (prefs.getBool(rightsKey) ?? false) return true;
-    final l10n = context.l10n;
-    final accepted = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        icon: const Icon(Icons.copyright_rounded),
-        title: Text(l10n.clipRightsTitle),
-        content: Text(l10n.clipRightsBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.clipRightsAccept),
-          ),
-        ],
-      ),
-    );
-    if (accepted != true) return false;
-    await prefs.setBool(rightsKey, true);
-    return true;
-  }
+  Future<bool> _confirmRights() => confirmShareTerms(context, ref);
 
   Lyrics? get _syncedLyrics {
     final lyrics = ref.read(trackLyricsProvider(widget.track)).value;
