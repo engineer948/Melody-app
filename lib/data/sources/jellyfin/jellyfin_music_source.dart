@@ -7,12 +7,10 @@ import 'package:melody/core/utils/parallel.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_api.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_dtos.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_mapper.dart';
-import 'package:melody/data/sources/jellyfin/jellyfin_social.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_syncplay.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/models/server.dart';
 import 'package:melody/domain/repositories/music_source.dart';
-import 'package:melody/domain/social/social_models.dart';
 import 'package:melody/domain/social/sync_play.dart';
 
 /// [MusicSource] backed by a Jellyfin server.
@@ -25,9 +23,6 @@ class JellyfinMusicSource implements MusicSource {
   });
 
   final JellyfinApi _api;
-
-  /// Sharing features (song dedications, shared playlist, greeting).
-  SocialApi get social => JellyfinSocial(_api, selfId: userId);
 
   /// The signed-in user's profile picture, or `null` when there is none.
   Future<Uri?> avatar() async {

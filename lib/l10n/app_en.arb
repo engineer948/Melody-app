@@ -680,104 +680,12 @@
   "tailnetRetry": "Try again",
   "tailnetCopyReport": "Copy error report",
   "tailnetReportCopied": "Error report copied. Please send it to the developer.",
-  "socialRequestTitle": "{name} wants to share music with you",
-  "socialRequestBody": "Songs with a short note, a playlist you both can add to, a greeting on your home screen and listening together. You choose what to allow and can change it any time in Settings.",
-  "socialAllow": "Allow",
-  "socialDecline": "No, thanks",
-  "socialChooseTitle": "What do you allow?",
-  "socialFeatureDedications": "Songs with a note",
-  "socialFeatureSharedPlaylist": "Shared playlist",
-  "socialFeatureWelcome": "Greeting and color",
   "socialFeatureListen": "Listening together",
-  "socialFromShelf": "From {name}",
-  "socialLike": "Like",
-  "socialSharedWith": "Shared with {name}",
-  "socialSettingsTitle": "Sharing with {name}",
-  "socialRevoke": "Stop sharing",
-  "socialAllowAgain": "Allow sharing",
-  "socialSenderEntry": "Share with someone",
-  "socialSenderEntrySubtitle": "Songs, a shared playlist and a greeting",
-  "socialRecipient": "Person",
-  "socialChoose": "Choose",
-  "socialYourName": "Your name as they see it",
-  "socialAsk": "Ask for permission",
-  "socialStatusNotAsked": "Not asked yet",
-  "socialStatusWaiting": "Waiting for an answer",
-  "socialStatusGranted": "Allowed",
-  "socialStatusDenied": "Not allowed",
-  "socialNotAllowed": "They have not allowed this.",
-  "socialWelcomeLabel": "Greeting",
-  "socialWelcomeHint": "Shown instead of “Good morning”",
-  "socialColor": "Color",
-  "socialOwnColor": "Their own",
-  "socialSaved": "Saved",
-  "socialPlaylistName": "Playlist name",
-  "socialPlaylistDefault": "Our playlist",
-  "socialPlaylistCreate": "Create shared playlist",
-  "socialSent": "Sent songs",
-  "socialLiked": "Liked",
-  "socialSeen": "Seen",
-  "socialSendTo": "Send to {name}",
-  "socialNoteLabel": "Note (optional)",
-  "socialSend": "Send",
-  "socialSentSnack": "Sent to {name}",
-  "socialFailed": "Could not reach the server",
-  "@socialRequestTitle": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@socialFromShelf": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@socialSharedWith": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@socialSettingsTitle": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@socialSendTo": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "@socialSentSnack": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "listenStart": "Start listening together",
   "listenLeave": "Leave",
-  "listenInviteTitle": "{name} invites you to listen together",
   "listenJoin": "Join",
   "listenActive": "Listening together: {names}",
   "listenFailed": "Could not start listening together",
   "listenHint": "What one of you plays, pauses or skips happens for both.",
-  "@listenInviteTitle": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "@listenActive": {
     "placeholders": {
       "names": {
@@ -818,15 +726,6 @@
       }
     }
   },
-  "socialWithdraw": "Withdraw the request",
-  "socialWithdrawConfirm": "Everything you sent {name} disappears from their app: the request, songs, greeting and invitations. Asking again needs a new answer.",
-  "@socialWithdrawConfirm": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "selectedCount": "{count, plural, =1{1 song selected} other{{count} songs selected}}",
   "@selectedCount": {
     "placeholders": {
@@ -837,14 +736,6 @@
   },
   "selectAll": "Select all",
   "selectNone": "Select none",
-  "downloadStarted": "{count, plural, =1{Downloading 1 song} other{Downloading {count} songs}}",
-  "@downloadStarted": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "favoritesAdded": "{count, plural, =1{Added to favorites} other{{count} songs added to favorites}}",
   "@favoritesAdded": {
     "placeholders": {
@@ -985,83 +876,10 @@
   "backupLater": "Later",
   "backupInvalid": "This is not a Melody settings backup.",
   "backupFailed": "The backup could not be made.",
-  "clipSpin": "Turning record",
-  "clipSpinBody": "In the video, the cover spins like a record and moves with the music",
-  "mixtapeMake": "Song letter",
-  "mixtapeKind": "Song letter",
-  "mixtapeTitle": "Title",
-  "mixtapeDefaultTitle": "A few songs for you",
-  "mixtapeNote": "Your note",
-  "mixtapeSend": "Send",
-  "mixtapeHint": "Sent as a cassette picture with a code. Your friend opens it in Melody (Library → Open a song letter); the songs are found in their library.",
-  "mixtapeShareText": "🎵 {title} — a song letter. Open it in {app}: Library → Open a song letter, then paste this message.",
-  "@mixtapeShareText": {
-    "placeholders": {
-      "title": {
-        "type": "String"
-      },
-      "app": {
-        "type": "String"
-      }
-    }
-  },
   "mixtapeMore": "+{count} more",
   "@mixtapeMore": {
     "placeholders": {
       "count": {
-        "type": "int"
-      }
-    }
-  },
-  "mixtapeHowToOpen": "Open in {app}:\nLibrary → Open a song letter → read QR from picture",
-  "@mixtapeHowToOpen": {
-    "placeholders": {
-      "app": {
-        "type": "String"
-      }
-    }
-  },
-  "mixtapeOpen": "Open a song letter",
-  "mixtapeOpenBody": "Paste the message you received, or pick the cassette picture to read its QR code.",
-  "mixtapeCode": "Message or code",
-  "mixtapeOpenButton": "Open",
-  "mixtapePaste": "Paste from clipboard",
-  "mixtapeFromPicture": "Read QR from picture",
-  "mixtapeInvalid": "No song letter found in this text.",
-  "mixtapeNoQr": "No QR code found in this picture.",
-  "mixtapeFinding": "Finding the songs: {done} / {total}",
-  "@mixtapeFinding": {
-    "placeholders": {
-      "done": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
-  },
-  "mixtapeMissing": "{count, plural, =1{1 song is not in your library} other{{count} songs are not in your library}}",
-  "@mixtapeMissing": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "mixtapeSave": "Save as playlist",
-  "mixtapeSealed": "You have a song letter",
-  "mixtapeSealedFrom": "{name} sent you a song letter",
-  "@mixtapeSealedFrom": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "mixtapeTooMany": "A song letter holds at most {max} songs",
-  "@mixtapeTooMany": {
-    "placeholders": {
-      "max": {
         "type": "int"
       }
     }
@@ -1153,8 +971,8 @@
   "legalRead": "Read the terms",
   "legalWhatTitle": "What Melody is",
   "legalWhatBody": "Melody is a free, open-source player for music on sources you choose: your Jellyfin or Subsonic-compatible server, internet radio and files on this phone. It does not sell, host or distribute music; it only plays and processes what your own server or source gives it. You are responsible for having the right to the music on your servers and for how you use the app.",
-  "legalSharingTitle": "Sharing clips, videos and song letters",
-  "legalSharingBody": "Clips, story pictures and videos, song letters and cards are made on this phone only when you ask, and sent only through the apps you choose. Melody and its developers do not see, store or send them. Songs and lyrics are usually protected by copyright. Before sharing, make sure you may: you own the rights, have permission, or the law of your country allows it (for example a short quotation, private use or fair use). You alone are responsible for what you share and for any claims arising from it. Clips are limited to 60 seconds, but that limit does not make a share lawful by itself. By confirming the notice before your first share you accept these terms; the date you did so is kept on this phone.",
+  "legalSharingTitle": "Sharing clips and videos",
+  "legalSharingBody": "Clips, story pictures and videos and cards are made on this phone only when you ask, and sent only through the apps you choose. Melody and its developers do not see, store or send them. Songs and lyrics are usually protected by copyright. Before sharing, make sure you may: you own the rights, have permission, or the law of your country allows it (for example a short quotation, private use or fair use). You alone are responsible for what you share and for any claims arising from it. Clips are limited to 60 seconds, but that limit does not make a share lawful by itself. By confirming the notice before your first share you accept these terms; the date you did so is kept on this phone.",
   "legalPrivacyTitle": "Privacy",
   "legalPrivacyBody": "Melody has no account with us, no ads, no analytics and no tracking. Your listening history, places, memories, letters and settings stay on this phone and in backups you make yourself. Your server address and sign-in go only to your server. Location and photos are read only if you turn on \"Soundtrack of your life\" and allow them, and they never leave the phone.",
   "legalServicesTitle": "Other services the app can contact",
@@ -1206,29 +1024,6 @@
       }
     }
   },
-  "partyTitle": "House party",
-  "partyBody": "Guests on the same Wi-Fi scan a code and add songs to the queue from their own phone's browser. No app or internet needed.",
-  "partyScan": "Scan with the phone camera. Guests need the same Wi-Fi.",
-  "partyAdded": "{count, plural, =0{No songs from guests yet} =1{1 song from guests} other{{count} songs from guests}}",
-  "@partyAdded": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "partyStart": "Start the party",
-  "partyStop": "End the party",
-  "partyNoNetwork": "Connect to a Wi-Fi network first.",
-  "dnaTitle": "Music DNA",
-  "dnaHour": "Most music at {hour}:00",
-  "@dnaHour": {
-    "placeholders": {
-      "hour": {
-        "type": "String"
-      }
-    }
-  },
   "monthAlbum": "Album of the month",
   "monthAlbumSongs": "{count, plural, =1{1 song} other{{count} songs}}",
   "@monthAlbumSongs": {
@@ -1257,45 +1052,6 @@
   "lookCassette": "Cassette",
   "lookMovingLyrics": "Moving lyrics",
   "lookMovingLyricsBody": "Words light up one by one as they are sung (synced lyrics). Tip: hold the cover in the player to switch to the cassette.",
-  "capsuleOpenOn": "Open on",
-  "capsuleAnyTime": "Any time",
-  "capsuleClear": "Remove the date",
-  "capsuleKeep": "Keep it for myself (time capsule)",
-  "capsuleKept": "Kept until its day. Find it in Library → Open a song letter.",
-  "capsuleSealed": "Opens on {date}",
-  "@capsuleSealed": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      }
-    }
-  },
-  "capsuleDaysLeft": "{count, plural, =0{Opens tomorrow} =1{1 day left} other{{count} days left}}",
-  "@capsuleDaysLeft": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "capsuleMine": "From you",
-  "capsuleDue": "A song letter can be opened today 💌",
-  "hiddenMake": "Hide in a photo",
-  "hiddenFailed": "Could not hide the letter in this picture.",
-  "hiddenHint": "Send the picture as a file, not as a photo: apps that shrink photos erase the letter.",
-  "nfcMake": "Write to an NFC sticker",
-  "nfcMissing": "This phone has no NFC.",
-  "nfcOff": "Turn on NFC in the phone's settings first.",
-  "nfcHold": "Hold the phone to the sticker",
-  "nfcHoldBody": "Keep it still until it is written. Then anyone with Melody can touch the sticker to open the letter.",
-  "nfcWritten": "Written to the sticker.",
-  "nfcTooBig": "The letter does not fit on this sticker. Use fewer songs or a bigger sticker (NTAG215 or NTAG216).",
-  "nfcReadOnly": "This sticker cannot be written.",
-  "nfcFailed": "Writing failed. Try again and keep the phone still.",
-  "relayPick": "Search for a song to add",
-  "relayAdd": "Add a song and pass it on",
-  "relayYou": "you",
-  "inboxTitle": "Your letters",
   "replayDay": "Relive",
   "replayEmpty": "No songs were played on these days.",
   "tripsTitle": "Trips",
@@ -1311,19 +1067,6 @@
   "@tripSongCount": {
     "placeholders": {
       "count": {
-        "type": "int"
-      }
-    }
-  },
-  "starMap": "Star map",
-  "starEmpty": "Places you listen to music will appear here as stars.",
-  "starFirst": "{plays, plural, =1{First here on {date} · 1 play} other{First here on {date} · {plays} plays}}",
-  "@starFirst": {
-    "placeholders": {
-      "date": {
-        "type": "String"
-      },
-      "plays": {
         "type": "int"
       }
     }

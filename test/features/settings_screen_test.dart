@@ -102,10 +102,10 @@ void main() {
     expect(find.text('Work Sans'), findsOneWidget);
     await tester.tap(find.text('Font'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Lexend'));
+    await tester.tap(find.text('Nunito'));
     await tester.pumpAndSettle();
-    expect(container.read(themeControllerProvider).font, AppFont.lexend);
-    expect(_theme(tester).textTheme.bodyMedium?.fontFamily, 'Lexend');
+    expect(container.read(themeControllerProvider).font, AppFont.nunito);
+    expect(_theme(tester).textTheme.bodyMedium?.fontFamily, 'Nunito');
   });
 
   testWidgets('playback settings are saved', (tester) async {

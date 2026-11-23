@@ -14,10 +14,7 @@ import 'package:melody/features/downloads/download_controller.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/settings/update_check.dart';
-import 'package:melody/features/share/mixtape_screens.dart';
 import 'package:melody/features/shell/app_shell.dart';
-import 'package:melody/features/social/social_controller.dart';
-import 'package:melody/features/social/social_home.dart';
 import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/features/tailnet/tailnet_controller.dart';
@@ -49,7 +46,6 @@ class HomeScreen extends ConsumerWidget {
       ..invalidate(trackListProvider(_recentlyPlayed))
       ..invalidate(trackListProvider(_mostPlayed))
       ..invalidate(suggestionsProvider);
-    unawaited(ref.read(socialControllerProvider.notifier).refresh());
     // Reconnects Tailscale if needed, then new songs are downloaded when
     // the library is kept in sync.
     unawaited(
@@ -70,7 +66,6 @@ class HomeScreen extends ConsumerWidget {
     final played = ref.watch(trackListProvider(_recentlyPlayed));
     final most = ref.watch(trackListProvider(_mostPlayed));
     final suggested = ref.watch(suggestionsProvider).value;
-    final social = ref.watch(socialControllerProvider);
     final now = DateTime.now();
 
     final empty =
@@ -108,9 +103,7 @@ class HomeScreen extends ConsumerWidget {
       slivers = [
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
         const SliverToBoxAdapter(child: UpdateBanner()),
-        ...socialHomeSlivers(context, social),
         const SliverToBoxAdapter(child: PlaceMemoryBanner()),
-        const SliverToBoxAdapter(child: DueLetterBanner()),
         const SliverToBoxAdapter(child: LifeShelf()),
         // The year in review is put forward in December.
         if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))
@@ -177,7 +170,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       body: LargeTitlePage(
-        title: socialGreeting(social) ?? greeting(l10n, now),
+        title: greeting(l10n, now),
         automaticallyImplyLeading: false,
         actions: const [SettingsButton()],
         onRefresh: () async => _refresh(ref),

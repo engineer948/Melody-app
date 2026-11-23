@@ -111,7 +111,7 @@ final class ListenTogetherProvider
   }
 }
 
-String _$listenTogetherHash() => r'2ca7e7517b8d36002a2dd959646bacd7648d98b0';
+String _$listenTogetherHash() => r'74a7309f0a0a5fee760afac3db5649dbffa3a899';
 
 /// Plays in step with a Jellyfin SyncPlay group.
 ///

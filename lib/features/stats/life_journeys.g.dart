@@ -95,50 +95,6 @@ final class TripsProvider
 
 String _$tripsHash() => r'ba9d093e8d445fd5f1ac0357aab4a7c0aa43f077';
 
-/// Places music was played at, in the order first visited.
-
-@ProviderFor(stars)
-final starsProvider = StarsProvider._();
-
-/// Places music was played at, in the order first visited.
-
-final class StarsProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<PlaceStar>>,
-          List<PlaceStar>,
-          FutureOr<List<PlaceStar>>
-        >
-    with $FutureModifier<List<PlaceStar>>, $FutureProvider<List<PlaceStar>> {
-  /// Places music was played at, in the order first visited.
-  StarsProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'starsProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$starsHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<PlaceStar>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<PlaceStar>> create(Ref ref) {
-    return stars(ref);
-  }
-}
-
-String _$starsHash() => r'7259c06c6ee0519b069b72887d655fb422753c6c';
-
 /// A big picture of photo [id] for the replay.
 
 @ProviderFor(photoLarge)

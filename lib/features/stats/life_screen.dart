@@ -313,14 +313,6 @@ class LifeScreen extends ConsumerWidget {
     return Scaffold(
       body: LargeTitlePage(
         title: l10n.lifeTitle,
-        actions: [
-          if (supported)
-            IconButton(
-              tooltip: l10n.starMap,
-              icon: const Icon(Icons.auto_awesome_outlined),
-              onPressed: () => unawaited(showStarMap(context)),
-            ),
-        ],
         onRefresh: () async => ref
           ..invalidate(lifeTimelineProvider)
           ..invalidate(dayPhotosProvider),

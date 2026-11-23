@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/features/lyrics/lyrics_view.dart';
+import 'package:melody/features/player/cassette.dart';
 import 'package:melody/features/player/now_playing_screen.dart';
 import 'package:melody/features/player/player_look.dart';
-import 'package:melody/features/share/mixtape_screens.dart';
 import 'package:melody/player/playback_settings.dart';
 import 'package:melody/player/player_controller.dart';
 

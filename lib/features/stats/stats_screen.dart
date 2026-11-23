@@ -10,7 +10,6 @@ import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/core/widgets/shelf_header.dart';
 import 'package:melody/domain/stats/listening_stats.dart';
 import 'package:melody/features/stats/month_album.dart';
-import 'package:melody/features/stats/music_dna.dart';
 import 'package:melody/features/stats/stats_providers.dart';
 import 'package:melody/features/stats/widgets/hour_chart.dart';
 import 'package:melody/features/stats/year_game.dart';
@@ -82,11 +81,6 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
                   onPressed: () => context.push(AppRoutes.lifeIn(context)),
                   icon: const Icon(Icons.auto_stories_outlined),
                   label: Text(l10n.lifeTitle),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () => unawaited(showMusicDna(context, _period)),
-                  icon: const Icon(Icons.fingerprint_rounded),
-                  label: Text(l10n.dnaTitle),
                 ),
                 OutlinedButton.icon(
                   onPressed: () =>

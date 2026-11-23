@@ -1,7 +1,7 @@
 # iOS
 
-The code is ready; since this development environment has no macOS / Xcode,
-the build is only tried on GitHub Actions (CI → "iOS build", unsigned).
+The code is ready, but this development environment has no macOS / Xcode and
+there is no iOS build in CI any more: build it on a Mac (`flutter build ios`).
 
 ## What is there
 

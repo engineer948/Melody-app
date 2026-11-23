@@ -6,7 +6,6 @@ import 'package:melody/core/widgets/artwork_image.dart';
 import 'package:melody/core/widgets/empty_state.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/library/collection_actions.dart';
-import 'package:melody/features/player/house_party.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
 
@@ -30,11 +29,6 @@ class QueueScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.queue),
         actions: [
-          IconButton(
-            tooltip: l10n.partyTitle,
-            icon: const Icon(Icons.celebration_outlined),
-            onPressed: () => showHouseParty(context),
-          ),
           if (!queue.isEmpty && editable)
             IconButton(
               tooltip: l10n.queueSaveAsPlaylist,

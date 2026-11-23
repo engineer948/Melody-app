@@ -15,56 +15,8 @@ enum AppFont {
   /// Roboto.
   roboto('Roboto', 'Roboto'),
 
-  /// IBM Plex Sans.
-  ibmPlexSans('IBMPlexSans', 'IBM Plex Sans'),
-
-  /// Source Sans 3.
-  sourceSans3('SourceSans3', 'Source Sans 3'),
-
-  /// DM Sans.
-  dmSans('DMSans', 'DM Sans'),
-
-  /// Plus Jakarta Sans.
-  plusJakartaSans('PlusJakartaSans', 'Plus Jakarta Sans'),
-
-  /// Geist.
-  geist('Geist', 'Geist'),
-
-  /// Onest.
-  onest('Onest', 'Onest'),
-
-  /// Albert Sans.
-  albertSans('AlbertSans', 'Albert Sans'),
-
-  /// Public Sans.
-  publicSans('PublicSans', 'Public Sans'),
-
-  /// Montserrat.
-  montserrat('Montserrat', 'Montserrat'),
-
-  /// Mulish.
-  mulish('Mulish', 'Mulish'),
-
   /// Nunito.
   nunito('Nunito', 'Nunito'),
-
-  /// Lexend, designed for readability.
-  lexend('Lexend', 'Lexend'),
-
-  /// Raleway.
-  raleway('Raleway', 'Raleway'),
-
-  /// Quicksand.
-  quicksand('Quicksand', 'Quicksand'),
-
-  /// Comfortaa.
-  comfortaa('Comfortaa', 'Comfortaa'),
-
-  /// Exo 2.
-  exo2('Exo2', 'Exo 2'),
-
-  /// Space Grotesk.
-  spaceGrotesk('SpaceGrotesk', 'Space Grotesk'),
 
   /// Lora, a serif.
   lora('Lora', 'Lora'),

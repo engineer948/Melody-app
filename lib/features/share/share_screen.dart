@@ -60,23 +60,8 @@ class ShareScreen extends ConsumerStatefulWidget {
   ConsumerState<ShareScreen> createState() => _ShareScreenState();
 }
 
-class _ShareScreenState extends ConsumerState<ShareScreen>
-    with SingleTickerProviderStateMixin {
+class _ShareScreenState extends ConsumerState<ShareScreen> {
   final GlobalKey _cardKey = GlobalKey();
-  final GlobalKey _discKey = GlobalKey();
-  final GlobalKey _discSlotKey = GlobalKey();
-
-  /// One turn of a record at 33⅓ rpm.
-  late final AnimationController _turn = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1800),
-  );
-
-  /// Whether the cover is a spinning record (sound clips only).
-  bool _spin = false;
-
-  /// Hides the record while the rest of the card is rendered.
-  bool _hideDisc = false;
   ImageProvider? _image;
   ColorScheme? _palette;
   ShareBackground _background = ShareBackground.blur;
@@ -94,23 +79,6 @@ class _ShareScreenState extends ConsumerState<ShareScreen>
     super.initState();
     _image = _resolveImage();
     unawaited(_load());
-  }
-
-  @override
-  void dispose() {
-    _turn.dispose();
-    super.dispose();
-  }
-
-  void _setSpin(bool spin) {
-    setState(() => _spin = spin);
-    if (spin) {
-      _turn.repeat();
-    } else {
-      _turn
-        ..stop()
-        ..value = 0;
-    }
   }
 
   /// The downloaded cover when there is one, otherwise the server's.
@@ -172,24 +140,11 @@ class _ShareScreenState extends ConsumerState<ShareScreen>
     return file;
   }
 
-  /// Renders the card once for each lyrics state, for a story video. With
-  /// [spin], the record is left out of those pictures and rendered on its
-  /// own, with where it sits on the card, so the video can turn it.
-  Future<StoryPictures> _renderPictures(
-    List<LyricFrame> frames, {
-    required bool spin,
-  }) async {
+  /// Renders the card once for each lyrics state, for a story video.
+  Future<StoryPictures> _renderPictures(List<LyricFrame> frames) async {
     final shown = _cardLyrics;
     final pictures = <(File, Duration)>[];
-    File? disc;
-    Rect? discRect;
-    if (spin) {
-      _turn
-        ..stop()
-        ..value = 0;
-    }
     try {
-      setState(() => _hideDisc = spin);
       for (final (i, frame) in frames.indexed) {
         setState(
           () => _cardLyrics = frame.line == null && frame.next == null
@@ -200,31 +155,10 @@ class _ShareScreenState extends ConsumerState<ShareScreen>
         final file = await _renderPng(folder: 'story', keep: i > 0);
         pictures.add((file, frame.at));
       }
-      if (spin) {
-        setState(() => _hideDisc = false);
-        await WidgetsBinding.instance.endOfFrame;
-        disc = await _renderPng(folder: 'story', keep: true, key: _discKey);
-        final card = _cardKey.currentContext!.findRenderObject()! as RenderBox;
-        final slot =
-            _discSlotKey.currentContext!.findRenderObject()! as RenderBox;
-        final topLeft = slot.localToGlobal(Offset.zero, ancestor: card);
-        discRect = Rect.fromLTWH(
-          topLeft.dx / card.size.width,
-          topLeft.dy / card.size.height,
-          slot.size.width / card.size.width,
-          slot.size.height / card.size.height,
-        );
-      }
     } finally {
-      if (mounted) {
-        setState(() {
-          _cardLyrics = shown;
-          _hideDisc = false;
-        });
-        if (_spin && _sound) _turn.repeat();
-      }
+      if (mounted) setState(() => _cardLyrics = shown);
     }
-    return (pictures: pictures, disc: disc, discRect: discRect);
+    return (pictures: pictures);
   }
 
   Rect? _origin(BuildContext context) {
@@ -286,11 +220,6 @@ class _ShareScreenState extends ConsumerState<ShareScreen>
                           palette: _palette,
                           background: _background,
                           lyrics: _sound ? _cardLyrics : null,
-                          vinyl: _sound && _spin,
-                          hideCover: _hideDisc,
-                          discKey: _discKey,
-                          discSlotKey: _discSlotKey,
-                          turn: _turn,
                         )
                       : const ColoredBox(
                           color: Color(0xFF121212),
@@ -341,8 +270,6 @@ class _ShareScreenState extends ConsumerState<ShareScreen>
                   selected: {_sound},
                   onSelectionChanged: (s) {
                     setState(() => _sound = s.first);
-                    // A new panel starts with a still cover.
-                    _setSpin(false);
                   },
                 ),
               ),
@@ -359,7 +286,6 @@ class _ShareScreenState extends ConsumerState<ShareScreen>
                 child: AudioClipPanel(
                   track: track,
                   renderPictures: _ready ? _renderPictures : null,
-                  onSpin: _setSpin,
                   onCardLyrics: (lyrics) =>
                       setState(() => _cardLyrics = lyrics),
                 ),
@@ -448,28 +374,8 @@ class ShareCard extends StatelessWidget {
     this.image,
     this.palette,
     this.lyrics,
-    this.vinyl = false,
-    this.hideCover = false,
-    this.discKey,
-    this.discSlotKey,
-    this.turn,
     super.key,
   });
-
-  /// Shows the cover as a record (it turns with [turn]).
-  final bool vinyl;
-
-  /// Keeps the record's place but does not draw it.
-  final bool hideCover;
-
-  /// Repaint boundary around the record, to render it on its own.
-  final GlobalKey? discKey;
-
-  /// The record's (unturned) place on the card.
-  final GlobalKey? discSlotKey;
-
-  /// Turns of the record, 0 to 1.
-  final Animation<double>? turn;
 
   /// What is shown.
   final ShareSubject subject;
@@ -588,23 +494,7 @@ class ShareCard extends StatelessWidget {
               child: Column(
                 children: [
                   const Spacer(),
-                  if (vinyl)
-                    SizedBox.square(
-                      key: discSlotKey,
-                      dimension: coverSize,
-                      child: RotationTransition(
-                        turns: turn ?? const AlwaysStoppedAnimation(0),
-                        child: RepaintBoundary(
-                          key: discKey,
-                          child: Opacity(
-                            opacity: hideCover ? 0 : 1,
-                            child: VinylDisc(size: coverSize, image: image),
-                          ),
-                        ),
-                      ),
-                    )
-                  else
-                    cover,
+                  cover,
                   const SizedBox(height: 24),
                   Text(
                     _kindLabel(context).toUpperCase(),
@@ -693,99 +583,4 @@ class ShareCard extends StatelessWidget {
       ),
     );
   }
-}
-
-/// A record with [image] as its label.
-class VinylDisc extends StatelessWidget {
-  /// Creates the record.
-  const VinylDisc({required this.size, this.image, super.key});
-
-  /// Diameter.
-  final double size;
-
-  /// Cover in the middle, or `null` for a plain label.
-  final ImageProvider? image;
-
-  @override
-  Widget build(BuildContext context) {
-    final image = this.image;
-    final label = size * 0.42;
-    return SizedBox.square(
-      dimension: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFF101010),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 24,
-                  offset: Offset(0, 8),
-                  color: Color(0x66000000),
-                ),
-              ],
-            ),
-            child: SizedBox.expand(),
-          ),
-          CustomPaint(size: Size.square(size), painter: _GroovePainter()),
-          ClipOval(
-            child: SizedBox.square(
-              dimension: label,
-              child: image == null
-                  ? const ColoredBox(color: Color(0xFF8E2C2C))
-                  : Image(
-                      image: image,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) =>
-                          const ColoredBox(color: Color(0xFF8E2C2C)),
-                    ),
-            ),
-          ),
-          Container(
-            width: size * 0.045,
-            height: size * 0.045,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFF101010),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Fine grooves and a soft light reflection; the reflection turns with
-/// the record, so the turning is visible even on a plain label.
-class _GroovePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = size.center(Offset.zero);
-    final radius = size.shortestSide / 2;
-    final groove = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5
-      ..color = const Color(0x14FFFFFF);
-    for (var r = radius * 0.24; r < radius * 0.97; r += radius * 0.025) {
-      canvas.drawCircle(center, r, groove);
-    }
-    final shine = Paint()
-      ..shader = const SweepGradient(
-        colors: [
-          Color(0x00FFFFFF),
-          Color(0x22FFFFFF),
-          Color(0x00FFFFFF),
-          Color(0x00FFFFFF),
-          Color(0x22FFFFFF),
-          Color(0x00FFFFFF),
-        ],
-        stops: [0, 0.08, 0.2, 0.5, 0.58, 0.7],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
-    canvas.drawCircle(center, radius * 0.97, shine);
-  }
-
-  @override
-  bool shouldRepaint(_GroovePainter old) => false;
 }

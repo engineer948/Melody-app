@@ -72,46 +72,4 @@ void main() {
     expect(find.byType(ReplayScreen), findsNothing);
     await c.read(playerControllerProvider.notifier).clear();
   });
-
-  testWidgets('star map shows places and opens one', (tester) async {
-    final c = await pumpApp(
-      tester,
-      preferences: {
-        ..._english,
-        ListeningSettingsController.key:
-            '{"lifeShelf":true,"lifeAsked":true,"places":true}',
-      },
-      size: const Size(400, 6000),
-      overrides: [placesBridgeProvider.overrideWithValue(FakePlacesBridge())],
-    );
-    await c
-        .read(historyStoreProvider)
-        .add(
-          testAccount.id,
-          PlayEvent(
-            track: makeTrack('t1', title: 'Firuze'),
-            startedAt: DateTime(2026, 3, 12),
-            listened: const Duration(minutes: 3),
-            place: PlayPlace(latitude: 40.4, longitude: 49.9, name: 'Bakı'),
-          ),
-        );
-    await tester.tap(find.byTooltip('Settings'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Listening statistics'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Soundtrack of your life').last);
-    await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Star map'));
-    for (var i = 0; i < 10; i++) {
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(find.text('Star map'), findsOneWidget);
-    // The only star is in the middle.
-    await tester.tapAt(tester.getCenter(find.byType(InteractiveViewer)));
-    for (var i = 0; i < 10; i++) {
-      await tester.pump(const Duration(milliseconds: 200));
-    }
-    expect(find.text('Bakı'), findsOneWidget);
-    expect(find.text('Firuze'), findsOneWidget);
-  });
 }

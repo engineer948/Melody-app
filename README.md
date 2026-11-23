@@ -14,15 +14,12 @@ statistics (Year in Review), Android Auto, a home screen widget, playback
 on DLNA devices, sharing songs, albums, artists and playlists as story
 images (Instagram, WhatsApp, …) as a 5–60 second MP3 clip of the
 chosen part of a song (real waveform, "best part", fades), or as a story
-video (the picture with the clip, optional synced lyrics and a turning
-record, Android), song letters (a few songs with a note as a cassette
-picture and a code a friend opens in Melody),
+video (the picture with the clip and optional synced lyrics, Android),
 settings backup and restore, "soundtrack of your life" (opt-in: the
 rough place of each play and the day's photos, kept on the phone only), and a built-in Tailscale node: friends join
 your server with an invite code, without the Tailscale app
-([docs/TAILSCALE.md](docs/TAILSCALE.md)), and sharing with one other
-user: songs with a note, a shared playlist, a greeting and listening
-together, each only after they allow it ([docs/SHARING.md](docs/SHARING.md)).
+([docs/TAILSCALE.md](docs/TAILSCALE.md)), and listening together with
+other users of the server ([docs/SHARING.md](docs/SHARING.md)).
 For the F-Droid release, see [docs/FDROID.md](docs/FDROID.md).
 
 **Copyright.** Melody plays and shares music from the user's own server.

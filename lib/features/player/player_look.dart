@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/domain/models/media.dart';
-import 'package:melody/domain/share/mixtape.dart';
-import 'package:melody/features/share/mixtape_screens.dart';
+import 'package:melody/features/player/cassette.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -76,7 +75,7 @@ Color cassetteColor(Track track) {
   for (final unit in key.codeUnits) {
     hash = (hash * 31 + unit) & 0x7fffffff;
   }
-  return Color(Mixtape.colors[hash % Mixtape.colors.length]);
+  return Color(cassetteColors[hash % cassetteColors.length]);
 }
 
 /// The song playing as a cassette: the reels turn while it plays and the

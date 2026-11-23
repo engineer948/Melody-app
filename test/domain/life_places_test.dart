@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:melody/domain/stats/life_places.dart';
 import 'package:melody/domain/stats/play_event.dart';
-import 'package:melody/features/stats/life_journeys.dart';
 
 import '../helpers/fakes.dart';
 
@@ -50,25 +47,6 @@ void main() {
     expect(trips.last.songs.map((s) => s.id), ['g1', 'g2']);
     expect(trips.first.days, 1);
     expect(findTrips(const []), isEmpty);
-  });
-
-  test('stars: one per place, in the order first visited', () {
-    final stars = placeStars([
-      _at('a', DateTime(2026, 2), lat: 41, lon: 47.85, name: 'Qəbələ'),
-      _at('b', DateTime(2026)),
-      _at('b', DateTime(2026, 1, 2)),
-      _at('c', DateTime(2026, 1, 3), skipped: true),
-    ]);
-    expect(stars.map((s) => s.name), ['Bakı', 'Qəbələ']);
-    expect(stars.first.plays, 3);
-    expect(stars.first.songs.map((s) => s.id), ['b']);
-
-    final points = starPositions(stars, const Size(400, 800));
-    expect(points, hasLength(2));
-    for (final p in points) {
-      expect(p.dx, inInclusiveRange(0, 400));
-      expect(p.dy, inInclusiveRange(0, 800));
-    }
   });
 
   test('songs in the order played, skips and repeats left out', () {

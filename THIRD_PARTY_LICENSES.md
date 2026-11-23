@@ -69,10 +69,7 @@ commercial use and redistribution. The license text of each font is in
 They come unmodified from the Google Fonts repository
 (https://github.com/google/fonts).
 
-Work Sans (default), Inter, Roboto, IBM Plex Sans, Source Sans 3, DM Sans,
-Plus Jakarta Sans, Geist, Onest, Albert Sans, Public Sans, Montserrat,
-Mulish, Nunito, Lexend, Raleway, Quicksand, Comfortaa, Exo 2,
-Space Grotesk, Lora, JetBrains Mono.
+Work Sans (default), Inter, Roboto, Nunito, Lora and JetBrains Mono.
 
 ## Development-only dependencies (not shipped)
 

@@ -57,7 +57,6 @@ class FakeVideoMaker implements StoryVideoMaker {
 
   final Directory dir;
   final calls = <(List<(File, Duration)>, String, String)>[];
-  final discs = <(File?, Rect?, List<double>)>[];
 
   @override
   bool get supported => true;
@@ -67,12 +66,8 @@ class FakeVideoMaker implements StoryVideoMaker {
     required List<(File, Duration)> pictures,
     required File audio,
     required String name,
-    File? disc,
-    Rect? discRect,
-    List<double> pulse = const [],
   }) async {
     calls.add((pictures, audio.path, name));
-    discs.add((disc, discRect, pulse));
     return File('${dir.path}/$name.mp4')..writeAsBytesSync([0]);
   }
 }
@@ -269,35 +264,5 @@ void main() {
       Duration(milliseconds: 15250),
     ]);
     expect(pictures.map((p) => p.$1.path).toSet(), hasLength(3));
-  });
-
-  testWidgets('a turning record is drawn apart and swells with the music', (
-    tester,
-  ) async {
-    await open(tester);
-    expect(find.byType(VinylDisc), findsNothing, reason: 'off by default');
-    await tester.tap(find.text('Turning record'));
-    // The record keeps turning: pump instead of settling.
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(find.byType(VinylDisc), findsOneWidget);
-    await tester.runAsync(() async {
-      await tester.tap(find.text('Story video (picture + song)'));
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.tap(find.text('I understand'));
-      for (var i = 0; i < 80 && shared.isEmpty; i++) {
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-        await tester.pump();
-      }
-    });
-    final (disc, rect, pulse) = video.discs.single;
-    expect(disc!.path, endsWith('.png'));
-    expect(rect!.left, inExclusiveRange(0, 1));
-    expect(rect.width, inExclusiveRange(0.2, 0.9));
-    // 30 s at 24 frames a second, louder in the chorus part.
-    expect(pulse, hasLength(720));
-    expect(pulse.every((p) => p >= 0 && p <= 1), isTrue);
-    await tester.tap(find.text('Turning record'));
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(find.byType(VinylDisc), findsNothing);
   });
 }

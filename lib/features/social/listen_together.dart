@@ -5,10 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'
 import 'package:melody/core/logging/app_logger.dart';
 import 'package:melody/data/sources/jellyfin/jellyfin_music_source.dart';
 import 'package:melody/domain/models/media.dart';
-import 'package:melody/domain/social/social_models.dart';
 import 'package:melody/domain/social/sync_play.dart';
 import 'package:melody/features/auth/session_controller.dart';
-import 'package:melody/features/social/social_controller.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:melody/player/player_state.dart';
 import 'package:meta/meta.dart';
@@ -189,47 +187,11 @@ class ListenTogether extends _$ListenTogether implements PlaybackRelay {
     }
   }
 
-  /// Creates a group and invites the chosen person (administrators, with
-  /// their permission).
-  Future<bool> start() async {
-    final social = ref.read(socialControllerProvider);
-    final outbox = social.outbox;
-    if (outbox == null || !social.canSend(SocialFeature.listenTogether)) {
-      return false;
-    }
-    final groupId = await createGroup('Melody · ${outbox.fromName}');
-    if (groupId == null) return false;
-    try {
-      await ref
-          .read(socialControllerProvider.notifier)
-          .setListenInvite(groupId);
-      return true;
-    } on Object catch (error, stack) {
-      _log.error('Could not send the invitation', error, stack);
-      return false;
-    }
-  }
-
-  /// Joins the group the sender invited this user to.
-  Future<bool> join() async {
-    final social = ref.read(socialControllerProvider);
-    final groupId = social.inbox?.listenGroupId;
-    if (groupId == null || !social.shows(SocialFeature.listenTogether)) {
-      return false;
-    }
-    return await joinGroup(groupId);
-  }
-
-  /// Leaves the group (the sender also withdraws the invitation).
+  /// Leaves the group.
   Future<void> leave() async {
     try {
       await _transport?.leave();
     } on Object catch (_) {}
-    if (ref.read(socialControllerProvider).outbox?.listenGroupId != null) {
-      try {
-        await ref.read(socialControllerProvider.notifier).setListenInvite(null);
-      } on Object catch (_) {}
-    }
     await _teardown();
   }
 

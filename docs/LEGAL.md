@@ -6,9 +6,9 @@ Version 1. The same text is shown in the app (Settings → About → Terms and p
 
 Melody is a free, open-source player for music on sources you choose: your Jellyfin or Subsonic-compatible server, internet radio and files on this phone. It does not sell, host or distribute music; it only plays and processes what your own server or source gives it. You are responsible for having the right to the music on your servers and for how you use the app.
 
-## Sharing clips, videos and song letters
+## Sharing clips and videos
 
-Clips, story pictures and videos, song letters and cards are made on this phone only when you ask, and sent only through the apps you choose. Melody and its developers do not see, store or send them. Songs and lyrics are usually protected by copyright. Before sharing, make sure you may: you own the rights, have permission, or the law of your country allows it (for example a short quotation, private use or fair use). You alone are responsible for what you share and for any claims arising from it. Clips are limited to 60 seconds, but that limit does not make a share lawful by itself. By confirming the notice before your first share you accept these terms; the date you did so is kept on this phone.
+Clips, story pictures and videos and cards are made on this phone only when you ask, and sent only through the apps you choose. Melody and its developers do not see, store or send them. Songs and lyrics are usually protected by copyright. Before sharing, make sure you may: you own the rights, have permission, or the law of your country allows it (for example a short quotation, private use or fair use). You alone are responsible for what you share and for any claims arising from it. Clips are limited to 60 seconds, but that limit does not make a share lawful by itself. By confirming the notice before your first share you accept these terms; the date you did so is kept on this phone.
 
 ## Privacy
 

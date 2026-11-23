@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -7,14 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:melody/core/settings/locale_controller.dart';
 import 'package:melody/domain/models/media.dart';
-import 'package:melody/domain/stats/listening_stats.dart';
 import 'package:melody/domain/stats/play_event.dart';
-import 'package:melody/features/player/house_party.dart';
 import 'package:melody/features/stats/month_album.dart';
-import 'package:melody/features/stats/music_dna.dart';
 import 'package:melody/features/stats/year_film.dart';
 import 'package:melody/features/stats/year_game.dart';
-import 'package:melody/l10n/app_localizations.dart';
 import 'package:melody/player/history_recorder.dart';
 import 'package:melody/player/playback_settings.dart';
 import 'package:melody/player/player_controller.dart';
@@ -33,8 +28,6 @@ PlayEvent _play(String id, DateTime at, {String? title}) => PlayEvent(
   startedAt: at,
   listened: const Duration(minutes: 3),
 );
-
-class _RealHttp extends HttpOverrides;
 
 void main() {
   test('year choices: the right year and three near it, none ahead', () {
@@ -75,22 +68,6 @@ void main() {
     expect(file!.lengthSync(), greaterThan(1000));
   });
 
-  testWidgets('music DNA draws the statistics', (tester) async {
-    expect(dnaColor('Rock'), dnaColor('rock'));
-    final stats = ListeningStats.of([
-      for (var i = 0; i < 20; i++)
-        _play('t${i % 4}', DateTime(2026, 3, 1 + i, i % 24)),
-    ], now: DateTime(2026, 4));
-    await tester.pumpWidget(
-      MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        home: SizedBox(width: 360, height: 640, child: DnaPoster(stats: stats)),
-      ),
-    );
-    expect(find.byType(DnaPoster), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
-
   testWidgets('the album of a month: its top songs as sides A and B', (
     tester,
   ) async {
@@ -126,42 +103,6 @@ void main() {
     await tester.tap(find.text('Play'));
     await tester.pump();
     expect(c.read(playerControllerProvider).queue.entries, hasLength(6));
-    await c.read(playerControllerProvider.notifier).clear();
-  });
-
-  test('house party: guests search and add songs with the key only', () async {
-    final c = await createContainer(preferences: _prefs);
-    final party = c.read(housePartyProvider.notifier);
-    expect(await party.start(host: '127.0.0.1'), isTrue);
-    final url = Uri.parse(c.read(housePartyProvider).url!);
-    final key = url.queryParameters['k']!;
-    // flutter_test answers every HttpClient call with 400: use real ones.
-    final client = HttpOverrides.runWithHttpOverrides(
-      HttpClient.new,
-      _RealHttp(),
-    );
-    addTearDown(client.close);
-    Future<(int, String)> call(String method, String path) async {
-      final request = await client.openUrl(method, url.resolve(path));
-      final response = await request.close();
-      return (response.statusCode, await utf8.decodeStream(response));
-    }
-
-    expect((await call('GET', '/?k=wrong')).$1, 403);
-    final page = await call('GET', '/?k=$key');
-    expect(page.$1, 200);
-    expect(page.$2, contains('Melody'));
-    final found = await call('GET', '/search?k=$key&q=fir');
-    final songs = jsonDecode(found.$2) as List<dynamic>;
-    expect((songs.single as Map)['title'], 'Firuze');
-    final added = await call('POST', '/add?k=$key&id=t1');
-    expect(added.$1, 200);
-    expect(c.read(playerControllerProvider).current?.id, 't1');
-    expect(c.read(housePartyProvider).added, 1);
-    // Too fast for the same guest.
-    expect((await call('POST', '/add?k=$key&id=t1')).$1, 429);
-    await party.stop();
-    expect(c.read(housePartyProvider).running, isFalse);
     await c.read(playerControllerProvider.notifier).clear();
   });
 
