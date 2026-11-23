@@ -175,7 +175,7 @@ final class PlayerControllerProvider
   }
 }
 
-String _$playerControllerHash() => r'41a47108008ff467fa21c96ce037410506e95060';
+String _$playerControllerHash() => r'f831f6e112f1fe6dee008d4238b93af4455b2a2d';
 
 /// Owns the queue and drives the [AudioEngine].
 

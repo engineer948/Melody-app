@@ -21,7 +21,7 @@ Profile picture stays (maintainer chose item 11 by mistake).
 
 - `.github/workflows/fdroid-build.yml` builds the APK twice inside
   F-Droid's `buildserver-trixie` image (`tool/fdroid_build.sh`) and
-  compares. Run 3 was dispatched on `698a78c`.
+  compares. Run 3 on `698a78c` PASSED (both builds equal).
 - Previous failure: `gomobile: failed to find android SDK platform (API
   level: 24)`. Fix: recipe `sudo:` now runs
   `sdkmanager 'platforms;android-36'`. If it still fails, read logs
