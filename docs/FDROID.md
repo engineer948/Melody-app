@@ -19,7 +19,7 @@ prebuilt binaries may be downloaded.
 | SQLite built from source | ✅ official 3.54.1 source, see section 2 |
 | Public repository | ✅ |
 | Version tag (`v0.x.y`) and GitHub release | ✅ automatic when a tag is pushed |
-| Screenshots | ❌ not added yet (`fastlane/metadata/android/en-US/images/phoneScreenshots/1.png`, …) |
+| Screenshots (album, player, home dark/light; covers and names replaced with made-up ones) | ✅ |
 | All Dart dependencies free (180 checked: BSD, MIT, Apache-2.0; `dbus`/`nm` MPL-2.0, Linux only) | ✅ |
 | Go toolchain pinned with SHA-256, no toolchain download during the build | ✅ |
 | No update check in the F-Droid build (`MELODY_DISTRIBUTION=fdroid`) | ✅ |
