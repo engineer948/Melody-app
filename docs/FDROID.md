@@ -78,6 +78,11 @@ gh release upload v0.5.0 io.github.engineer948.melody_6.apk
 
 ## 4. First submission
 
+**Submitted** on 2026-11-23: merge request
+[fdroid/fdroiddata!58809](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/58809)
+from the fork `engineer948/fdroiddata` (branch `melody`). The recipe there
+uses the full commit hash instead of the tag, as fdroiddata requires.
+
 There are two ways.
 
 **Easy way: open a request.** Open a new "Request For Packaging" at
