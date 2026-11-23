@@ -334,6 +334,15 @@ class TailnetController extends _$TailnetController {
 
   /// Shortest time between two automatic reconnects.
   static Duration healEvery = const Duration(minutes: 1);
+
+  /// Shortest time between two restarts because the server did not answer.
+  static Duration serverRestartEvery = const Duration(minutes: 10);
+
+  /// Set after a restart because the server did not answer, until it
+  /// answers again or the network changes: when one restart did not help,
+  /// the server itself is down (or its computer is off), and restarting
+  /// Tailscale again would not help either.
+  bool _restartedForServer = false;
   TailnetSecrets? _secrets;
   Future<void>? _starting;
   final _random = Random.secure();
@@ -352,6 +361,7 @@ class TailnetController extends _$TailnetController {
     ref.listen(onMobileDataProvider, (before, after) {
       final was = before?.value;
       if (was == null || was == after.value) return;
+      _restartedForServer = false;
       Future<void>.delayed(
         const Duration(seconds: 3),
         () => ref.mounted ? ensureConnected() : null,
@@ -395,9 +405,13 @@ class TailnetController extends _$TailnetController {
       };
 
   Future<void> _boot(TailnetSecrets secrets) async {
+    // Running already: the node survived in the background and its
+    // connection may be dead. Otherwise it is started fresh now.
+    final before = await refresh(heal: false);
+    final fresh = before.status != TailnetStatus.running;
     await _ensureStarted(secrets);
     if (!ref.mounted || !state.configured) return;
-    if (await _waitRunning()) await ensureConnected();
+    if (await _waitRunning()) await ensureConnected(fresh: fresh);
   }
 
   /// Polls until the node runs; `false` when it needs the user or the
@@ -545,7 +559,12 @@ class TailnetController extends _$TailnetController {
   /// Tailscale may still say "running" after the phone changed networks
   /// while the connection is dead, so the music server is asked through
   /// the proxy too; no answer means a full restart (as Settings does).
-  Future<void> ensureConnected() async {
+  ///
+  /// A restart only helps a dead connection, not a server that is down:
+  /// right after a [fresh] start, or when a restart did not help, the
+  /// node is left alone (downloads keep playing), and such restarts are
+  /// at most [serverRestartEvery] apart.
+  Future<void> ensureConnected({bool fresh = false}) async {
     if (!state.configured || state.crashed || _joining) return;
     final report = await refresh(heal: false);
     if (_broken(report)) {
@@ -553,10 +572,19 @@ class TailnetController extends _$TailnetController {
       return;
     }
     final local = state.local;
-    if (report.status == TailnetStatus.running && local != null) {
-      final reachable = await ref.read(tailnetProbeProvider)(local);
-      if (!reachable && state.configured && !_joining) await _reconnect();
+    if (report.status != TailnetStatus.running || local == null) return;
+    final reachable = await ref.read(tailnetProbeProvider)(local);
+    if (reachable) {
+      _restartedForServer = false;
+      return;
     }
+    if (!state.configured || _joining || fresh || _restartedForServer) return;
+    final last = _lastHeal;
+    if (last != null && DateTime.now().difference(last) < serverRestartEvery) {
+      return;
+    }
+    _restartedForServer = true;
+    await _reconnect();
   }
 
   /// Restarts the node and, once it runs again, lets the screens load

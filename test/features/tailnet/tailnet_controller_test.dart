@@ -313,6 +313,53 @@ void main() {
     await notifier.ensureConnected();
     expect(bridge.stops, 1);
     expect(bridge.starts, hasLength(2));
+
+    // Still no answer after the restart: the server is down, not the
+    // connection. Tailscale is left alone (downloads keep playing).
+    await notifier.ensureConnected();
+    await notifier.ensureConnected();
+    expect(bridge.stops, 1);
+    expect(bridge.starts, hasLength(2));
+
+    // Once it answers again, a later dead connection may be restarted
+    // again (after the pause between such restarts).
+    probeAnswer = true;
+    await notifier.ensureConnected();
+    probeAnswer = false;
+    final pause = TailnetController.serverRestartEvery;
+    TailnetController.serverRestartEvery = Duration.zero;
+    addTearDown(() => TailnetController.serverRestartEvery = pause);
+    await notifier.ensureConnected();
+    expect(bridge.stops, 2);
+  });
+
+  test('a fresh start is not restarted when the server is down', () async {
+    final first = await container();
+    await first.read(tailnetControllerProvider.notifier).join(invite);
+    final prefs = first.read(preferencesProvider);
+    // The app was closed: the node is gone and starts fresh.
+    bridge.reports = [
+      const TailnetReport(TailnetStatus.stopped),
+      const TailnetReport(TailnetStatus.running, ip: '100.64.0.9', port: 41641),
+    ];
+    bridge.starts.clear();
+    probeAnswer = false;
+    final restarted = ProviderContainer(
+      overrides: [
+        preferencesProvider.overrideWithValue(prefs),
+        tailnetBootstrapProvider.overrideWithValue(
+          TailnetBootstrap(available: true, secrets: secrets.secrets),
+        ),
+        tailnetBridgeProvider.overrideWithValue(bridge),
+        tailnetSecretStoreProvider.overrideWithValue(secrets),
+        tailnetProbeProvider.overrideWithValue((_) async => probeAnswer),
+      ],
+    );
+    addTearDown(restarted.dispose);
+    restarted.read(tailnetControllerProvider);
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    expect(bridge.starts, hasLength(1));
+    expect(bridge.stops, 0, reason: 'a restart would not help');
   });
 
   group('TailnetRoutingConnector', () {

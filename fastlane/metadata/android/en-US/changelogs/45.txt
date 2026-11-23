@@ -1,0 +1,1 @@
+Fix: with Tailscale connected but the music server down, the app could close. It restarted Tailscale every time the server did not answer. Now Tailscale is restarted only when that can help: not right after a fresh start, not again when one restart did not help (until the network changes), and at most every 10 minutes. Downloads keep playing meanwhile.

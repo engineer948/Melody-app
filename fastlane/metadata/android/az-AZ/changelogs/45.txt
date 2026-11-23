@@ -1,0 +1,1 @@
+Düzəliş: Tailscale qoşulu olub musiqi serveri işləməyəndə tətbiq bağlana bilirdi; server hər cavab verməyəndə Tailscale yenidən başladılırdı. İndi yalnız faydası olanda: təzə başladılandan dərhal sonra yox, bir dəfə kömək etmədisə şəbəkə dəyişənə qədər bir də yox, ən çox 10 dəqiqədən bir. Yüklənənlər bu vaxt çalmağa davam edir.
