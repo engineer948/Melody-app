@@ -1,0 +1,43 @@
+name: F-Droid build
+
+# Builds the APK as F-Droid's build server does (tool/fdroid_build.sh), two
+# times on two machines, and checks that both are the same file: the
+# release signs this build, so F-Droid can reproduce it.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: F-Droid build ${{ matrix.run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      matrix:
+        run: [1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+      - name: Build in the F-Droid buildserver image
+        run: |
+          mkdir -p out
+          docker run --rm -v "$PWD:/src" -v "$PWD/out:/out" \
+            registry.gitlab.com/fdroid/fdroidserver:buildserver-trixie \
+            bash /src/tool/fdroid_build.sh "$GITHUB_SHA" /out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-${{ matrix.run }}
+          path: out/*.apk
+
+  compare:
+    name: Same file twice
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Compare
+        run: |
+          sha256sum unsigned-1/*.apk unsigned-2/*.apk
+          cmp unsigned-1/*.apk unsigned-2/*.apk

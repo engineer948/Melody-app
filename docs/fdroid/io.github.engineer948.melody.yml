@@ -1,6 +1,6 @@
-# Draft F-Droid build recipe. Copy it to metadata/io.github.engineer948.melody.yml in a
-# fork of https://gitlab.com/fdroid/fdroiddata (see docs/FDROID.md).
-# Check with `fdroid lint` and `fdroid build` before opening the merge request.
+AntiFeatures:
+  NonFreeNet:
+    en-US: The optional built-in Tailscale node uses Tailscale's coordination server.
 Categories:
   - Multimedia
 License: MIT
@@ -11,47 +11,39 @@ Changelog: https://github.com/engineer948/Melody-app/releases
 
 AutoName: Melody
 
-AntiFeatures:
-  NonFreeNet:
-    en-US: The optional built-in Tailscale node talks to Tailscale's coordination
-      server when the user joins a network with an invite.
-
 RepoType: git
 Repo: https://github.com/engineer948/Melody-app.git
+Binaries: https://github.com/engineer948/Melody-app/releases/download/v%v/melody-%v.apk
 
 Builds:
   - versionName: 0.28.2
     versionCode: 45
     commit: v0.28.2
+    sudo:
+      - apt-get update
+      - apt-get install -y golang-go
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
       - flutter@3.47.9
-    sudo:
-      # The official Go release named in native/tailscale/go.mod, checked
-      # against its published SHA-256 (no toolchain download at build).
-      - curl -fsSLo /tmp/go.tar.gz https://dl.google.com/go/go1.27.4.linux-amd64.tar.gz
-      - echo "7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840  /tmp/go.tar.gz"
-        | sha256sum -c -
-      - rm -rf /usr/local/go
-      - tar -C /usr/local -xzf /tmp/go.tar.gz
-    ndk: r28c
     rm:
       - ios
     prebuild:
       - export PUB_CACHE=$(pwd)/.pub-cache
       - $$flutter$$/bin/flutter config --no-analytics
-      - $$flutter$$/bin/flutter pub get
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
     scandelete:
       - .pub-cache
       - .gopath
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - export PATH=/usr/local/go/bin:$PATH
-      - export GOPATH=$(pwd)/.gopath GOTOOLCHAIN=local
+      - export GOPATH=$(pwd)/.gopath GOTOOLCHAIN=auto
       - export ANDROID_NDK_HOME=$$NDK$$
       - tool/build_tailscale.sh
       - export MELODY_UNSIGNED=1
-      - $$flutter$$/bin/flutter build apk --release --dart-define=MELODY_DISTRIBUTION=fdroid
+      - $$flutter$$/bin/flutter build apk --release
+    ndk: r28c
+
+AllowedAPKSigningKeys: 28a0ba96918e8a33a3f168b94a41611439b201f380f9e907129cf0504d6342c6
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags

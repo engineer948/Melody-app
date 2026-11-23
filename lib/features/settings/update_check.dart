@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:melody/core/config/app_config.dart';
 import 'package:melody/core/settings/preferences.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -49,9 +48,7 @@ class UpdateCheckSetting extends Notifier<bool> {
   static const key = 'update.check';
 
   @override
-  bool build() =>
-      !AppConfig.fromFdroid &&
-      (ref.watch(preferencesProvider).getBool(key) ?? true);
+  bool build() => ref.watch(preferencesProvider).getBool(key) ?? true;
 
   /// Turns the check on or off.
   Future<void> set({required bool on}) async {
@@ -90,6 +87,28 @@ final latestReleaseFetcherProvider =
       },
     );
 
+/// App stores that are F-Droid clients (F-Droid, F-Droid Basic, Droid-ify,
+/// Neo Store): they deliver updates themselves.
+const fdroidInstallers = {
+  'org.fdroid.fdroid',
+  'org.fdroid.basic',
+  'org.fdroid.fdroid.privileged',
+  'com.looker.droidify',
+  'com.machiav3lli.fdroid',
+};
+
+/// Whether the app was installed by an F-Droid client: then it does not
+/// look for new versions on GitHub. The GitHub and F-Droid APKs are the
+/// same file (reproducible build), so this is decided at run time.
+final installedFromFdroidProvider = FutureProvider<bool>((ref) async {
+  try {
+    final store = (await PackageInfo.fromPlatform()).installerStore;
+    return fdroidInstallers.contains(store);
+  } on Object {
+    return false;
+  }
+});
+
 /// The installed version (e.g. `0.12.0`); overridden in tests.
 final installedVersionProvider = FutureProvider<String?>((ref) async {
   try {
@@ -105,6 +124,7 @@ final installedVersionProvider = FutureProvider<String?>((ref) async {
 /// release list is read; nothing about the user is sent.
 final availableUpdateProvider = FutureProvider<AvailableUpdate?>((ref) async {
   if (!ref.watch(updateCheckSettingProvider)) return null;
+  if (await ref.watch(installedFromFdroidProvider.future)) return null;
   try {
     final current = await ref.watch(installedVersionProvider.future);
     if (current == null) return null;
@@ -155,7 +175,10 @@ class UpdateCheckTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (AppConfig.fromFdroid) return const SizedBox.shrink();
+    // F-Droid delivers updates itself.
+    if (ref.watch(installedFromFdroidProvider).value ?? false) {
+      return const SizedBox.shrink();
+    }
     final l10n = context.l10n;
     return SwitchListTile(
       secondary: const Icon(Icons.system_update_outlined),

@@ -14,11 +14,16 @@ void main() {
     expect(isNewerVersion('0.12.0', '0.12.0+21'), isFalse);
   });
 
-  Future<void> pump(WidgetTester tester, {required String latest}) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    required String latest,
+    bool fdroid = false,
+  }) async {
     await pumpApp(
       tester,
       preferences: {LocaleController.localeKey: 'en'},
       overrides: [
+        installedFromFdroidProvider.overrideWith((ref) async => fdroid),
         installedVersionProvider.overrideWith((ref) async => '0.12.0'),
         latestReleaseFetcherProvider.overrideWithValue(
           () async => (latest, Uri.parse('https://example.com/r')),
@@ -36,6 +41,13 @@ void main() {
 
   testWidgets('no banner when up to date', (tester) async {
     await pump(tester, latest: '0.12.0');
+    expect(find.textContaining('is available'), findsNothing);
+  });
+
+  testWidgets('installed from F-Droid: no banner, F-Droid updates it', (
+    tester,
+  ) async {
+    await pump(tester, latest: '0.13.0', fdroid: true);
     expect(find.textContaining('is available'), findsNothing);
   });
 }
