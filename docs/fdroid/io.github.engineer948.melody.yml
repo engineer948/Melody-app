@@ -16,9 +16,9 @@ Repo: https://github.com/engineer948/Melody-app.git
 Binaries: https://github.com/engineer948/Melody-app/releases/download/v%v/melody-%v.apk
 
 Builds:
-  - versionName: 0.28.2
-    versionCode: 45
-    commit: v0.28.2
+  - versionName: 0.29.0
+    versionCode: 46
+    commit: v0.29.0
     sudo:
       - apt-get update
       - apt-get install -y golang-go
@@ -48,5 +48,5 @@ AllowedAPKSigningKeys: 28a0ba96918e8a33a3f168b94a41611439b201f380f9e907129cf0504
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
-CurrentVersion: 0.28.2
-CurrentVersionCode: 45
+CurrentVersion: 0.29.0
+CurrentVersionCode: 46

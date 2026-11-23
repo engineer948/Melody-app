@@ -1,13 +1,13 @@
 # Next steps (handoff)
 
 State on 2026-11-23: `main` = `claude/new-session-j42vuv` = `698a78c`.
-Last release: 0.28.2+45. Next release: **0.29.0+46**.
+Last release: 0.28.2+45. Released 0.29.0+46 (removals + previous-button fix). Next release: **0.30.0+47**.
 
 Maintainer writes Azerbaijani/Turkish; answer in Azerbaijani, keep repo
 content English (see CLAUDE.md). When everything below is done and checks
 pass, release without asking (CLAUDE.md "Releasing").
 
-## Done, not released yet
+## Done (in 0.29.0)
 
 Removed (commits `d30b802`, `d1010d8` legal text): song letters (mixtape,
 hidden-in-photo, NFC, capsule, relay, inbox), house party, star map, Music
@@ -50,12 +50,12 @@ order + hidden set in settings (with backup/restore), default = today's
 order, everything on. Use a `ReorderableListView` with switches. Home
 screen renders shelves in that order. Tests.
 
-## 4. Release 0.29.0+46
+## 4. Release 0.30.0+47
 
 - `pubspec.yaml` version, `docs/fdroid/io.github.engineer948.melody.yml`
-  (versionName, versionCode, commit `v0.29.0`, CurrentVersion*).
-- Changelogs `fastlane/metadata/android/{en-US,tr-TR,az-AZ}/changelogs/46.txt`
-  (en-US first, < 500 chars): presets, home shelves, removed features.
+  (versionName, versionCode, commit `v0.30.0`, CurrentVersion*).
+- Changelogs `fastlane/metadata/android/{en-US,tr-TR,az-AZ}/changelogs/47.txt`
+  (en-US first, < 500 chars): presets, home shelves.
 - Checks: `dart run build_runner build`, `flutter gen-l10n`,
   `dart format lib test`, `flutter analyze`, `flutter test --concurrency=2`.
 - Push to branch and `main`, run Release workflow on `main`, report the

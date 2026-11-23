@@ -96,6 +96,25 @@ void main() {
     await player(c).previous();
     expect(c.read(playerControllerProvider).current?.id, 't1');
 
+    // Pressed again soon after a restart, even past 3 seconds: back a song.
+    await player(c).next();
+    final t0 = DateTime(2026);
+    engine.position = const Duration(seconds: 30);
+    await player(c).previous(now: t0);
+    expect(c.read(playerControllerProvider).current?.id, 't2');
+    engine.position = const Duration(seconds: 5);
+    await player(c).previous(now: t0.add(const Duration(seconds: 5)));
+    expect(c.read(playerControllerProvider).current?.id, 't1');
+
+    // Long after a restart it restarts again.
+    await player(c).next();
+    engine.position = const Duration(seconds: 30);
+    await player(c).previous(now: t0);
+    engine.position = const Duration(seconds: 20);
+    await player(c).previous(now: t0.add(const Duration(seconds: 20)));
+    expect(c.read(playerControllerProvider).current?.id, 't2');
+    expect(engine.log.last, 'seek 0');
+
     await player(c).skipTo(3);
     await player(c).next();
     expect(c.read(playerControllerProvider).current?.id, 't3');

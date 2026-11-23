@@ -321,6 +321,9 @@ class PlayerController extends _$PlayerController {
   /// Set while listening together; see [PlaybackRelay].
   PlaybackRelay? relay;
 
+  /// When [previous] last restarted a track, and which one.
+  ({int? uid, DateTime at})? _restart;
+
   /// Current position in the track.
   Duration get position => _engine.position;
 
@@ -398,9 +401,23 @@ class PlayerController extends _$PlayerController {
     if (target != null) await skipTo(target);
   }
 
-  /// Restarts the track, or goes to the previous one near its start.
-  Future<void> previous() async {
-    if (_engine.position > const Duration(seconds: 3)) {
+  /// Pressing previous again within this time after it restarted the
+  /// track goes to the previous track, however far the song has played.
+  static const previousAgainWindow = Duration(seconds: 10);
+
+  /// Restarts the track, or goes to the previous one near its start or
+  /// when pressed again soon after a restart.
+  Future<void> previous({DateTime? now}) async {
+    final at = now ?? DateTime.now();
+    final uid = state.queue.current?.uid;
+    final restarted = _restart;
+    final justRestarted =
+        restarted != null &&
+        restarted.uid == uid &&
+        at.difference(restarted.at) < previousAgainWindow;
+    _restart = null;
+    if (_engine.position > const Duration(seconds: 3) && !justRestarted) {
+      _restart = (uid: uid, at: at);
       await seek(Duration.zero);
       return;
     }

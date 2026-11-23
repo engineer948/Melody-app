@@ -37,7 +37,7 @@ void main() {
 
     await tester.tap(find.text('Read the terms'));
     await tester.pumpAndSettle();
-    expect(find.text('Sharing clips, videos and song letters'), findsOneWidget);
+    expect(find.text('Sharing clips and videos'), findsOneWidget);
     await tester.scrollUntilVisible(find.text('No warranty'), 200);
     expect(find.text('No warranty'), findsOneWidget);
     await tester.pageBack();

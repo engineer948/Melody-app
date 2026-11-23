@@ -1,0 +1,2 @@
+Fix: pressing "previous" again within 10 seconds after it restarted the song now goes to the previous song.
+Simpler app: song letters, house party, star map, Music DNA poster, "Share with someone", the turning record in story videos and most extra fonts were removed. Listening together, profile pictures and six fonts stay.
