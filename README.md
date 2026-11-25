@@ -1,32 +1,61 @@
+<div align="center">
+
+<img src="docs/icon.png" width="112" alt="Melody icon">
+
 # Melody
 
-A Jellyfin-first, multi-source mobile music player (Flutter; Android first,
-then iOS). The display name is changed in one place: `AppConfig.appName`.
+**A free, open-source music player for your own Jellyfin server.**
+No ads, no tracking, no account with us: your music, your server, your phone.
 
-## Status
+[![Latest release](https://img.shields.io/github/v/release/engineer948/Melody-app?label=release&color=5b7fe8)](https://github.com/engineer948/Melody-app/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/engineer948/Melody-app/total?color=2ea44f)](https://github.com/engineer948/Melody-app/releases)
+[![Stars](https://img.shields.io/github/stars/engineer948/Melody-app?style=flat&color=e3b341)](https://github.com/engineer948/Melody-app/stargazers)
+[![CI](https://img.shields.io/github/actions/workflow/status/engineer948/Melody-app/ci.yml?branch=main&label=CI)](https://github.com/engineer948/Melody-app/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/engineer948/Melody-app?color=blue)](LICENSE)
+![Android](https://img.shields.io/badge/Android-7.0%2B-3ddc84?logo=android&logoColor=white)
+![Languages](https://img.shields.io/badge/languages-English%20%C2%B7%20T%C3%BCrk%C3%A7e%20%C2%B7%20Az%C9%99rbaycanca-8a63d2)
 
-Early development. Working today: Jellyfin sign-in, library, search,
-background playback (queue, notification, sleep timer, volume
-normalisation, equalizer), lyrics, playlists (smart playlists, M3U import/export,
-selecting several songs at once), Wi-Fi / mobile streaming
-quality, offline downloads, Auto DJ, on-device recommendations, listening
-statistics (Year in Review), Android Auto, a home screen widget, playback
-on DLNA devices, sharing songs, albums, artists and playlists as story
-images (Instagram, WhatsApp, …) as a 5–60 second MP3 clip of the
-chosen part of a song (real waveform, "best part", fades), or as a story
-video (the picture with the clip and optional synced lyrics, Android),
-settings backup and restore, "soundtrack of your life" (opt-in: the
-rough place of each play and the day's photos, kept on the phone only), and a built-in Tailscale node: friends join
-your server with an invite code, without the Tailscale app
-([docs/TAILSCALE.md](docs/TAILSCALE.md)), and listening together with
-other users of the server ([docs/SHARING.md](docs/SHARING.md)).
-For the F-Droid release, see [docs/FDROID.md](docs/FDROID.md).
+[**⬇ Download the latest APK**](https://github.com/engineer948/Melody-app/releases/latest)
+
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="200" alt="Screenshot">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="200" alt="Screenshot">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="200" alt="Screenshot">
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="200" alt="Screenshot">
+
+</div>
+
+## Features
+
+- 🎵 **Your Jellyfin library**: albums, artists, genres, playlists (smart
+  playlists, M3U import/export), search, favourites
+- 📴 **Offline downloads** and Wi-Fi / mobile streaming quality
+- 🎤 **Synced lyrics** that line up by themselves with each song
+- 🎛️ Equalizer, volume normalisation, crossfade, sleep timer, Auto DJ
+- 🚗 Android Auto, home screen widget, playback on DLNA devices
+- 📊 Listening statistics and a Year in Review, kept on your phone
+- 📍 "Soundtrack of your life" (opt-in): the places and photos of the days
+  you listened, never leaving the phone
+- 📤 Share songs as story pictures, 5–60 s clips or story videos
+- 🎧 Listen together with other users of your server
+- 🔒 Built-in Tailscale: friends reach your server with an invite code,
+  without the Tailscale app ([docs/TAILSCALE.md](docs/TAILSCALE.md))
+
+Updates appear in the app (GitHub builds). F-Droid: see
+[docs/FDROID.md](docs/FDROID.md). Privacy and sharing terms:
+[docs/LEGAL.md](docs/LEGAL.md).
 
 **Copyright.** Melody plays and shares music from the user's own server.
 Users alone are responsible for what they share (story images, song
 clips) and must respect copyright; the app asks for this once before the
 first song clip is shared. The app and its developers take no
 responsibility for content shared by users.
+
+## Contributing
+
+Issues and pull requests are welcome. If you like the app, a ⭐ helps
+others find it.
+
+# For developers
 
 ## Running
 

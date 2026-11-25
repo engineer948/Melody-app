@@ -69,3 +69,20 @@ screen renders shelves in that order. Tests.
   reproducible build with Binaries + AllowedAPKSigningKeys).
 - Maintainer will add song letters and house party back later in a
   different form.
+
+## 1.0 ideas (proposed to the maintainer, not decided yet)
+
+1.0 = "stable and ready for everyone", released together with F-Droid
+inclusion (~Feb 2027).
+
+- **Must have:** quality presets, home shelves, first-run guide (find
+  server / Tailscale invite / pick a quality preset), settings search,
+  F-Droid release wired into release.yml, crash-free on a 50k-song
+  library (profile startup, lists, search), DB migration tests.
+- **More users:** make Navidrome / Subsonic visible (code exists behind a
+  flag), tablet / landscape layout, translations through Hosted Weblate
+  (free for libre projects).
+- **Polish:** TalkBack labels and large-font check, a short in-app
+  "What's new" after updates, a simple project website (GitHub Pages).
+- **Later (maintainer):** song letters and house party back in a new
+  form.
