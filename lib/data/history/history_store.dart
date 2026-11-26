@@ -48,12 +48,17 @@ class HistoryStore {
       })
       ..orderBy([(t) => OrderingTerm(expression: t.startedAt)]);
     final events = <PlayEvent>[];
+    // A song is played many times: decode each payload once.
+    final decoded = <String, Track>{};
     for (final row in await query.get()) {
       try {
         events.add(
           PlayEvent(
-            track: Track.fromJson(
-              jsonDecode(row.payload) as Map<String, dynamic>,
+            track: decoded.putIfAbsent(
+              row.payload,
+              () => Track.fromJson(
+                jsonDecode(row.payload) as Map<String, dynamic>,
+              ),
             ),
             startedAt: row.startedAt,
             listened: Duration(milliseconds: row.listenedMs),

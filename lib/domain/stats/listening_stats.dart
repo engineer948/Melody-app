@@ -52,7 +52,8 @@ class ListeningStats {
     final genres = <String, _Tally<String>>{};
     final byHour = List.filled(24, Duration.zero);
     final byWeekday = List.filled(7, Duration.zero);
-    final byDay = <DateTime, Duration>{};
+    // Keyed by yyyymmdd: building a local DateTime per play is slow.
+    final byDayKey = <int, Duration>{};
     var plays = 0;
     var listened = Duration.zero;
 
@@ -91,9 +92,13 @@ class ListeningStats {
       final at = e.startedAt;
       byHour[at.hour] += e.listened;
       byWeekday[at.weekday - 1] += e.listened;
-      final day = DateTime(at.year, at.month, at.day);
-      byDay[day] = (byDay[day] ?? Duration.zero) + e.listened;
+      final day = at.year * 10000 + at.month * 100 + at.day;
+      byDayKey[day] = (byDayKey[day] ?? Duration.zero) + e.listened;
     }
+    final byDay = {
+      for (final MapEntry(key: k, value: v) in byDayKey.entries)
+        DateTime(k ~/ 10000, k ~/ 100 % 100, k % 100): v,
+    };
 
     final busiest = byDay.entries.reduce((a, b) => b.value > a.value ? b : a);
     final (longest, current) = _streaks(byDay.keys.toSet(), now);
