@@ -231,4 +231,37 @@ void main() {
     handle.dispose();
     await stop(tester, container);
   });
+
+  testWidgets('landscape tablet: cover and controls side by side', (
+    tester,
+  ) async {
+    final container = await pumpApp(
+      tester,
+      preferences: prefs,
+      engine: FakeAudioEngine(),
+      size: const Size(1280, 800),
+    );
+    await playFirstSong(tester);
+    await tester.tap(find.text('Firuze').last);
+    await tester.pumpAndSettle();
+    expect(find.byType(NowPlayingScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    final cover = tester.getCenter(find.byTooltip('Previous'));
+    expect(cover.dx, greaterThan(640), reason: 'controls on the right');
+    await stop(tester, container);
+  });
+
+  testWidgets('landscape phone: no overflow', (tester) async {
+    final container = await pumpApp(
+      tester,
+      preferences: prefs,
+      engine: FakeAudioEngine(),
+      size: const Size(800, 380),
+    );
+    await playFirstSong(tester);
+    await tester.tap(find.text('Firuze').last);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await stop(tester, container);
+  });
 }

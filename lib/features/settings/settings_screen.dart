@@ -199,6 +199,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ),
   ];
 
+  static double _sidePadding(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    return width > 760 ? (width - 720) / 2 : 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -241,8 +246,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: sections.isEmpty
           ? Center(child: Text(l10n.settingsSearchEmpty))
           : ListView(
+              // On tablets the rows keep a readable width.
               padding: EdgeInsets.only(
                 bottom: MediaQuery.paddingOf(context).bottom + 16,
+                left: _sidePadding(context),
+                right: _sidePadding(context),
               ),
               children: [
                 for (final s in sections) ...[

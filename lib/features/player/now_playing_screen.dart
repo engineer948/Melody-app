@@ -78,6 +78,84 @@ class NowPlayingScreen extends ConsumerWidget {
             SafeArea(
               child: LayoutBuilder(
                 builder: (context, constraints) {
+                  final topBar = Row(
+                    children: [
+                      IconButton(
+                        color: fg,
+                        tooltip: l10n.playerClose,
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 32,
+                        ),
+                        onPressed: () => context.pop(),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        color: fg,
+                        tooltip: l10n.socialFeatureListen,
+                        icon: const Icon(Icons.headphones_rounded),
+                        onPressed: () => ListenTogetherScreen.open(context),
+                      ),
+                      IconButton(
+                        color: fg,
+                        tooltip: l10n.share,
+                        icon: const Icon(Icons.share_outlined),
+                        onPressed: () =>
+                            showShareScreen(context, ShareSubject.track(track)),
+                      ),
+                      IconButton(
+                        color: fg,
+                        tooltip: l10n.moreOptions,
+                        icon: const Icon(Icons.more_horiz),
+                        onPressed: () => showTrackMenu(context, ref, track),
+                      ),
+                    ],
+                  );
+                  final controls = <Widget>[
+                    _TitleRow(state: state),
+                    const SizedBox(height: 12),
+                    SeekBar(
+                      duration: state.duration ?? track.duration,
+                      color: fg,
+                    ),
+                    const SizedBox(height: 8),
+                    _Transport(state: state),
+                    const SizedBox(height: 16),
+                    _BottomRow(state: state),
+                    const SizedBox(height: 8),
+                  ];
+                  // Landscape on tablets and wide phones: the cover (or the
+                  // lyrics) on the left, the controls on the right.
+                  if (constraints.maxWidth > constraints.maxHeight &&
+                      constraints.maxWidth >= 560) {
+                    final cover = (constraints.maxHeight - 48).clamp(
+                      120.0,
+                      constraints.maxWidth * 0.42,
+                    );
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: showLyrics
+                                ? LyricsView(track: track)
+                                : Center(
+                                    child: _SwipeableCover(
+                                      state: state,
+                                      size: cover,
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: Column(
+                              children: [topBar, const Spacer(), ...controls],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                   final cover = (constraints.maxWidth - 64).clamp(
                     120.0,
                     constraints.maxHeight * 0.45,
@@ -86,43 +164,7 @@ class NowPlayingScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              color: fg,
-                              tooltip: l10n.playerClose,
-                              icon: const Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 32,
-                              ),
-                              onPressed: () => context.pop(),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              color: fg,
-                              tooltip: l10n.socialFeatureListen,
-                              icon: const Icon(Icons.headphones_rounded),
-                              onPressed: () =>
-                                  ListenTogetherScreen.open(context),
-                            ),
-                            IconButton(
-                              color: fg,
-                              tooltip: l10n.share,
-                              icon: const Icon(Icons.share_outlined),
-                              onPressed: () => showShareScreen(
-                                context,
-                                ShareSubject.track(track),
-                              ),
-                            ),
-                            IconButton(
-                              color: fg,
-                              tooltip: l10n.moreOptions,
-                              icon: const Icon(Icons.more_horiz),
-                              onPressed: () =>
-                                  showTrackMenu(context, ref, track),
-                            ),
-                          ],
-                        ),
+                        topBar,
                         if (showLyrics)
                           Expanded(child: LyricsView(track: track))
                         else ...[
@@ -130,17 +172,7 @@ class NowPlayingScreen extends ConsumerWidget {
                           _SwipeableCover(state: state, size: cover),
                           const Spacer(),
                         ],
-                        _TitleRow(state: state),
-                        const SizedBox(height: 12),
-                        SeekBar(
-                          duration: state.duration ?? track.duration,
-                          color: fg,
-                        ),
-                        const SizedBox(height: 8),
-                        _Transport(state: state),
-                        const SizedBox(height: 16),
-                        _BottomRow(state: state),
-                        const SizedBox(height: 8),
+                        ...controls,
                       ],
                     ),
                   );
