@@ -56,6 +56,9 @@ flutter:
   assets:
     - assets/fonts/
     - assets/licenses/
+    - fastlane/metadata/android/en-US/changelogs/
+    - fastlane/metadata/android/tr-TR/changelogs/
+    - fastlane/metadata/android/az-AZ/changelogs/
   # Variable fonts: Flutter maps FontWeight onto the weight axis.
   fonts:
     - family: WorkSans

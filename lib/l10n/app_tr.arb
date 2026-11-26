@@ -593,5 +593,7 @@
   "homeShelvesLifeNote": "Yalnızca \"Hayatının müziği\" açıkken görünür",
   "settingsHome": "Ana sayfa",
   "settingsSearch": "Ayarlarda ara",
-  "settingsSearchEmpty": "Eşleşen ayar yok"
+  "settingsSearchEmpty": "Eşleşen ayar yok",
+  "whatsNewTitle": "{version} sürümünde yenilikler",
+  "whatsNewDismiss": "Tamam"
 }

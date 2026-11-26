@@ -593,5 +593,7 @@
   "homeShelvesLifeNote": "Yalnız \"Həyatının musiqisi\" açıq olanda görünür",
   "settingsHome": "Ana ekran",
   "settingsSearch": "Ayarlarda axtar",
-  "settingsSearchEmpty": "Uyğun ayar yoxdur"
+  "settingsSearchEmpty": "Uyğun ayar yoxdur",
+  "whatsNewTitle": "{version} versiyasında yeniliklər",
+  "whatsNewDismiss": "Oldu"
 }

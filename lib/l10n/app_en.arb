@@ -1153,5 +1153,8 @@
   "homeShelvesLifeNote": "Shown only when \"Soundtrack of your life\" is on",
   "settingsHome": "Home",
   "settingsSearch": "Search settings",
-  "settingsSearchEmpty": "No setting matches"
+  "settingsSearchEmpty": "No setting matches",
+  "whatsNewTitle": "What's new in {version}",
+  "@whatsNewTitle": {"placeholders": {"version": {"type": "String"}}},
+  "whatsNewDismiss": "Got it"
 }

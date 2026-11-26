@@ -15,6 +15,7 @@ import 'package:melody/features/home/home_shelves.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/settings/update_check.dart';
+import 'package:melody/features/settings/whats_new.dart';
 import 'package:melody/features/shell/app_shell.dart';
 import 'package:melody/features/stats/life_screen.dart';
 import 'package:melody/features/stats/stats_providers.dart';
@@ -105,6 +106,7 @@ class HomeScreen extends ConsumerWidget {
       slivers = [
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
         const SliverToBoxAdapter(child: UpdateBanner()),
+        const SliverToBoxAdapter(child: WhatsNewBanner()),
         const SliverToBoxAdapter(child: PlaceMemoryBanner()),
         // The year in review is put forward in December.
         if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))
