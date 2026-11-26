@@ -15,7 +15,7 @@ No ads, no tracking, no account with us: your music, your server, your phone.
 ![Android](https://img.shields.io/badge/Android-7.0%2B-3ddc84?logo=android&logoColor=white)
 ![Languages](https://img.shields.io/badge/languages-English%20%C2%B7%20T%C3%BCrk%C3%A7e%20%C2%B7%20Az%C9%99rbaycanca-8a63d2)
 
-[**⬇ Download the latest APK**](https://github.com/engineer948/Melody-app/releases/latest)
+[**⬇ Download the latest APK**](https://github.com/engineer948/Melody-app/releases/latest) · [Website](https://engineer948.github.io/Melody-app/)
 
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="200" alt="Screenshot">
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="200" alt="Screenshot">

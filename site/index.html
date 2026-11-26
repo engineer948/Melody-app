@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Melody – music player for Jellyfin and Navidrome</title>
+<meta name="description" content="Melody is a free, open-source Android music player for your own Jellyfin or Navidrome / Subsonic server. No ads, no tracking, no account with us.">
+<link rel="icon" href="icon.png">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #17161c; --muted: #5d5a68; --card: #f4f3f8;
+    --accent: #5b7fe8; --accent-fg: #ffffff; --line: #e4e2ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111015; --fg: #f1f0f5; --muted: #a9a6b5; --card: #1c1b22;
+      --accent: #8aa4f2; --accent-fg: #0d1020; --line: #2a2933;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  header { padding: 64px 0 32px; text-align: center; }
+  header img.icon { width: 104px; height: 104px; border-radius: 24px; }
+  h1 { font-size: clamp(36px, 6vw, 56px); margin: 16px 0 8px; letter-spacing: -0.02em; }
+  .lead { font-size: 20px; color: var(--muted); max-width: 640px; margin: 0 auto; }
+  .buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 28px 0 8px; }
+  .btn {
+    display: inline-block; padding: 14px 24px; border-radius: 999px;
+    font-weight: 600; text-decoration: none; border: 1px solid var(--line);
+    color: var(--fg); background: var(--card);
+  }
+  .btn.primary { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
+  .small { color: var(--muted); font-size: 14px; }
+  .shots {
+    display: flex; gap: 16px; overflow-x: auto; padding: 24px 4px 8px;
+    scroll-snap-type: x mandatory; justify-content: safe center;
+  }
+  .shots img {
+    height: 460px; border-radius: 20px; scroll-snap-align: center;
+    border: 1px solid var(--line); flex: none;
+  }
+  h2 { font-size: 30px; margin: 56px 0 16px; text-align: center; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border-radius: 18px; padding: 20px; }
+  .card h3 { margin: 4px 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .emoji { font-size: 26px; }
+  footer { margin: 64px 0 32px; text-align: center; color: var(--muted); font-size: 14px; }
+  @media (max-width: 520px) { .shots img { height: 380px; } header { padding-top: 40px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="icon" src="icon.png" alt="Melody icon">
+    <h1>Melody</h1>
+    <p class="lead">A free, open-source music player for your own <b>Jellyfin</b> or <b>Navidrome / Subsonic</b> server. No ads, no tracking, no account with us.</p>
+    <div class="buttons">
+      <a class="btn primary" href="https://github.com/engineer948/Melody-app/releases/latest">⬇ Download for Android</a>
+      <a class="btn" href="https://github.com/engineer948/Melody-app">★ Source on GitHub</a>
+    </div>
+    <p class="small">Android 7.0 or newer · English, Türkçe, Azərbaycanca · MIT licence</p>
+  </header>
+
+  <div class="shots">
+    <img src="screenshots/1.png" alt="Melody screenshot 1" loading="lazy">
+    <img src="screenshots/2.png" alt="Melody screenshot 2" loading="lazy">
+    <img src="screenshots/3.png" alt="Melody screenshot 3" loading="lazy">
+    <img src="screenshots/4.png" alt="Melody screenshot 4" loading="lazy">
+  </div>
+
+  <h2>Everything you need, nothing you don't</h2>
+  <div class="grid">
+    <div class="card"><div class="emoji">🎵</div><h3>Your whole library</h3><p>Albums, artists, genres, playlists, smart playlists and fast search, from Jellyfin or Navidrome.</p></div>
+    <div class="card"><div class="emoji">📴</div><h3>Offline</h3><p>Download songs, albums and playlists. Quality presets for Wi-Fi, mobile data and downloads.</p></div>
+    <div class="card"><div class="emoji">🎤</div><h3>Synced lyrics</h3><p>Lyrics that line up with each song by themselves.</p></div>
+    <div class="card"><div class="emoji">🎛️</div><h3>Sound</h3><p>Equalizer, volume normalisation, crossfade, sleep timer and Auto DJ.</p></div>
+    <div class="card"><div class="emoji">🚗</div><h3>Everywhere</h3><p>Android Auto, a home screen widget and playback on DLNA speakers.</p></div>
+    <div class="card"><div class="emoji">📊</div><h3>Your year in music</h3><p>Listening statistics and a Year in Review, worked out on your phone.</p></div>
+    <div class="card"><div class="emoji">🎧</div><h3>Listen together</h3><p>Play in sync with other people on your server.</p></div>
+    <div class="card"><div class="emoji">🔒</div><h3>Private by design</h3><p>Built-in Tailscale lets friends reach your server with an invite code. Your history never leaves the phone.</p></div>
+  </div>
+
+  <h2>Your data stays yours</h2>
+  <p class="lead" style="text-align:center">Melody talks only to your server. There is no Melody account, no analytics and no ads. Read the <a href="https://github.com/engineer948/Melody-app/blob/main/docs/LEGAL.md">privacy notes</a>.</p>
+
+  <footer>
+    Melody is open source under the MIT licence ·
+    <a href="https://github.com/engineer948/Melody-app/issues">Report a problem</a> ·
+    <a href="https://github.com/engineer948/Melody-app/releases">All releases</a>
+  </footer>
+</div>
+</body>
+</html>
