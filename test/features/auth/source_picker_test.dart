@@ -7,11 +7,25 @@ import 'package:melody/features/auth/auth_providers.dart';
 import '../../helpers/pump_app.dart';
 
 void main() {
+  testWidgets('by default: Jellyfin and Subsonic to choose from', (
+    tester,
+  ) async {
+    await pumpApp(
+      tester,
+      signedIn: false,
+      preferences: {LocaleController.localeKey: 'en'},
+    );
+    expect(find.byType(ChoiceChip), findsNWidgets(2));
+  });
+
   testWidgets('only Jellyfin: no picker', (tester) async {
     await pumpApp(
       tester,
       signedIn: false,
       preferences: {LocaleController.localeKey: 'en'},
+      overrides: [
+        enabledSourcesProvider.overrideWithValue({SourceType.jellyfin}),
+      ],
     );
     expect(find.byType(ChoiceChip), findsNothing);
     expect(find.byType(TextField), findsOneWidget);

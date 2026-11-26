@@ -1,4 +1,4 @@
-<p>Melody, kendi <b>Jellyfin</b> sunucundaki müzik kütüphaneni çalar. Bize ait bir hesap, reklam ya da takip yok: her şey cihazında ve kendi sunucunda kalır.</p>
+<p>Melody, kendi <b>Jellyfin</b> veya <b>Navidrome / Subsonic</b> sunucundaki müzik kütüphaneni çalar. Bize ait bir hesap, reklam ya da takip yok: her şey cihazında ve kendi sunucunda kalır.</p>
 <p><b>Erken geliştirme aşamasında.</b> Eksikler olabilir; geri bildirimlere açığız.</p>
 <p><b>Özellikler</b></p>
 <ul>

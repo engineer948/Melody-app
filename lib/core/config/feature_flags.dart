@@ -24,8 +24,12 @@ enum SourceType {
 abstract final class FeatureFlags {
   static const String _rawSources = String.fromEnvironment('ENABLED_SOURCES');
 
-  /// Source used when nothing (or nothing valid) is configured.
-  static const Set<SourceType> defaultSources = {SourceType.jellyfin};
+  /// Sources offered when nothing (or nothing valid) is configured:
+  /// Jellyfin and Subsonic-compatible servers such as Navidrome.
+  static const Set<SourceType> defaultSources = {
+    SourceType.jellyfin,
+    SourceType.subsonic,
+  };
 
   /// Sources the UI is allowed to list.
   static final Set<SourceType> enabledSources = parseSources(_rawSources);

@@ -3,11 +3,15 @@ import 'package:melody/core/config/feature_flags.dart';
 
 void main() {
   group('FeatureFlags', () {
-    test('only Jellyfin is enabled by default', () {
-      expect(FeatureFlags.enabledSources, {SourceType.jellyfin});
+    test('Jellyfin and Subsonic are enabled by default', () {
+      expect(FeatureFlags.enabledSources, {
+        SourceType.jellyfin,
+        SourceType.subsonic,
+      });
       expect(FeatureFlags.isEnabled(SourceType.jellyfin), isTrue);
-      expect(FeatureFlags.isEnabled(SourceType.subsonic), isFalse);
-      expect(FeatureFlags.hasMultipleSources, isFalse);
+      expect(FeatureFlags.isEnabled(SourceType.subsonic), isTrue);
+      expect(FeatureFlags.isEnabled(SourceType.local), isFalse);
+      expect(FeatureFlags.hasMultipleSources, isTrue);
     });
 
     test('parses a comma separated list', () {
@@ -27,7 +31,7 @@ void main() {
 
     test('falls back to the default when nothing valid is given', () {
       expect(FeatureFlags.parseSources(''), FeatureFlags.defaultSources);
-      expect(FeatureFlags.parseSources('vinyl'), {SourceType.jellyfin});
+      expect(FeatureFlags.parseSources('vinyl'), FeatureFlags.defaultSources);
     });
   });
 }

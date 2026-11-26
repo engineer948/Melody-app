@@ -67,10 +67,10 @@ void main() {
     expect(find.byType(NavigationBar), findsNothing);
   });
 
-  testWidgets('only Jellyfin is ever mentioned', (tester) async {
+  testWidgets('only the offered sources are mentioned', (tester) async {
     await pumpApp(tester, preferences: tr, signedIn: false);
     expect(find.textContaining('Jellyfin'), findsWidgets);
-    for (final hidden in ['Emby', 'Subsonic', 'Navidrome', 'Radyo']) {
+    for (final hidden in ['Emby', 'Radyo']) {
       expect(find.textContaining(hidden), findsNothing);
     }
   });

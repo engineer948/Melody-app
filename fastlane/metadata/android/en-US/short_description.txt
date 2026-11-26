@@ -1,1 +1,1 @@
-A clean, private music player for your Jellyfin server
+A clean, private music player for Jellyfin and Navidrome

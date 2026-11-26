@@ -1,4 +1,4 @@
-<p>Melody öz <b>Jellyfin</b> serverindəki musiqi kitabxananı çalır. Bizdə hesab, reklam və izləmə yoxdur: hər şey cihazında və öz serverində qalır.</p>
+<p>Melody öz <b>Jellyfin</b> və ya <b>Navidrome / Subsonic</b> serverindəki musiqi kitabxananı çalır. Bizdə hesab, reklam və izləmə yoxdur: hər şey cihazında və öz serverində qalır.</p>
 <p><b>Erkən inkişaf mərhələsində.</b> Çatışmazlıqlar ola bilər; rəylərə açığıq.</p>
 <p><b>Xüsusiyyətlər</b></p>
 <ul>

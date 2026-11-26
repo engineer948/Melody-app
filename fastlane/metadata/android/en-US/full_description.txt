@@ -1,4 +1,4 @@
-<p>Melody plays the music library on your own <b>Jellyfin</b> server. No account with us, no ads, no tracking: everything stays on your device and your server.</p>
+<p>Melody plays the music library on your own <b>Jellyfin</b> or <b>Navidrome / Subsonic</b> server. No account with us, no ads, no tracking: everything stays on your device and your server.</p>
 <p><b>Early development.</b> Expect rough edges; feedback is welcome.</p>
 <p><b>Features</b></p>
 <ul>

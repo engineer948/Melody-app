@@ -4,7 +4,7 @@
 
 # Melody
 
-**A free, open-source music player for your own Jellyfin server.**
+**A free, open-source music player for your own Jellyfin or Navidrome / Subsonic server.**
 No ads, no tracking, no account with us: your music, your server, your phone.
 
 [![Latest release](https://img.shields.io/github/v/release/engineer948/Melody-app?label=release&color=5b7fe8)](https://github.com/engineer948/Melody-app/releases/latest)
@@ -26,7 +26,7 @@ No ads, no tracking, no account with us: your music, your server, your phone.
 
 ## Features
 
-- 🎵 **Your Jellyfin library**: albums, artists, genres, playlists (smart
+- 🎵 **Your Jellyfin or Navidrome / Subsonic library**: albums, artists, genres, playlists (smart
   playlists, M3U import/export), search, favourites
 - 📴 **Offline downloads** and Wi-Fi / mobile streaming quality
 - 🎤 **Synced lyrics** that line up by themselves with each song
@@ -92,8 +92,8 @@ Translation files (`lib/l10n/app_*.arb`) are compiled automatically by
 
 ## Sources and feature flag
 
-Only Jellyfin is visible in the UI. Other sources are turned on at build
-time:
+Jellyfin and Subsonic (Navidrome, Airsonic, Gonic) are offered in the UI.
+The other sources are turned on at build time:
 
 ```bash
 flutter run --dart-define=ENABLED_SOURCES=jellyfin,subsonic,local
