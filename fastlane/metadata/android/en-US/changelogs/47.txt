@@ -1,0 +1,3 @@
+New: sound quality presets (Best, Balanced, Saver) set streaming and downloads at once; the detailed settings stay below.
+New: Settings → Home → Home shelves: turn shelves on or off and drag them into your order.
+New: search in Settings.

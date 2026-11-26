@@ -1136,5 +1136,22 @@
   },
   "placePlay": "That day's songs",
   "placeReminders": "Place reminder",
-  "placeRemindersBody": "When you come back somewhere you played music before, Home shows what you listened to there"
+  "placeRemindersBody": "When you come back somewhere you played music before, Home shows what you listened to there",
+  "qualityPreset": "Sound quality",
+  "qualityBest": "Best",
+  "qualityBalanced": "Balanced",
+  "qualitySaver": "Saver",
+  "qualityBestBody": "Original files on Wi-Fi, mobile data and downloads.",
+  "qualityBalancedBody": "Original on Wi-Fi and downloads, 256 kbps on mobile data.",
+  "qualitySaverBody": "Opus 192 kbps on Wi-Fi, 128 kbps on mobile data and for downloads.",
+  "qualityCustomBody": "Custom: your own choices below.",
+  "homeShelves": "Home shelves",
+  "homeShelvesSubtitle": "Choose and order what Home shows",
+  "homeShelvesBody": "Turn shelves on or off and drag them by the handle to change the order.",
+  "homeShelvesReset": "Reset",
+  "homeShelvesDrag": "Drag to move",
+  "homeShelvesLifeNote": "Shown only when \"Soundtrack of your life\" is on",
+  "settingsHome": "Home",
+  "settingsSearch": "Search settings",
+  "settingsSearchEmpty": "No setting matches"
 }

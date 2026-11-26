@@ -576,5 +576,22 @@
   "placeLastTime": "Geçen sefer, {date} tarihinde burada {artist} — {song} dinliyordun.",
   "placePlay": "O günün şarkıları",
   "placeReminders": "Yer hatırlatıcı",
-  "placeRemindersBody": "Daha önce müzik dinlediğin bir yere dönünce, ana ekran orada ne dinlediğini gösterir"
+  "placeRemindersBody": "Daha önce müzik dinlediğin bir yere dönünce, ana ekran orada ne dinlediğini gösterir",
+  "qualityPreset": "Ses kalitesi",
+  "qualityBest": "En iyi",
+  "qualityBalanced": "Dengeli",
+  "qualitySaver": "Tasarruf",
+  "qualityBestBody": "Wi-Fi'da, mobil veride ve indirmelerde orijinal dosyalar.",
+  "qualityBalancedBody": "Wi-Fi'da ve indirmelerde orijinal, mobil veride 256 kbps.",
+  "qualitySaverBody": "Wi-Fi'da Opus 192 kbps, mobil veride ve indirmelerde 128 kbps.",
+  "qualityCustomBody": "Özel: aşağıdaki kendi seçimlerin.",
+  "homeShelves": "Ana sayfa rafları",
+  "homeShelvesSubtitle": "Ana sayfada neyin hangi sırayla görüneceğini seç",
+  "homeShelvesBody": "Rafları aç veya kapat; sırayı değiştirmek için tutamaktan sürükle.",
+  "homeShelvesReset": "Sıfırla",
+  "homeShelvesDrag": "Taşımak için sürükle",
+  "homeShelvesLifeNote": "Yalnızca \"Hayatının müziği\" açıkken görünür",
+  "settingsHome": "Ana sayfa",
+  "settingsSearch": "Ayarlarda ara",
+  "settingsSearchEmpty": "Eşleşen ayar yok"
 }

@@ -1,0 +1,3 @@
+Yeni: ses kalitesi hazır ayarları (En iyi, Dengeli, Tasarruf) akışı ve indirmeleri birlikte ayarlar; ayrıntılı ayarlar aşağıda duruyor.
+Yeni: Ayarlar → Ana sayfa → Ana sayfa rafları: rafları aç/kapat ve istediğin sıraya sürükle.
+Yeni: Ayarlarda arama.

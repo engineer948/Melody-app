@@ -1,7 +1,9 @@
 # Next steps (handoff)
 
 State on 2026-11-23: `main` = `claude/new-session-j42vuv` = `698a78c`.
-Last release: 0.28.2+45. Released 0.29.0+46 (removals + previous-button fix). Next release: **0.30.0+47**.
+Last release: 0.28.2+45. Released 0.29.0+46 (removals + previous-button fix). Released 0.30.0+47 (quality presets, home shelves, settings search). Next: 0.31.0+48.
+
+Maintainer chose for 1.0: all of "Must have", Navidrome/Subsonic visible, tablet/landscape layout, and all of "Polish" (TalkBack + large font, What's new, GitHub Pages site). Done so far: presets, shelves, settings search.
 
 Maintainer writes Azerbaijani/Turkish; answer in Azerbaijani, keep repo
 content English (see CLAUDE.md). When everything below is done and checks

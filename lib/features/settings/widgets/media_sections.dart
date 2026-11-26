@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:melody/data/downloads/download_settings.dart';
 import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/lyrics/lyrics_providers.dart';
 import 'package:melody/l10n/l10n.dart';
 import 'package:melody/player/player_controller.dart';
+import 'package:melody/player/quality_preset.dart';
 import 'package:melody/player/streaming_settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -66,6 +68,7 @@ class StreamingSection extends ConsumerWidget {
     );
     return Column(
       children: [
+        const QualityPresetTile(),
         bitrateTile(
           Icons.wifi,
           l10n.streamWifi,
@@ -102,6 +105,68 @@ class StreamingSection extends ConsumerWidget {
               unawaited(c.update((s) => s.copyWith(dataSaver: v))),
         ),
       ],
+    );
+  }
+}
+
+/// Best / Balanced / Saver for streaming and downloads at once.
+class QualityPresetTile extends ConsumerWidget {
+  /// Creates the tile.
+  const QualityPresetTile({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final streaming = ref.watch(streamingSettingsControllerProvider);
+    final downloads = ref.watch(downloadSettingsControllerProvider);
+    final preset = presetOf(streaming, downloads);
+    Future<void> choose(QualityPreset p) async {
+      await ref
+          .read(streamingSettingsControllerProvider.notifier)
+          .update((s) => streamingFor(p, s));
+      await ref
+          .read(downloadSettingsControllerProvider.notifier)
+          .update((d) => downloadsFor(p, d));
+    }
+
+    return ListTile(
+      leading: const Icon(Icons.tune_rounded),
+      title: Text(l10n.qualityPreset),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          SegmentedButton<QualityPreset>(
+            showSelectedIcon: false,
+            emptySelectionAllowed: true,
+            segments: [
+              ButtonSegment(
+                value: QualityPreset.best,
+                label: Text(l10n.qualityBest),
+              ),
+              ButtonSegment(
+                value: QualityPreset.balanced,
+                label: Text(l10n.qualityBalanced),
+              ),
+              ButtonSegment(
+                value: QualityPreset.saver,
+                label: Text(l10n.qualitySaver),
+              ),
+            ],
+            selected: {if (preset != QualityPreset.custom) preset},
+            onSelectionChanged: (v) {
+              if (v.isNotEmpty) unawaited(choose(v.first));
+            },
+          ),
+          const SizedBox(height: 6),
+          Text(switch (preset) {
+            QualityPreset.best => l10n.qualityBestBody,
+            QualityPreset.balanced => l10n.qualityBalancedBody,
+            QualityPreset.saver => l10n.qualitySaverBody,
+            QualityPreset.custom => l10n.qualityCustomBody,
+          }),
+        ],
+      ),
     );
   }
 }

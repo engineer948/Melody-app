@@ -1,0 +1,3 @@
+Yeni: səs keyfiyyəti hazır seçimləri (Ən yaxşı, Balanslı, Qənaət) axını və yükləmələri birlikdə ayarlayır; detallı ayarlar aşağıda qalır.
+Yeni: Ayarlar → Ana ekran → Ana ekran rəfləri: rəfləri aç/bağla və istədiyin sıraya sürüşdür.
+Yeni: Ayarlarda axtarış.

@@ -576,5 +576,22 @@
   "placeLastTime": "Keçən dəfə, {date} tarixində burada {artist} — {song} dinləyirdin.",
   "placePlay": "O günün mahnıları",
   "placeReminders": "Yer xatırladıcısı",
-  "placeRemindersBody": "Əvvəl musiqi dinlədiyin yerə qayıdanda, ana ekran orada nə dinlədiyini göstərir"
+  "placeRemindersBody": "Əvvəl musiqi dinlədiyin yerə qayıdanda, ana ekran orada nə dinlədiyini göstərir",
+  "qualityPreset": "Səs keyfiyyəti",
+  "qualityBest": "Ən yaxşı",
+  "qualityBalanced": "Balanslı",
+  "qualitySaver": "Qənaət",
+  "qualityBestBody": "Wi-Fi-da, mobil internetdə və yükləmələrdə orijinal fayllar.",
+  "qualityBalancedBody": "Wi-Fi-da və yükləmələrdə orijinal, mobil internetdə 256 kbps.",
+  "qualitySaverBody": "Wi-Fi-da Opus 192 kbps, mobil internetdə və yükləmələrdə 128 kbps.",
+  "qualityCustomBody": "Xüsusi: aşağıdakı öz seçimlərin.",
+  "homeShelves": "Ana ekran rəfləri",
+  "homeShelvesSubtitle": "Ana ekranda nəyin hansı sırayla görünəcəyini seç",
+  "homeShelvesBody": "Rəfləri aç və ya bağla; sıranı dəyişmək üçün tutacaqdan sürüşdür.",
+  "homeShelvesReset": "Sıfırla",
+  "homeShelvesDrag": "Yerini dəyişmək üçün sürüşdür",
+  "homeShelvesLifeNote": "Yalnız \"Həyatının musiqisi\" açıq olanda görünür",
+  "settingsHome": "Ana ekran",
+  "settingsSearch": "Ayarlarda axtar",
+  "settingsSearchEmpty": "Uyğun ayar yoxdur"
 }

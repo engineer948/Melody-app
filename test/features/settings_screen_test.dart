@@ -18,7 +18,7 @@ Future<ProviderContainer> _openSettings(
     tester,
     preferences: preferences,
     systemSeed: systemSeed,
-    size: const Size(400, 6000),
+    size: const Size(400, 12000),
   );
   await tester.tap(
     find.byTooltip(preferences.containsValue('tr') ? 'Ayarlar' : 'Settings'),
@@ -136,6 +136,21 @@ void main() {
     await tester.ensureVisible(find.text('Görünüm'));
     expect(find.text('Görünüm'), findsOneWidget);
     expect(find.text('Açık kaynak lisansları'), findsOneWidget);
+  });
+
+  testWidgets('search narrows the settings to matching sections', (
+    tester,
+  ) async {
+    await _openSettings(tester);
+    await tester.tap(find.byTooltip('Search settings'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'crossfade');
+    await tester.pumpAndSettle();
+    expect(find.text('Playback'), findsOneWidget);
+    expect(find.text('Appearance'), findsNothing);
+    await tester.enterText(find.byType(TextField), 'zzzz');
+    await tester.pumpAndSettle();
+    expect(find.text('No setting matches'), findsOneWidget);
   });
 
   testWidgets('about shows the version and opens the license page', (

@@ -11,6 +11,7 @@ import 'package:melody/core/widgets/shelf_header.dart';
 import 'package:melody/domain/models/media.dart';
 import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/downloads/download_controller.dart';
+import 'package:melody/features/home/home_shelves.dart';
 import 'package:melody/features/library/library_providers.dart';
 import 'package:melody/features/library/widgets/media_tiles.dart';
 import 'package:melody/features/settings/update_check.dart';
@@ -67,6 +68,7 @@ class HomeScreen extends ConsumerWidget {
     final most = ref.watch(trackListProvider(_mostPlayed));
     final suggested = ref.watch(suggestionsProvider).value;
     final now = DateTime.now();
+    final shelves = ref.watch(homeShelvesControllerProvider);
 
     final empty =
         added.items.isEmpty &&
@@ -104,7 +106,6 @@ class HomeScreen extends ConsumerWidget {
         if (failure != null) const SliverToBoxAdapter(child: OfflineBanner()),
         const SliverToBoxAdapter(child: UpdateBanner()),
         const SliverToBoxAdapter(child: PlaceMemoryBanner()),
-        const SliverToBoxAdapter(child: LifeShelf()),
         // The year in review is put forward in December.
         if (now.month == 12 && (suggested?.mix.isNotEmpty ?? false))
           SliverToBoxAdapter(
@@ -118,53 +119,63 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
           ),
-        if (added.items.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _AlbumShelf(
-              title: l10n.homeRecentlyAdded,
-              albums: added.items,
-              cardWidth: 240,
-            ),
-          ),
-        if (suggested != null && suggested.mix.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _TrackShelf(
-              title: l10n.homeMixForYou,
-              tracks: suggested.mix,
-            ),
-          ),
-        if (played.items.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _TrackShelf(
-              title: l10n.homeRecentlyPlayed,
-              tracks: played.items,
-            ),
-          ),
-        if (most.items.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _TrackShelf(title: l10n.homeMostPlayed, tracks: most.items),
-          ),
-        if (suggested != null && suggested.forgotten.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _TrackShelf(
-              title: l10n.homeForgotten,
-              tracks: suggested.forgotten,
-            ),
-          ),
-        if (random.items.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _AlbumShelf(
-              title: l10n.homeRandomAlbums,
-              albums: random.items,
-            ),
-          ),
-        if (suggested != null && suggested.discover.isNotEmpty)
-          SliverToBoxAdapter(
-            child: _TrackShelf(
-              title: l10n.homeDiscover,
-              tracks: suggested.discover,
-            ),
-          ),
+        for (final shelf in shelves.visible)
+          ?switch (shelf) {
+            HomeShelf.life => const SliverToBoxAdapter(child: LifeShelf()),
+            HomeShelf.recentlyAdded when added.items.isNotEmpty =>
+              SliverToBoxAdapter(
+                child: _AlbumShelf(
+                  title: l10n.homeRecentlyAdded,
+                  albums: added.items,
+                  cardWidth: 240,
+                ),
+              ),
+            HomeShelf.mix when suggested != null && suggested.mix.isNotEmpty =>
+              SliverToBoxAdapter(
+                child: _TrackShelf(
+                  title: l10n.homeMixForYou,
+                  tracks: suggested.mix,
+                ),
+              ),
+            HomeShelf.recentlyPlayed when played.items.isNotEmpty =>
+              SliverToBoxAdapter(
+                child: _TrackShelf(
+                  title: l10n.homeRecentlyPlayed,
+                  tracks: played.items,
+                ),
+              ),
+            HomeShelf.mostPlayed when most.items.isNotEmpty =>
+              SliverToBoxAdapter(
+                child: _TrackShelf(
+                  title: l10n.homeMostPlayed,
+                  tracks: most.items,
+                ),
+              ),
+            HomeShelf.forgotten
+                when suggested != null && suggested.forgotten.isNotEmpty =>
+              SliverToBoxAdapter(
+                child: _TrackShelf(
+                  title: l10n.homeForgotten,
+                  tracks: suggested.forgotten,
+                ),
+              ),
+            HomeShelf.randomAlbums when random.items.isNotEmpty =>
+              SliverToBoxAdapter(
+                child: _AlbumShelf(
+                  title: l10n.homeRandomAlbums,
+                  albums: random.items,
+                ),
+              ),
+            HomeShelf.discover
+                when suggested != null && suggested.discover.isNotEmpty =>
+              SliverToBoxAdapter(
+                child: _TrackShelf(
+                  title: l10n.homeDiscover,
+                  tracks: suggested.discover,
+                ),
+              ),
+            _ => null,
+          },
       ];
     }
 
