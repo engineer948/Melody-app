@@ -1,0 +1,5 @@
+Yeni: Jellyfin-in yanında Navidrome / Subsonic serverləri də əlavə etmək olar.
+Yeni: ilk açılışda xoş gəldin kartı, yeniləmədən sonra "Yeniliklər" kartı.
+Planşet və üfüqi ekran: pleyer örtüyü və idarəetməni yan-yana göstərir.
+Böyük kitabxanalarda daha sürətli statistika və tövsiyələr.
+Ekran oxuyucu dəstəyi yaxşılaşdı; iki qat şrift ölçüsü ilə yoxlanıldı.

@@ -1,0 +1,5 @@
+Yeni: Jellyfin'in yanında Navidrome / Subsonic sunucuları da eklenebilir.
+Yeni: ilk açılışta karşılama kartı, güncellemeden sonra "Yenilikler" kartı.
+Tablet ve yatay ekran: çalar kapak ve kontrolleri yan yana gösterir.
+Büyük kütüphanelerde daha hızlı istatistikler ve öneriler.
+Ekran okuyucu desteği iyileştirildi; iki kat yazı boyutuyla denendi.

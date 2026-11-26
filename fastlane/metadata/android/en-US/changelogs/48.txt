@@ -1,0 +1,5 @@
+New: Navidrome / Subsonic servers can be added next to Jellyfin.
+New: a welcome card on first start and a "What's new" card after updates.
+Tablets and landscape: the player shows cover and controls side by side.
+Faster statistics and suggestions on big libraries.
+Better screen reader support; checked with twice the font size.

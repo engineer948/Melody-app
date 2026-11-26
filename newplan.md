@@ -3,7 +3,7 @@
 State on 2026-11-23: `main` = `claude/new-session-j42vuv` = `698a78c`.
 Last release: 0.28.2+45. Released 0.29.0+46 (removals + previous-button fix). Released 0.30.0+47 (quality presets, home shelves, settings search). Next: 0.31.0+48.
 
-Maintainer chose for 1.0: all of "Must have", Navidrome/Subsonic visible, tablet/landscape layout, and all of "Polish" (TalkBack + large font, What's new, GitHub Pages site). Done so far: presets, shelves, settings search.
+Maintainer chose for 1.0: all of "Must have", Navidrome/Subsonic visible, tablet/landscape layout, and all of "Polish" (TalkBack + large font, What's new, GitHub Pages site). Done: presets, shelves, settings search (0.30.0); F-Droid build in release.yml, Navidrome visible, What's new card, welcome card, DB migration test, 50k perf test + fixes, tablet/landscape player, accessibility tests, GitHub Pages site (0.31.0). Left for 1.0: maintainer enables Pages (Settings -> Pages -> GitHub Actions); check the first release with the F-Droid universal APK; resubmit to F-Droid ~Feb 2027 and call that 1.0.
 
 Maintainer writes Azerbaijani/Turkish; answer in Azerbaijani, keep repo
 content English (see CLAUDE.md). When everything below is done and checks
