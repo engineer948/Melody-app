@@ -88,3 +88,8 @@ inclusion (~Feb 2027).
   "What's new" after updates, a simple project website (GitHub Pages).
 - **Later (maintainer):** song letters and house party back in a new
   form.
+
+
+## 1.0.0 released (2026-11-26)
+
+Maintainer chose to release 1.0 now and leave the F-Droid resubmission for later (~Feb 2027).

@@ -1,0 +1,2 @@
+Melody 1.0 🎉
+Stable for everyday use: Jellyfin and Navidrome / Subsonic, offline downloads, synced lyrics, sound quality presets, configurable Home, settings search, Android Auto, tablets and landscape, screen reader support and faster big libraries. Thank you for listening!
