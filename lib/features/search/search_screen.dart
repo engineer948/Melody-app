@@ -77,6 +77,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         behavior: HitTestBehavior.translucent,
+        // Only closes the keyboard: nothing for screen readers.
+        excludeFromSemantics: true,
         child: LargeTitlePage(
           title: l10n.navSearch,
           automaticallyImplyLeading: false,
