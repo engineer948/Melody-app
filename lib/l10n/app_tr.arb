@@ -595,5 +595,8 @@
   "settingsSearch": "Ayarlarda ara",
   "settingsSearchEmpty": "Eşleşen ayar yok",
   "whatsNewTitle": "{version} sürümünde yenilikler",
-  "whatsNewDismiss": "Tamam"
+  "whatsNewDismiss": "Tamam",
+  "welcomeTitle": "Melody'ye hoş geldin",
+  "welcomeBody": "İki hızlı seçim; ikisini de sonra Ayarlar'dan değiştirebilirsin.",
+  "welcomeDone": "Dinlemeye başla"
 }

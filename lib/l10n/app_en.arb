@@ -1156,5 +1156,8 @@
   "settingsSearchEmpty": "No setting matches",
   "whatsNewTitle": "What's new in {version}",
   "@whatsNewTitle": {"placeholders": {"version": {"type": "String"}}},
-  "whatsNewDismiss": "Got it"
+  "whatsNewDismiss": "Got it",
+  "welcomeTitle": "Welcome to Melody",
+  "welcomeBody": "Two quick choices; you can change both later in Settings.",
+  "welcomeDone": "Start listening"
 }

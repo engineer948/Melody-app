@@ -15,7 +15,9 @@ import 'package:melody/domain/repositories/music_source.dart';
 import 'package:melody/features/auth/auth_providers.dart';
 import 'package:melody/features/auth/session_controller.dart';
 import 'package:melody/features/downloads/download_controller.dart';
+import 'package:melody/features/home/welcome_card.dart';
 import 'package:melody/features/settings/app_info.dart';
+import 'package:melody/features/settings/whats_new.dart';
 import 'package:melody/player/player_controller.dart';
 import 'package:melody/player/streaming_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,7 +41,11 @@ Future<ProviderContainer> createContainer({
   Override? engineOverride,
   List<Override> overrides = const [],
 }) async {
-  SharedPreferences.setMockInitialValues(preferences);
+  // The welcome card is tested on its own.
+  SharedPreferences.setMockInitialValues({
+    welcomeDoneKey: true,
+    ...preferences,
+  });
   final prefs = await SharedPreferences.getInstance();
   final database = AppDatabase(NativeDatabase.memory());
   final fakeSource = source ?? FakeMusicSource();
@@ -49,6 +55,8 @@ Future<ProviderContainer> createContainer({
       preferencesProvider.overrideWithValue(prefs),
       systemSeedColorProvider.overrideWith((ref) async => systemSeed),
       appVersionProvider.overrideWith((ref) async => '9.9.9 (99)'),
+      // Tested on its own.
+      whatsNewProvider.overrideWith((ref, language) async => null),
       clientIdentityProvider.overrideWithValue(testIdentity),
       appDatabaseProvider.overrideWithValue(database),
       tokenStoreProvider.overrideWithValue(tokens ?? MemoryTokenStore()),
